@@ -14,7 +14,8 @@
 #include "TROOT.h"
 #include "TMatrixDSym.h"
 #include "TMath.h"
-
+#include <fstream>
+#include <vector>
 #include <sstream>
 #include <iostream>
 #include <string> 
@@ -61,21 +62,59 @@ void FitAndSave() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2015  #sqrt{s} = 13 TeV   L_{int} =some pb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2015  #sqrt{s} = 13 TeV   L_{int} = ~ pb^{-1}");
 
   RooWorkspace* w = new RooWorkspace("w");
 
-  TString file_name = "FitNtuple_Run2015D2_DoubleMu.root";
-  //TString file_name = "prova.root";
+//  ifstream fin( "FitNtuple_Run2015D2_DoubleMu.txt" );
+//  string line;
+//  getline( fin, line );
+//  stringstream ss( line ); int nLine; ss >> nLine;
+//  vector< string > lines( nLine );
+//  int i = 0;
+//  cout<<"nLine "<<nLine<<endl;
+//  while( i < nLine && getline( fin, line ) ) {
+//      lines[i] = line;
+//      cout<<"line) "<<line<<endl;
+//      ++i;
+//  }
+
+  TString file_name = "FitNtuple_Run2015D3_DoubleMu.root";
   TChain chain_data_dimudimu("cutFlowAnalyzer/Events");
   TChain chain_data_dimuorphan("cutFlowAnalyzer/Events_orphan");
   chain_data_dimudimu.Add(file_name.Data());
   chain_data_dimuorphan.Add(file_name.Data());
 
-  //const double       m_min  = 0.2113;
-  const double       m_min  = 0.2114;
+  ////Load Ntuples
+  //string line[9999];
+  //int nLine = 0;
+  //std::ifstream myfile( "FitNtuple_Run2015D2_DoubleMu.txt" );
+  //for(int i = 0; myfile.good(); i++) nLine++;
+  //for(int i = 0; i<nLine-1; i++) {
+  //  getline(myfile, line[i]);
+  //  cout<<i<<") "<<line[i]<<endl;    
+  //  chain_data_dimudimu.Add( line[i].c_str() );
+  //  chain_data_dimuorphan.Add( line[i].c_str() );
+  //}
+
+  const double       m_min  = 0.2113;
   const double       m_max  = 3.5536;
   const unsigned int m_bins = 66;
+
+  //Efficiencies studies
+  float Pass_OffLine                 = chain_data_dimuorphan.Draw("orph_passOffLineSel>>hist","orph_passOffLineSel>0","goff");
+  float Pass_OffLine_pt              = chain_data_dimuorphan.Draw("orph_passOffLineSelPt>>hist","orph_passOffLineSelPt>0","goff");
+  float Pass_OffLine_pt1788          = chain_data_dimuorphan.Draw("orph_passOffLineSelPt1788>>hist","orph_passOffLineSelPt1788>0","goff");
+  float Pass_FiredTrig               = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig>0","goff");
+  float Pass_FiredTrig_pt            = chain_data_dimuorphan.Draw("orph_FiredTrig_pt>>hist","orph_FiredTrig_pt>0","goff");
+  float Pass_FiredTrig_ptColl        = chain_data_dimuorphan.Draw("orph_FiredTrig_ptColl>>hist","orph_FiredTrig_ptColl>0","goff");
+
+  float Pass_FiredTrig_notOff        = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig>0 && orph_passOffLineSelPt1788<1","goff");
+  float Pass_Offl_noFiredTrig        = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig<1 && orph_passOffLineSelPt1788>0","goff");
+
+  float Pass_OffLineFiredTrig        = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig>0 && orph_passOffLineSelPt1788>0","goff");
+  float Pass_OffLineFiredTrig_pt     = chain_data_dimuorphan.Draw("orph_FiredTrig_pt>>hist","orph_FiredTrig_pt>0 && orph_passOffLineSelPt1788>0","goff");
+  float Pass_OffLineFiredTrig_ptColl = chain_data_dimuorphan.Draw("orph_FiredTrig_ptColl>>hist","orph_FiredTrig_ptColl>0 && orph_passOffLineSelPt1788>0","goff");
 
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
   RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV/#it{c}^{2}");
@@ -85,25 +124,25 @@ void FitAndSave() {
   w->import(m2);
 
   ostringstream stream_cut_bg_m1_iso;
-  stream_cut_bg_m1_iso << "isoTk<2. && isoTk>0 && containstrig2 > 0 && mass > "<< m_min << " && mass < " << m_max;
-  //stream_cut_bg_m1_iso << "isoTk<2. && isoTk>0 && mass > "<< m_min << " && mass < " << m_max;
-  //stream_cut_bg_m1_iso << "isoTk>0 && containstrig2 > 0 && mass > "<< m_min << " && mass < " << m_max;
+  //stream_cut_bg_m1_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  //stream_cut_bg_m1_iso << "orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m1_iso << "orph_dimu_isoTk < 100. && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
 
   ostringstream stream_cut_bg_m2_iso;
-  stream_cut_bg_m2_iso << "isoTk<2. && isoTk>0 && containstrig > 0 && mass > "<< m_min << " && mass < " << m_max;
-  //stream_cut_bg_m2_iso << "isoTk<2. && isoTk>0 && mass > "<< m_min << " && mass < " << m_max;
-  //stream_cut_bg_m2_iso << "isoTk>0 && containstrig > 0 && mass > "<< m_min << " && mass < " << m_max;
+  //stream_cut_bg_m2_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  //stream_cut_bg_m2_iso << "orph_dimu_isoTk > 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m2_iso << "orph_dimu_isoTk < 100. && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
   TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
   TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
-  TString cut_control_Iso_offDiagonal = "isoC_1mm < 2. && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
+  TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
   TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
 
-  TString cut_signal   = "isoC_1mm<2. && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.)";
+  TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.)";
 
-  TTree* tree_dimuorphan_bg_m1    = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
-  TTree* tree_dimuorphan_bg_m2    = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
+  TTree* tree_dimuorphan_bg_m1        = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
+  TTree* tree_dimuorphan_bg_m2        = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
 
   TTree* tree_dimudimu_diagonal_2D                      = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massC                = chain_data_dimudimu.CopyTree(cut_diagonal);
@@ -112,16 +151,18 @@ void FitAndSave() {
   TTree* tree_dimudimu_control_offDiagonal_1D_massC     = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
   TTree* tree_dimudimu_control_offDiagonal_1D_massF     = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
+  cout<<"------OffDiagonal SCAN------"<<endl;
   tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF");
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_nonIso                   = chain_data_dimudimu.CopyTree(cut_control_nonIso);
 
   TTree* tree_dimudimu_signal_2D  = chain_data_dimudimu.CopyTree(cut_signal);
-  tree_dimudimu_signal_2D->Scan("massC:massF");
+  //cout<<"------Signal SCAN------"<<endl;
+  //tree_dimudimu_signal_2D->Scan("massC:massF");
 
-  tree_dimuorphan_bg_m1->GetBranch("mass")->SetName("m1");
-  tree_dimuorphan_bg_m2->GetBranch("mass")->SetName("m2");
+  tree_dimuorphan_bg_m1->GetBranch("orph_dimu_mass")->SetName("m1");
+  tree_dimuorphan_bg_m2->GetBranch("orph_dimu_mass")->SetName("m2");
   tree_dimudimu_diagonal_2D->GetBranch("massC")->SetName("m1");
   tree_dimudimu_diagonal_2D->GetBranch("massF")->SetName("m2");
   tree_dimudimu_diagonal_1D_massC->GetBranch("massC")->SetName("m1");
@@ -161,6 +202,7 @@ void FitAndSave() {
 
   RooDataSet* ds_dimudimu_signal_2D = new RooDataSet("ds_dimudimu_signal_2D","ds_dimudimu_signal_2D", tree_dimudimu_signal_2D, RooArgSet(m1,m2));
 
+  cout<<"-----Now Printing the Datasets:-----"<<endl;
   ds_dimuorphan_bg_m1->Print("s");
   ds_dimuorphan_bg_m2->Print("s");
   ds_dimudimu_diagonal_2D->Print("s");
@@ -198,7 +240,7 @@ void FitAndSave() {
   //****************************************************************************
   //                         Create template for m1                             
   //****************************************************************************
-
+  cout<<"-----Creating templates:-----"<<endl;
   //  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.5, 0.0, 2.0], MmumuC_p[0.5])");
   w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.5, 0.0, 20.0], MmumuC_p[0.5])");
   //  w->factory("Bernstein::bgC(m1,{bC06[0.0], bC16[0.1,0.,3.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.1,0.,3.]})");
@@ -208,8 +250,8 @@ void FitAndSave() {
   w->factory("Gaussian::phiC(m1,1.019,0.033)");
   w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.097,3.0,3.2], JpsiC_sigma[0.028,0.01,0.06], JpsiC_alpha[1.8,1.0,3.0], JpsiC_n[2.0])");
 
-  //	w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[44000.,15000.,80000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[18000.,9000.,27000.]*JpsiC)");
-  w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[4400.,1000.,8000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[1800.,900.,2700.]*JpsiC)");
+  //w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[4400.,1000.,8000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[1800.,900.,2700.]*JpsiC)");
+  w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[4400.,1000.,8000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[1000.,300.,2700.]*JpsiC)");
 
   RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));
   rC->Print();
@@ -240,8 +282,9 @@ void FitAndSave() {
   w->factory("Gaussian::phiF(m2,1.019,0.039)");
   w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.097,3.0,3.2], JpsiF_sigma[0.028,0.01,0.06], JpsiF_alpha[1.8,1.0,3.0], JpsiF_n[2.0])");
 
-  //  w->factory("SUM::template1D_m2(norm_MmumuF[1000., 0., 50000.]*MmumuF, norm_bgF[24000.,15000.,50000.]*bgF,norm_etaF[150.,0.0,800.]*etaF,norm_rhoF[150.,0.,800.]*rhoF,norm_phiF[150.,0.,800.]*phiF,norm_JpsiF[12000.,3000.,30000.]*JpsiF)");
-  w->factory("SUM::template1D_m2(norm_MmumuF[100., 0., 5000.]*MmumuF, norm_bgF[2400.,1000.,5000.]*bgF,norm_etaF[15.,0.0,100.]*etaF,norm_rhoF[15.,0.,100.]*rhoF,norm_phiF[15.,10.,100.]*phiF,norm_JpsiF[1200.,300.,3000.]*JpsiF)");
+  //w->factory("SUM::template1D_m2(norm_MmumuF[100., 0., 5000.]*MmumuF, norm_bgF[2400.,1000.,5000.]*bgF,norm_etaF[15.,0.0,100.]*etaF,norm_rhoF[15.,0.,100.]*rhoF,norm_phiF[15.,10.,100.]*phiF,norm_JpsiF[1200.,300.,3000.]*JpsiF)");
+  //m1: w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[4400.,1000.,8000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[1800.,900.,2700.]*JpsiC)");
+    w->factory("SUM::template1D_m2(norm_MmumuF[1000., 0., 50000.]*MmumuF, norm_bgF[700.,700.,8000.]*bgF, norm_etaF[15.,0.,800.]*etaF, norm_rhoF[300.,0.,800.]*rhoF, norm_phiF[500.,0.,800.]*phiF, norm_JpsiF[700.,200.,2700.]*JpsiF)");
 
   RooFitResult *rF = w->pdf("template1D_m2")->fitTo(*(w->data("ds_dimuorphan_bg_m2")), Extended(1), Save(), SumW2Error(kTRUE));
   rF->Print();
@@ -337,4 +380,11 @@ void FitAndSave() {
 
   w->writeToFile("ws.root");
 
+  cout<<"Efficiencies on bb: "<<endl;
+  cout<<"--#Ev. Pass OffLine: "<<Pass_OffLine<<" but only "<<Pass_OffLine_pt<<" has Pt>17 and only "<<Pass_OffLine_pt1788<<" have pt 17 8 8"<<endl;
+  cout<<" Times you have fired but no selection: "<<Pass_FiredTrig_notOff<<endl;
+  cout<<" Times you have not fired but passed selection: "<<Pass_Offl_noFiredTrig<<endl;
+  cout<<"--#Ev. FiredTrig: "<<Pass_FiredTrig<<" Eff. to OffLine: "<<Pass_FiredTrig/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig<<" #Ev. FiredTrigger && Offline. "<<Pass_OffLineFiredTrig/Pass_OffLine_pt<<endl;
+  cout<<"--#Ev. FiredTrig+Pt: "<<Pass_FiredTrig_pt<<" Eff. to OffLine: "<<Pass_FiredTrig_pt/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_pt<<" #Ev. FiredTrigger+Pt && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
+  cout<<"--#Ev. FiredTrig+PT+Coll: "<<Pass_FiredTrig_ptColl<<" Eff. to OffLine: "<<Pass_FiredTrig_ptColl/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_ptColl<<" #Ev. FiredTrigger+pt+Coll && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
 }
