@@ -66,37 +66,21 @@ void FitAndSave() {
 
   RooWorkspace* w = new RooWorkspace("w");
 
-//  ifstream fin( "FitNtuple_Run2015D2_DoubleMu.txt" );
-//  string line;
-//  getline( fin, line );
-//  stringstream ss( line ); int nLine; ss >> nLine;
-//  vector< string > lines( nLine );
-//  int i = 0;
-//  cout<<"nLine "<<nLine<<endl;
-//  while( i < nLine && getline( fin, line ) ) {
-//      lines[i] = line;
-//      cout<<"line) "<<line<<endl;
-//      ++i;
-//  }
-
   TString file_name = "FitNtuple_Run2015D3_DoubleMu.root";
   TChain chain_data_dimudimu("cutFlowAnalyzer/Events");
   TChain chain_data_dimuorphan("cutFlowAnalyzer/Events_orphan");
-  chain_data_dimudimu.Add(file_name.Data());
-  chain_data_dimuorphan.Add(file_name.Data());
 
-  ////Load Ntuples
-  //string line[9999];
-  //int nLine = 0;
-  //std::ifstream myfile( "FitNtuple_Run2015D2_DoubleMu.txt" );
-  //for(int i = 0; myfile.good(); i++) nLine++;
-  //for(int i = 0; i<nLine-1; i++) {
-  //  getline(myfile, line[i]);
-  //  cout<<i<<") "<<line[i]<<endl;    
-  //  chain_data_dimudimu.Add( line[i].c_str() );
-  //  chain_data_dimuorphan.Add( line[i].c_str() );
-  //}
-
+  std::ifstream Myfile( "Input_2015D_v3_ONE.txt" );
+  std::string Line;
+  if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
+  while (std::getline(Myfile, Line)){
+    TString Line2(Line);
+    if( Line2.Contains("root") ){
+      chain_data_dimudimu.Add(Line2.Data());
+      chain_data_dimuorphan.Add(Line2.Data());
+    }
+  }
+  cout<<"Done with chain!"<<endl;
   const double       m_min  = 0.2113;
   const double       m_max  = 3.5536;
   const unsigned int m_bins = 66;
@@ -115,6 +99,7 @@ void FitAndSave() {
   float Pass_OffLineFiredTrig        = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig>0 && orph_passOffLineSelPt1788>0","goff");
   float Pass_OffLineFiredTrig_pt     = chain_data_dimuorphan.Draw("orph_FiredTrig_pt>>hist","orph_FiredTrig_pt>0 && orph_passOffLineSelPt1788>0","goff");
   float Pass_OffLineFiredTrig_ptColl = chain_data_dimuorphan.Draw("orph_FiredTrig_ptColl>>hist","orph_FiredTrig_ptColl>0 && orph_passOffLineSelPt1788>0","goff");
+  cout<<"Done with Efficiencies!"<<endl;
 
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
   RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV/#it{c}^{2}");
@@ -126,24 +111,25 @@ void FitAndSave() {
   ostringstream stream_cut_bg_m1_iso;
   //stream_cut_bg_m1_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
   //stream_cut_bg_m1_iso << "orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-  stream_cut_bg_m1_iso << "orph_dimu_isoTk < 100. && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m1_iso << "orph_dimu_isoTk < 10. && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
 
   ostringstream stream_cut_bg_m2_iso;
   //stream_cut_bg_m2_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
   //stream_cut_bg_m2_iso << "orph_dimu_isoTk > 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-  stream_cut_bg_m2_iso << "orph_dimu_isoTk < 100. && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m2_iso << "orph_dimu_isoTk < 10. && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
   TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
   TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
   TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
   TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
-
   TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.)";
 
+  cout<<"Starting TTree."<<endl;
+  //bb
   TTree* tree_dimuorphan_bg_m1        = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
   TTree* tree_dimuorphan_bg_m2        = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
-
+  //signal
   TTree* tree_dimudimu_diagonal_2D                      = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massC                = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massF                = chain_data_dimudimu.CopyTree(cut_diagonal);
@@ -156,11 +142,10 @@ void FitAndSave() {
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_nonIso                   = chain_data_dimudimu.CopyTree(cut_control_nonIso);
-
+  cout<<"------Signal SCAN------"<<endl;
   TTree* tree_dimudimu_signal_2D  = chain_data_dimudimu.CopyTree(cut_signal);
-  //cout<<"------Signal SCAN------"<<endl;
-  //tree_dimudimu_signal_2D->Scan("massC:massF");
-
+  tree_dimudimu_signal_2D->Scan("massC:massF");
+  cout<<"Setting names."<<endl;
   tree_dimuorphan_bg_m1->GetBranch("orph_dimu_mass")->SetName("m1");
   tree_dimuorphan_bg_m2->GetBranch("orph_dimu_mass")->SetName("m2");
   tree_dimudimu_diagonal_2D->GetBranch("massC")->SetName("m1");
