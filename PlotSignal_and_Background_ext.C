@@ -50,7 +50,7 @@
 
 using namespace RooFit;
 
-void PlotSignal_and_Background() {
+void PlotSignal_and_Background_ext() {
 
   setTDRStyle();
 
@@ -69,7 +69,7 @@ void PlotSignal_and_Background() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2015D  #sqrt{s} = 8 TeV   L_{int} = 2.6 fb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2015D  #sqrt{s} = 8 TeV   L_{int} = 2.83 fb^{-1}");
 
 
   TLegend *txtHeader_CMS = new TLegend(.2,0.81,0.7,0.86);
@@ -88,20 +88,20 @@ void PlotSignal_and_Background() {
   txtHeader_lumi->SetTextFont(42);
   txtHeader_lumi->SetTextSize(0.042);
   txtHeader_lumi->SetTextAlign(32);
-  txtHeader_lumi->SetHeader("2.6 fb^{-1} (13 TeV)");
+  txtHeader_lumi->SetHeader("2.83 fb^{-1} (13 TeV)");
 
   TFile* file = new TFile("ws.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   const double       m_min  = 0.2113;
-  const double       m_max  = 3.5536;
-  const unsigned int m_bins = 66;
+  const double       m_max  = 9.;
+  const unsigned int m_bins = 60;
 
   // Diagonal region |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
   const double kA = 0.13;
   const double kB = 0.065;
 
-  double nEvents_Jpsi = 0.0; //From alfredo: double Jpsi. Not in bb selection. You add it using the Jpsi template from bb, using normalization from Alfredo.
+  double nEvents_Jpsi = 0.064; 
 
   //****************************************************************************
   //                         Draw 2D template m1 x m2                           
@@ -278,9 +278,11 @@ void PlotSignal_and_Background() {
   //************************************
   //*    Row   *     massC *     massF *
   //************************************
-  //*        0 * 1.7474905 * 2.7977094 *    260576 * 388414933 *       188 *
-  //*        1 * 1.2658947 * 2.3115363 *    256843 * 1.603e+09 *      1166 *
-  //*        2 * 1.1979647 * 0.8495020 *    258714 *  14142382 *        10 *
+  //************************************************************************************************
+  //*        0 * 0.3789996 * 1.8526362 *         0 * 1.2943311 *    254790 * 859868610 *       611 *
+  //*        1 * 1.7474905 * 2.7977094 *         0 * 0.7504828 *    260576 * 388414933 *       188 *
+  //*        2 * 1.1979647 * 0.8495020 * 1.5138732 *         0 *    258714 *  14142382 *        10 *
+  //*        3 * 1.2658947 * 2.3115363 *         0 *         0 *    256843 * 1.603e+09 *      1166 *
 
   //************************************
   //------Signal SCAN------
@@ -293,6 +295,7 @@ void PlotSignal_and_Background() {
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerColor(kBlack);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerStyle(20);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerSize(3.0);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3789996, 1.8526362);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.2658947, 2.3115363);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.7474905, 2.7977094);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.1979647, 0.8495020);
@@ -302,6 +305,7 @@ void PlotSignal_and_Background() {
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerColor(kWhite);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerStyle(20);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerSize(2.0);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3789996, 1.8526362);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.2658947, 2.3115363);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7474905, 2.7977094);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1979647, 0.8495020);

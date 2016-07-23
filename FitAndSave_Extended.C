@@ -51,7 +51,7 @@
 
 using namespace RooFit;
 
-void FitAndSave() {
+void FitAndSave_Extended() {
 
   bool useTrig=true;
   setTDRStyle();
@@ -63,14 +63,14 @@ void FitAndSave() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 2.6 fb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 2.83 fb^{-1}");
 
   RooWorkspace* w = new RooWorkspace("w");
 
-  TChain chain_data_dimudimu("cutFlowAnalyzer/Events");
-  TChain chain_data_dimuorphan("cutFlowAnalyzer/Events_orphan");
+  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2/Events");
+  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2/Events_orphan");
 
-  std::ifstream Myfile( "Input_2015D_v1.txt" );
+  std::ifstream Myfile( "Input_2015CD_v1_Ext.txt" );
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
   while (std::getline(Myfile, Line)){
@@ -82,8 +82,8 @@ void FitAndSave() {
   }
   cout<<"Done with chain!"<<endl;
   const double       m_min  = 0.2113;
-  const double       m_max  = 3.5536;
-  const unsigned int m_bins = 66;
+  const double       m_max  = 9; //12
+  const unsigned int m_bins = 60; //120
 
   //Efficiencies studies
   float Pass_OffLine                 = chain_data_dimuorphan.Draw("orph_passOffLineSel>>hist","orph_passOffLineSel>0","goff");
@@ -118,10 +118,10 @@ void FitAndSave() {
 
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
-  TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
-  TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
-  TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
-  TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 3.55 && massF > 0.25 && massF < 3.55";
+  TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
+  TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
+  TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
+  TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.)";
 
   cout<<"Starting TTree."<<endl;
@@ -137,7 +137,7 @@ void FitAndSave() {
   TTree* tree_dimudimu_control_offDiagonal_1D_massF     = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   cout<<"------OffDiagonal SCAN------"<<endl;
-  tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF:run:event:lumi");
+  tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF:isoC_1mm:isoF_1mm:run:event:lumi");
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   cout<<"------OffDiagonal non ISO SCAN------"<<endl;
@@ -223,25 +223,56 @@ void FitAndSave() {
 
   w->import(*ds_dimudimu_signal_2D);
 
+  //Draw before the fit
+  RooPlot* plotC1 = w->var("m1")->frame(Title("bb Tempale no FIT"),Bins(m_bins));
+  w->data("ds_dimuorphan_bg_m1")->plotOn(plotC1, DataError(RooAbsData::SumW2), Name("data_m1"));
+  float SizeBin1 = plotC1->GetXaxis()->GetBinCenter(3) - plotC1->GetXaxis()->GetBinCenter(2);
+  char c_SizeBin1[10];
+  snprintf(c_SizeBin1,50,"%.2f",SizeBin1);
+  TString Yname1 = "Events / (" + std::string(c_SizeBin1) + "[GeV])";
+  plotC1->GetYaxis()->SetTitle( Yname1.Data() );
+  TCanvas * c1 = new TCanvas("c1");
+  c1->cd();
+  plotC1->Draw();
+  txtHeader->Draw();
+  c1->SaveAs("h_dimuorphan_bg_m1.pdf");
+  RooPlot* plotC2 = w->var("m2")->frame(Title("bb Tempale no FIT"),Bins(m_bins));
+  w->data("ds_dimuorphan_bg_m2")->plotOn(plotC2, DataError(RooAbsData::SumW2), Name("data_m2"));
+  plotC2->Draw();
+  txtHeader->Draw();
+  c1->SaveAs("h_dimuorphan_bg_m2.pdf");
+  delete c1; 
+
   //****************************************************************************
   //                         Create template for m1                             
   //****************************************************************************
   cout<<"-----Creating templates:-----"<<endl;
-  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.5, 0.0, 2.0], MmumuC_p[0.5])");
-  //                                                                                                                            FIRST KINK
-  //w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.5, 0.0, 20.0], MmumuC_p[0.5])");
-  //w->factory("Bernstein::bgC(m1,{bC06[0.0], bC16[0.1,0.,3.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.1,0.,3.]})");
-  w->factory("Bernstein::bgC(m1,{bC06[0.0], bC16[0.1,0.,3.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.1,0.,3.]})");
+  //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
+  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.8], MmumuC_p[0.05, 0.0, 0.5])");
+  //                  // 0 or ruin the DPF                                                                                         FIRST KINK
+  w->factory("Bernstein::bgC(m1,{bC06[0.1,0.,3.], bC16[3.,0.,10.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.5,0.1,4.]})");
+  // Resolnances, not very important
   w->factory("Gaussian::etaC(m1,0.548,0.030)");
   w->factory("Gaussian::rhoC(m1,0.782,0.031)");
   w->factory("Gaussian::phiC(m1,1.019,0.033)");
-  //w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.097,3.0,3.2], JpsiC_sigma[0.028,0.01,0.06], JpsiC_alpha[1.8,1.0,3.0], JpsiC_n[2.0])");
-  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.097,3.0,3.2], JpsiC_sigma[0.028,0.005,0.06], JpsiC_alpha[1.8,1.0,3.0], JpsiC_n[2.0])");
+  // Ad hoc gaussian to cover first bump and help other function
+  w->factory("Gaussian::adHocC(m1,adHocC_mass[0.23,0.1,0.3],adHocC_sigma[0.03,0.001,0.1])");
+  // Visible Resonances
+  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.12,3.0,3.35], JpsiC_sigma[0.1,0.04,0.3], JpsiC_alpha[1.2,0.4,3.0], JpsiC_n[2.0])");
+  w->factory("Gaussian::Up1C(m1,Up1C_mean[9.43,9.39,9.500], Up1C_sigma[0.101,0.01,0.20])");
+  w->factory("Gaussian::Up2C(m1,Up2C_mean[10.0,9.90,10.20], Up2C_sigma[0.060,0.01,0.15])");
+  w->factory("Gaussian::Up3C(m1,Up3C_mean[10.45,10.2,10.7], Up3C_sigma[0.050,0.01,0.15])");
+  // NOT used
+  w->factory("EXPR::ExpC('Exp_a * pow(Exp_b, Exp_c*m1)', m1, Exp_a[200, 80., 300.0], Exp_b[0.5, 0.2, 0.7], Exp_c[10, 7.0, 100.0])");
+  w->factory("Chebychev:chebC(m1,{cb0[0.1, -1.,1.], cb1[-0.1, -1.,0.], cb2[0.1, -1.,1.]})");
 
-  //w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[4400.,1000.,8000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[1800.,900.,2700.]*JpsiC)");
-  w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[100.,30.,2700.]*JpsiC)");
+  // FINAL PDF
+  //w->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_Up1C[76., 10., 1000.]*Up1C, norm_Up2C[22., 0., 100.]*Up2C, norm_Up3C[20., 0., 30.]*Up3C)");
+  w->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC)");
+  //w->factory("SUM::template1D_m1(norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC)");
 
   RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));
+  cout<<"------------------RooPrintable 1---------------------"<<endl;
   rC->Print();
 
   RooPlot* plotC = w->var("m1")->frame(Title("BG template for trigger dimuon"),Bins(m_bins));
@@ -264,19 +295,29 @@ void FitAndSave() {
   //                         Create template for m2                             
   //****************************************************************************
 
-  //  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[1.0, 0.5, 1.0], MmumuF_p[1.0, 0.5, 1.0])");
-  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[1.0, 0.5, 10.0], MmumuF_p[0.5])");
-  //  w->factory("Bernstein::bgF(m2,{bF06[0.0],bF16[0.1,0.,3.],bF26[1.,0.,3.],bF36[2.,0.,3.],bF46[0.2,0.,3.],bF56[0.5,0.,3.],bF66[0.1,0.,3.]})");
-  w->factory("Bernstein::bgF(m2,{bF06[0.0],bF16[0.1,0.,3.],bF26[1.,-1.,3.],bF36[2.,0.,3.],bF46[0.2,0.,3.],bF56[0.5,0.,3.],bF66[0.1,-1.,3.]})");
-  w->factory("Gaussian::etaF(m2,0.548,0.033)");
-  w->factory("Gaussian::rhoF(m2,0.782,0.036)");
-  w->factory("Gaussian::phiF(m2,1.019,0.039)");
-  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.097,3.0,3.2], JpsiF_sigma[0.028,0.01,0.06], JpsiF_alpha[1.8,1.0,3.0], JpsiF_n[2.0])");
+  //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
+  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.05, 0.0, 0.5], MmumuF_p[0.05, 0.0, 0.5])");
+  //                  // 0 or ruin the DPF                                                                                         FIRST KINK
+  w->factory("Bernstein::bgF(m2,{bF06[0.1,0.,3.], bF16[3.,0.,10.], bF26[1.,0.,3.], bF36[2.,0.,3.], bF46[0.2,0.,3.], bF56[0.5,0.,3.], bF66[0.5,0.2,4.]})");
+  // Resolnances, not very important
+  w->factory("Gaussian::etaF(m2,0.548,0.030)");
+  w->factory("Gaussian::rhoF(m2,0.782,0.031)");
+  w->factory("Gaussian::phiF(m2,1.019,0.033)");
+  // Ad hoc gaussian to cover first bump and help other function
+  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.23,0.05,0.3],adHocF_sigma[0.01,0.001,0.1])");
+  // Visible Resonances
+  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.12,3.0,3.35], JpsiF_sigma[0.1,0.045,0.3], JpsiF_alpha[1.2,0.4,3.0], JpsiF_n[2.0])");
+  w->factory("Gaussian::Up1F(m2,Up1F_mean[9.43,9.39,9.500], Up1F_sigma[0.101,0.01,0.20])");
+  w->factory("Gaussian::Up2F(m2,Up2F_mean[10.0,9.90,10.20], Up2F_sigma[0.060,0.01,0.15])");
+  w->factory("Gaussian::Up3F(m2,Up3F_mean[10.35,10.2,10.5], Up3F_sigma[0.050,0.01,0.10])");
+  // NOT used
+  w->factory("EXPR::ExpF('Exp_a * pow(Exp_b, Exp_c*m2)', m2, Exp_a[200, 80., 300.0], Exp_b[0.5, 0.2, 0.7], Exp_c[10, 7.0, 100.0])");
+  w->factory("Chebychev:chebF(m2,{cb0[0.1, -1.,1.], cb1[-0.1, -1.,0.], cb2[0.1, -1.,1.]})");
 
-  //w->factory("SUM::template1D_m2(norm_MmumuF[100., 0., 5000.]*MmumuF, norm_bgF[2400.,1000.,5000.]*bgF,norm_etaF[15.,0.0,100.]*etaF,norm_rhoF[15.,0.,100.]*rhoF,norm_phiF[15.,10.,100.]*phiF,norm_JpsiF[1200.,300.,3000.]*JpsiF)");
-  //m1: w->factory("SUM::template1D_m1(norm_MmumuC[1000., 0., 50000.]*MmumuC, norm_bgC[4400.,1000.,8000.]*bgC, norm_etaC[150.,0.,800.]*etaC, norm_rhoC[300.,0.,800.]*rhoC, norm_phiC[500.,0.,800.]*phiC, norm_JpsiC[1800.,900.,2700.]*JpsiC)");
-  //w->factory("SUM::template1D_m2(norm_MmumuF[1000., 0., 50000.]*MmumuF, norm_bgF[700.,700.,8000.]*bgF, norm_etaF[15.,0.,800.]*etaF, norm_rhoF[300.,0.,800.]*rhoF, norm_phiF[500.,0.,800.]*phiF, norm_JpsiF[100.,10.,2700.]*JpsiF)");
-  w->factory("SUM::template1D_m2(norm_MmumuF[10000., 0., 50000.]*MmumuF, norm_bgF[200.,0.,8000.]*bgF, norm_etaF[15.,0.,800.]*etaF, norm_rhoF[200.,0.,800.]*rhoF, norm_phiF[100.,0.,800.]*phiF, norm_JpsiF[70.,0.,1000.]*JpsiF)");
+  // FINAL PDF
+  //w->factory("SUM::template1D_m2(norm_adHocF[200., 0., 5000.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_Up1F[76., 0., 1000.]*Up1F, norm_Up2F[22., 0., 100.]*Up2F, norm_Up3F[20., 0., 30.]*Up3F)");
+  w->factory("SUM::template1D_m2(norm_adHocF[200., 0., 5000.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF)");
+  //w->factory("SUM::template1D_m2(norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF)");
 
   RooFitResult *rF = w->pdf("template1D_m2")->fitTo(*(w->data("ds_dimuorphan_bg_m2")), Extended(1), Save(), SumW2Error(kTRUE));
   rF->Print();
@@ -284,8 +325,6 @@ void FitAndSave() {
   RooPlot* plotF = w->var("m2")->frame(Title("BG template for non-trigger dimuon"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotF, DataError(RooAbsData::SumW2), Name("data_m2"));
   w->pdf("template1D_m2")->plotOn(plotF,LineColor(kRed),Precision(0.0001),Name("template_m2"));
-  //  w->pdf("template1D_m2")->paramOn(plotF,Layout(0.2,0.7,0.9),ShowConstants(1));
-  //  plotF->getAttText()->SetTextSize(0.02);
 
   TCanvas * c_template1D_m2_RooPlot = new TCanvas("c_template1D_m2_RooPlot", "c_template1D_m2_RooPlot");
   c_template1D_m2_RooPlot->cd();
