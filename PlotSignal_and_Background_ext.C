@@ -134,12 +134,12 @@ void PlotSignal_and_Background_ext() {
 
   //Signal: ISO +off Diag
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1,m2",1000,1000);
-  cout << "Signal ISO + offDiag:" << h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << std::endl;
+  cout << "Signal ISO + offDiag: " << h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << std::endl;
 
   cout << "Scaled as: "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" / "<<h2_Template2D->Integral()<<" * "<<(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral()<<endl;
   //Scale to: DimuDimu_iso_offDiag / Template2D_Area (normalize to the off-diag part of the data) * bb_ALL/bb_offDiag (scale factor to pass from a normalization off-diag. to a normalization to the whole area.)
   h2_Template2D->Scale(h2_dimudimu_control_Iso_offDiagonal_2D->Integral()/h2_Template2D->Integral()*(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral());
-  cout << "Scaled bb_2D template integral: " << h2_Template2D->Integral() << std::endl;
+  cout << "Scaled bb_2D template integral: " << h2_Template2D->Integral() <<" That means " << h2_Template2D->Integral()-h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << " events in signal region "<< std::endl;
 
   TH2D * h2_background = new TH2D( *h2_Jpsi_2D );
   h2_background->Add( h2_Template2D );

@@ -248,13 +248,14 @@ void FitAndSave_Extended() {
   //****************************************************************************
   cout<<"-----Creating templates:-----"<<endl;
   //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
-  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.8], MmumuC_p[0.05, 0.0, 0.5])");
+  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.3], MmumuC_p[0.05, 0.0, 0.5])");
   //                  // 0 or ruin the DPF                                                                                         FIRST KINK
-  w->factory("Bernstein::bgC(m1,{bC06[0.1,0.,3.], bC16[3.,0.,10.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.5,0.1,4.]})");
+  w->factory("Bernstein::bgC(m1,{bC06[0.1,0.1,3.], bC16[3.,0.1,10.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.5,0.1,4.]})");
   // Resolnances, not very important
   w->factory("Gaussian::etaC(m1,0.548,0.030)");
   w->factory("Gaussian::rhoC(m1,0.782,0.031)");
   w->factory("Gaussian::phiC(m1,1.019,0.033)");
+  w->factory("Gaussian::psiC(m1,3.6,0.045)");
   // Ad hoc gaussian to cover first bump and help other function
   w->factory("Gaussian::adHocC(m1,adHocC_mass[0.23,0.1,0.3],adHocC_sigma[0.03,0.001,0.1])");
   // Visible Resonances
@@ -268,8 +269,8 @@ void FitAndSave_Extended() {
 
   // FINAL PDF
   //w->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_Up1C[76., 10., 1000.]*Up1C, norm_Up2C[22., 0., 100.]*Up2C, norm_Up3C[20., 0., 30.]*Up3C)");
-  w->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC)");
-  //w->factory("SUM::template1D_m1(norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC)");
+  w->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_psiC[50.,0.,300.]*psiC)");
+  //w->factory("SUM::template1D_m1(norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_psiC[50.,0.,300.]*psiC)");
 
   RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));
   cout<<"------------------RooPrintable 1---------------------"<<endl;
@@ -296,15 +297,16 @@ void FitAndSave_Extended() {
   //****************************************************************************
 
   //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
-  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.05, 0.0, 0.5], MmumuF_p[0.05, 0.0, 0.5])");
+  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0.0, 0.3], MmumuF_p[0.05, 0.0, 0.5])");
   //                  // 0 or ruin the DPF                                                                                         FIRST KINK
-  w->factory("Bernstein::bgF(m2,{bF06[0.1,0.,3.], bF16[3.,0.,10.], bF26[1.,0.,3.], bF36[2.,0.,3.], bF46[0.2,0.,3.], bF56[0.5,0.,3.], bF66[0.5,0.2,4.]})");
+  w->factory("Bernstein::bgF(m2,{bF06[0.1,0.1,3.], bF16[3.,0.1,10.], bF26[1.,0.,3.], bF36[2.,0.,3.], bF46[0.2,0.,3.], bF56[0.5,0.,3.], bF66[0.5,0.2,4.]})");
   // Resolnances, not very important
   w->factory("Gaussian::etaF(m2,0.548,0.030)");
   w->factory("Gaussian::rhoF(m2,0.782,0.031)");
   w->factory("Gaussian::phiF(m2,1.019,0.033)");
+  w->factory("Gaussian::psiF(m2,3.65,0.06)");
   // Ad hoc gaussian to cover first bump and help other function
-  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.23,0.05,0.3],adHocF_sigma[0.01,0.001,0.1])");
+  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.23,0.05,0.33],adHocF_sigma[0.03,0.04,0.1])");
   // Visible Resonances
   w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.12,3.0,3.35], JpsiF_sigma[0.1,0.045,0.3], JpsiF_alpha[1.2,0.4,3.0], JpsiF_n[2.0])");
   w->factory("Gaussian::Up1F(m2,Up1F_mean[9.43,9.39,9.500], Up1F_sigma[0.101,0.01,0.20])");
@@ -316,8 +318,8 @@ void FitAndSave_Extended() {
 
   // FINAL PDF
   //w->factory("SUM::template1D_m2(norm_adHocF[200., 0., 5000.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_Up1F[76., 0., 1000.]*Up1F, norm_Up2F[22., 0., 100.]*Up2F, norm_Up3F[20., 0., 30.]*Up3F)");
-  w->factory("SUM::template1D_m2(norm_adHocF[200., 0., 5000.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF)");
-  //w->factory("SUM::template1D_m2(norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF)");
+  w->factory("SUM::template1D_m2(norm_adHocF[10., 0., 20.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_psiF[50.,0.,300.]*psiF)");
+  //w->factory("SUM::template1D_m2(norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_psiF[50.,0.,300.]*psiF)");
 
   RooFitResult *rF = w->pdf("template1D_m2")->fitTo(*(w->data("ds_dimuorphan_bg_m2")), Extended(1), Save(), SumW2Error(kTRUE));
   rF->Print();
