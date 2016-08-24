@@ -68,7 +68,7 @@ void PlotBBbar_ext() {
 
   const double       m_min  = 0.2113;
   const double       m_max  = 9.;
-  const unsigned int m_bins = 60;
+  const unsigned int m_bins = 220;
 
   // Resolution 5 sigma = kA + kB * (m1 + m2)/2
   const double kA = 0.13;
@@ -166,6 +166,7 @@ void PlotBBbar_ext() {
   h2_Template2D->GetZaxis()->SetTitleOffset(1.2);
   h2_Template2D->GetZaxis()->SetTitleFont(42);
 
+  //gStyle->SetPalette(52); //Grey Scale
   const Int_t NCont = 99;
   const Int_t NRGBs = 5;
   Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };

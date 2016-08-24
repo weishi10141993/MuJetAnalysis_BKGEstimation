@@ -95,7 +95,7 @@ void PlotSignal_and_Background_ext() {
 
   const double       m_min  = 0.2113;
   const double       m_max  = 9.;
-  const unsigned int m_bins = 60;
+  const unsigned int m_bins = 220;
 
   // Diagonal region |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
   const double kA = 0.13;
@@ -158,17 +158,27 @@ void PlotSignal_and_Background_ext() {
   h2_background->GetZaxis()->SetTitleOffset(1.2);
   h2_background->GetZaxis()->SetTitleFont(42);
 
-  const Int_t NCont = 99;
-  const Int_t NRGBs = 5;
-  Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
-  Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
-  Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
-  Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
-  Int_t FI = TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-  Int_t MyPalette[NCont];
-  for ( int i=0; i<NCont; i++ ) MyPalette[i] = FI+i;
-  gStyle->SetPalette(NCont, MyPalette);
-  h2_background->SetContour(NCont);
+  //gStyle->SetPalette(52); //Grey Scale
+Double_t Red[2]    = { 1.00, 0.00};
+Double_t Green[2]  = { 1.00, 0.00};
+Double_t Blue[2]   = { 1.00, 0.00};
+Double_t Length[2] = { 0.00, 1.00 };
+Int_t nb=50;
+TColor::CreateGradientColorTable(2,Length,Red,Green,Blue,nb);
+h2_background->SetContour(nb);
+
+
+  //const Int_t NCont = 99;
+  //const Int_t NRGBs = 5;
+  //Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
+  //Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
+  //Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
+  //Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
+  //Int_t FI = TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+  //Int_t MyPalette[NCont];
+  //for ( int i=0; i<NCont; i++ ) MyPalette[i] = FI+i;
+  //gStyle->SetPalette(NCont, MyPalette);
+  //h2_background->SetContour(NCont);
   h2_background->Draw("Cont4 Colz");
 
   //double diagonal_x1a = ( (1.0+kB/2.0)*m_min + kA )/( 1.0 - kB/2.0 );
@@ -289,6 +299,9 @@ void PlotSignal_and_Background_ext() {
   //************************************
   //*    Row   *     massC *     massF *
   //************************************
+  //************************************************************************
+  //        0  0.4049646  0.5604345     256843  348750551        241 *
+  //************************************************************************
 
   // 2D histogram to nclude all points in new version of the analysis (November 2014). I can not use work space because I currently don't have it. So, all points are hard coded!
   TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_points = new TH2D("h2_dimudimu_control_Iso_offDiagonal_2D_points","h2_dimudimu_control_Iso_offDiagonal_2D_points", m_bins, m_min, m_max, m_bins, m_min, m_max);
@@ -312,7 +325,7 @@ void PlotSignal_and_Background_ext() {
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Draw("same");
 
   TH2D* h2_signal = new TH2D("h2_signal","h2_signal", m_bins, m_min, m_max, m_bins, m_min, m_max);
-  //h2_signal->Fill(0.4039067, 0.5626457);
+  h2_signal->Fill(0.404, 0.560);
 
   h2_signal->GetXaxis()->SetTitle("m_{1 #mu#mu} [GeV]");
   h2_signal->GetXaxis()->CenterTitle(true);
@@ -347,12 +360,12 @@ void PlotSignal_and_Background_ext() {
   std::cout << "diagonal_x2 " << diagonal_x2 <<" "<<m_max<< std::endl;
 
   TLine *line1 = new TLine(m_min, diagonal_x1, diagonal_x2, m_max);
-  line1->SetLineColor(0);
+  line1->SetLineColor(1);
   line1->SetLineStyle(9);
   line1->SetLineWidth(2);
   line1->Draw();
   TLine *line2 = new TLine(diagonal_x1,m_min,m_max,diagonal_x2);
-  line2->SetLineColor(0);
+  line2->SetLineColor(1);
   line2->SetLineStyle(9);
   line2->SetLineWidth(2);
   line2->Draw();

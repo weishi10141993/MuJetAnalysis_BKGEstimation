@@ -37,6 +37,7 @@
 #include "RooTFnBinding.h"
 #include "RooArgusBG.h"
 #include "RooBernstein.h"
+#include "RooPolynomial.h"
 #include "RooGaussian.h"
 #include "RooPolynomial.h"
 #include "RooChebychev.h"
@@ -54,6 +55,7 @@ using namespace RooFit;
 void FitAndSave_Extended() {
 
   bool useTrig=true;
+  TString iso_cut= "2";
   setTDRStyle();
 
   TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
@@ -82,8 +84,8 @@ void FitAndSave_Extended() {
   }
   cout<<"Done with chain!"<<endl;
   const double       m_min  = 0.2113;
-  const double       m_max  = 9; //12
-  const unsigned int m_bins = 60; //120
+  const double       m_max  = 9;
+  const unsigned int m_bins = 220;
 
   //Efficiencies studies
   float Pass_OffLine                 = chain_data_dimuorphan.Draw("orph_passOffLineSel>>hist","orph_passOffLineSel>0","goff");
@@ -109,12 +111,12 @@ void FitAndSave_Extended() {
   w->import(m2);
 
   ostringstream stream_cut_bg_m1_iso;
-  if(useTrig) stream_cut_bg_m1_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-  else        stream_cut_bg_m1_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && ((orph_PtMu0>17 && TMath::Abs(orph_EtaMu0<0.9)) || (orph_PtMu1>17 && TMath::Abs(orph_EtaMu1<0.9))) && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  if(useTrig) stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  else        stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && ((orph_PtMu0>17 && TMath::Abs(orph_EtaMu0<0.9)) || (orph_PtMu1>17 && TMath::Abs(orph_EtaMu1<0.9))) && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
 
   ostringstream stream_cut_bg_m2_iso;
-  if(useTrig) stream_cut_bg_m2_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-  else        stream_cut_bg_m2_iso << "orph_dimu_isoTk < 2. && orph_dimu_isoTk >= 0 && orph_PtOrph>17 && TMath::Abs(orph_EtaOrph)<0.9 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  if(useTrig) stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  else        stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && orph_PtOrph>17 && TMath::Abs(orph_EtaOrph)<0.9 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
 
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
@@ -145,7 +147,7 @@ void FitAndSave_Extended() {
   tree_dimudimu_control_nonIso->Scan("massC:massF:run:event:lumi");
   cout<<"------Signal SCAN------"<<endl;
   TTree* tree_dimudimu_signal_2D  = chain_data_dimudimu.CopyTree(cut_signal);
-  tree_dimudimu_signal_2D->Scan("massC:massF:run:event:lumi");
+  tree_dimudimu_signal_2D->Scan("massC:massF:run:event:lumi:isoC_1mm:isoF_1mm");
   cout<<"Setting names."<<endl;
   tree_dimuorphan_bg_m1->GetBranch("orph_dimu_mass")->SetName("m1");
   tree_dimuorphan_bg_m2->GetBranch("orph_dimu_mass")->SetName("m2");
@@ -248,18 +250,20 @@ void FitAndSave_Extended() {
   //****************************************************************************
   cout<<"-----Creating templates:-----"<<endl;
   //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
-  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.3], MmumuC_p[0.05, 0.0, 0.5])");
+  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.3], MmumuC_p[0.05, 0.0, 1.5])");
   //                  // 0 or ruin the DPF                                                                                         FIRST KINK
-  w->factory("Bernstein::bgC(m1,{bC06[0.1,0.1,3.], bC16[3.,0.1,10.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.5,0.1,4.]})");
+  w->factory("Bernstein::bgC(m1,{bC06[0.1,0.1,7.], bC16[3.,0.1,10.], bC26[1.,0.,3.], bC36[2.,0.,3.], bC46[0.2,0.,3.], bC56[0.5,0.,3.], bC66[0.5,0.1,4.]})");
+  w->factory("Polynomial::polC(m1,{polC0[100,0.,500.], polC1[0.5,-1.,1.], polC2[0.5,-1.,1.], polC3[0.5,-1.,1.], polC4[-0.2,-1,0.]})");
+  //w->factory("Polynomial::polC(m1,{polC0[100,0.,500.], polC1[0.5,0.,7.], polC2[0.5,0,7.], polC3[0.5,0.,7.], polC4[0.,-1,7.], polC5[0.,-7,1.], polC6[0.,-7,0.]})");
   // Resolnances, not very important
   w->factory("Gaussian::etaC(m1,0.548,0.030)");
   w->factory("Gaussian::rhoC(m1,0.782,0.031)");
   w->factory("Gaussian::phiC(m1,1.019,0.033)");
-  w->factory("Gaussian::psiC(m1,3.6,0.045)");
-  // Ad hoc gaussian to cover first bump and help other function
-  w->factory("Gaussian::adHocC(m1,adHocC_mass[0.23,0.1,0.3],adHocC_sigma[0.03,0.001,0.1])");
+  w->factory("Gaussian::psiC(m1,3.7,psiC_sigma[0.033,0.001,0.1])");
+  // Ad hoc gaussian to cover first bump and help other functions
+  w->factory("Gaussian::adHocC(m1,adHocC_mass[0.4,0.2,0.6],adHocC_sigma[0.03,0.001,0.1])");
   // Visible Resonances
-  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.12,3.0,3.35], JpsiC_sigma[0.1,0.04,0.3], JpsiC_alpha[1.2,0.4,3.0], JpsiC_n[2.0])");
+  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.12,3.0,3.35], JpsiC_sigma[0.1,0.001,0.3], JpsiC_alpha[1.2,0.4,7.0], JpsiC_n[2.0])");
   w->factory("Gaussian::Up1C(m1,Up1C_mean[9.43,9.39,9.500], Up1C_sigma[0.101,0.01,0.20])");
   w->factory("Gaussian::Up2C(m1,Up2C_mean[10.0,9.90,10.20], Up2C_sigma[0.060,0.01,0.15])");
   w->factory("Gaussian::Up3C(m1,Up3C_mean[10.45,10.2,10.7], Up3C_sigma[0.050,0.01,0.15])");
@@ -269,8 +273,10 @@ void FitAndSave_Extended() {
 
   // FINAL PDF
   //w->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_Up1C[76., 10., 1000.]*Up1C, norm_Up2C[22., 0., 100.]*Up2C, norm_Up3C[20., 0., 30.]*Up3C)");
-  w->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_psiC[50.,0.,300.]*psiC)");
-  //w->factory("SUM::template1D_m1(norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_psiC[50.,0.,300.]*psiC)");
+  //ORIw->factory("SUM::template1D_m1(norm_adHocC[200., 0., 5000.]*adHocC, norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_psiC[50.,0.,300.]*psiC)");
+  w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 500.]*adHocC,norm_MmumuC[200., 0., 10000.]*MmumuC, norm_bgC[4400.,100.,8000.]*bgC, norm_etaC[100.,0.,1000.]*etaC, norm_rhoC[100.,0.,1000.]*rhoC, norm_phiC[100.,0.,1000.]*phiC, norm_JpsiC[50.,10.,6000.]*JpsiC, norm_psiC[50.,0.,1000.]*psiC)");
+  //w->factory("SUM::template1D_m1(norm_polC[4400.,0.,8000.]*polC, norm_etaC[100.,1.,1000.]*etaC, norm_rhoC[100.,1.,1000.]*rhoC, norm_phiC[100.,1.,1000.]*phiC, norm_JpsiC[50.,10.,300.]*JpsiC, norm_psiC[50.,0.,300.]*psiC)");
+  //w->factory("SUM::template1D_m1(norm_bgC[4400.,0.,8000.]*bgC,norm_polC[4400.,0.,8000.]*polC, norm_etaC[100.,0.,1000.]*etaC, norm_rhoC[100.,0.,1000.]*rhoC, norm_phiC[100.,0.,1000.]*phiC, norm_JpsiC[50.,0.,300.]*JpsiC, norm_psiC[50.,0.,300.]*psiC)");
 
   RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));
   cout<<"------------------RooPrintable 1---------------------"<<endl;
@@ -291,24 +297,27 @@ void FitAndSave_Extended() {
   txtHeader->Draw();
   c_template1D_m1_RooPlot->SaveAs("template1D_m1_RooPlot.pdf");
   c_template1D_m1_RooPlot->SaveAs("template1D_m1_RooPlot.png");
+  float chi2_C = plotC->chiSquare(20);
+  TH1 *h1 = w->pdf("template1D_m1")->createHistogram("m1");
+  h1->SaveAs("template1D_m1_RooPlot.root");
 
   //****************************************************************************
   //                         Create template for m2                             
   //****************************************************************************
 
   //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
-  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0.0, 0.3], MmumuF_p[0.05, 0.0, 0.5])");
+  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0.0, 0.3], MmumuF_p[0.05, 0.0, 2.])");
   //                  // 0 or ruin the DPF                                                                                         FIRST KINK
-  w->factory("Bernstein::bgF(m2,{bF06[0.1,0.1,3.], bF16[3.,0.1,10.], bF26[1.,0.,3.], bF36[2.,0.,3.], bF46[0.2,0.,3.], bF56[0.5,0.,3.], bF66[0.5,0.2,4.]})");
+  w->factory("Bernstein::bgF(m2,{bF06[0.1,0.1,5.], bF16[3.,0.,10.], bF26[1.,0.,3.], bF36[2.,0.,3.], bF46[0.2,0.,3.], bF56[0.5,0.,3.], bF66[0.5,0.1,4.]})");
   // Resolnances, not very important
   w->factory("Gaussian::etaF(m2,0.548,0.030)");
   w->factory("Gaussian::rhoF(m2,0.782,0.031)");
   w->factory("Gaussian::phiF(m2,1.019,0.033)");
-  w->factory("Gaussian::psiF(m2,3.65,0.06)");
-  // Ad hoc gaussian to cover first bump and help other function
-  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.23,0.05,0.33],adHocF_sigma[0.03,0.04,0.1])");
+  w->factory("Gaussian::psiF(m2,3.7,psiF_sigma[0.033,0.001,0.05])");
+  // Ad hoc gaussian to cover first bump and help other functions
+  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.4,0.2,0.6],adHocF_sigma[0.03,0.04,0.1])");
   // Visible Resonances
-  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.12,3.0,3.35], JpsiF_sigma[0.1,0.045,0.3], JpsiF_alpha[1.2,0.4,3.0], JpsiF_n[2.0])");
+  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.12,3.0,3.35], JpsiF_sigma[0.1,0.02,0.3], JpsiF_alpha[1.2,0.4,10.0], JpsiF_n[2.0])");
   w->factory("Gaussian::Up1F(m2,Up1F_mean[9.43,9.39,9.500], Up1F_sigma[0.101,0.01,0.20])");
   w->factory("Gaussian::Up2F(m2,Up2F_mean[10.0,9.90,10.20], Up2F_sigma[0.060,0.01,0.15])");
   w->factory("Gaussian::Up3F(m2,Up3F_mean[10.35,10.2,10.5], Up3F_sigma[0.050,0.01,0.10])");
@@ -318,7 +327,8 @@ void FitAndSave_Extended() {
 
   // FINAL PDF
   //w->factory("SUM::template1D_m2(norm_adHocF[200., 0., 5000.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_Up1F[76., 0., 1000.]*Up1F, norm_Up2F[22., 0., 100.]*Up2F, norm_Up3F[20., 0., 30.]*Up3F)");
-  w->factory("SUM::template1D_m2(norm_adHocF[10., 0., 20.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_psiF[50.,0.,300.]*psiF)");
+  //ORIw->factory("SUM::template1D_m2(norm_adHocF[10., 0., 20.]*adHocF, norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_psiF[50.,0.,300.]*psiF)");
+  w->factory("SUM::template1D_m2(norm_adHocF[10., 0., 500.]*adHocF,norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,0.,3000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,2500.]*JpsiF, norm_psiF[50.,0.,1000.]*psiF)");
   //w->factory("SUM::template1D_m2(norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[100.,1.,1000.]*etaF, norm_rhoF[100.,1.,1000.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[50.,0.,300.]*JpsiF, norm_psiF[50.,0.,300.]*psiF)");
 
   RooFitResult *rF = w->pdf("template1D_m2")->fitTo(*(w->data("ds_dimuorphan_bg_m2")), Extended(1), Save(), SumW2Error(kTRUE));
@@ -339,6 +349,7 @@ void FitAndSave_Extended() {
   txtHeader->Draw();
   c_template1D_m2_RooPlot->SaveAs("template1D_m2_RooPlot.pdf");
   c_template1D_m2_RooPlot->SaveAs("template1D_m2_RooPlot.png");
+  float chi2_F = plotF->chiSquare(20);
 
   //****************************************************************************
   //                     Create 2D template = m1 x m2                           
@@ -426,11 +437,13 @@ void FitAndSave_Extended() {
 
   w->writeToFile("ws.root");
 
-  cout<<"Efficiencies on bb: "<<endl;
-  cout<<"--#Ev. Pass OffLine: "<<Pass_OffLine<<" but only "<<Pass_OffLine_pt<<" has Pt>17 and only "<<Pass_OffLine_pt1788<<" have pt 17 8 8"<<endl;
-  cout<<" Times you have fired but no selection: "<<Pass_FiredTrig_notOff<<endl;
-  cout<<" Times you have not fired but passed selection: "<<Pass_Offl_noFiredTrig<<endl;
-  cout<<"--#Ev. FiredTrig: "<<Pass_FiredTrig<<" Eff. to OffLine: "<<Pass_FiredTrig/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig<<" #Ev. FiredTrigger && Offline. "<<Pass_OffLineFiredTrig/Pass_OffLine_pt<<endl;
-  cout<<"--#Ev. FiredTrig+Pt: "<<Pass_FiredTrig_pt<<" Eff. to OffLine: "<<Pass_FiredTrig_pt/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_pt<<" #Ev. FiredTrigger+Pt && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
-  cout<<"--#Ev. FiredTrig+PT+Coll: "<<Pass_FiredTrig_ptColl<<" Eff. to OffLine: "<<Pass_FiredTrig_ptColl/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_ptColl<<" #Ev. FiredTrigger+pt+Coll && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
+  //cout<<"Efficiencies on bb: "<<endl;
+  //cout<<"--#Ev. Pass OffLine: "<<Pass_OffLine<<" but only "<<Pass_OffLine_pt<<" has Pt>17 and only "<<Pass_OffLine_pt1788<<" have pt 17 8 8"<<endl;
+  //cout<<" Times you have fired but no selection: "<<Pass_FiredTrig_notOff<<endl;
+  //cout<<" Times you have not fired but passed selection: "<<Pass_Offl_noFiredTrig<<endl;
+  //cout<<"--#Ev. FiredTrig: "<<Pass_FiredTrig<<" Eff. to OffLine: "<<Pass_FiredTrig/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig<<" #Ev. FiredTrigger && Offline. "<<Pass_OffLineFiredTrig/Pass_OffLine_pt<<endl;
+  //cout<<"--#Ev. FiredTrig+Pt: "<<Pass_FiredTrig_pt<<" Eff. to OffLine: "<<Pass_FiredTrig_pt/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_pt<<" #Ev. FiredTrigger+Pt && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
+  //cout<<"--#Ev. FiredTrig+PT+Coll: "<<Pass_FiredTrig_ptColl<<" Eff. to OffLine: "<<Pass_FiredTrig_ptColl/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_ptColl<<" #Ev. FiredTrigger+pt+Coll && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
+  cout<<"template1D_m1_RooPlot has "<<chi2_C<<endl;
+  cout<<"template1D_m2_RooPlot has "<<chi2_F<<endl;
 }

@@ -158,17 +158,19 @@ void PlotSignal_and_Background() {
   h2_background->GetZaxis()->SetTitleOffset(1.2);
   h2_background->GetZaxis()->SetTitleFont(42);
 
-  const Int_t NCont = 99;
-  const Int_t NRGBs = 5;
-  Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
-  Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
-  Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
-  Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
-  Int_t FI = TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-  Int_t MyPalette[NCont];
-  for ( int i=0; i<NCont; i++ ) MyPalette[i] = FI+i;
-  gStyle->SetPalette(NCont, MyPalette);
-  h2_background->SetContour(NCont);
+  gStyle->SetPalette(52);
+
+  //const Int_t NCont = 99;
+  //const Int_t NRGBs = 5;
+  //Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
+  //Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
+  //Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
+  //Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
+  //Int_t FI = TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
+  //Int_t MyPalette[NCont];
+  //for ( int i=0; i<NCont; i++ ) MyPalette[i] = FI+i;
+  //gStyle->SetPalette(NCont, MyPalette);
+  //h2_background->SetContour(NCont);
   h2_background->Draw("Cont4 Colz");
 
   //double diagonal_x1a = ( (1.0+kB/2.0)*m_min + kA )/( 1.0 - kB/2.0 );
