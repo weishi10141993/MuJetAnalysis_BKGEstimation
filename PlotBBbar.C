@@ -50,7 +50,7 @@
 
 using namespace RooFit;
 
-void PlotBBbar() {
+void PlotBBbar_ext() {
 
   setTDRStyle();
 
@@ -61,14 +61,14 @@ void PlotBBbar() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2015  #sqrt{s} = 13 TeV   L_{int} = 2.6 fb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2015  #sqrt{s} = 13 TeV   L_{int} = 2.83 fb^{-1}");
 
   TFile* file = new TFile("ws.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   const double       m_min  = 0.2113;
-  const double       m_max  = 3.5536;
-  const unsigned int m_bins = 66;
+  const double       m_max  = 9.;
+  const unsigned int m_bins = 220;
 
   // Resolution 5 sigma = kA + kB * (m1 + m2)/2
   const double kA = 0.13;
@@ -166,6 +166,7 @@ void PlotBBbar() {
   h2_Template2D->GetZaxis()->SetTitleOffset(1.2);
   h2_Template2D->GetZaxis()->SetTitleFont(42);
 
+  //gStyle->SetPalette(52); //Grey Scale
   const Int_t NCont = 99;
   const Int_t NRGBs = 5;
   Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
@@ -300,7 +301,7 @@ void PlotBBbar() {
   h1_control_offDiagonal_massC_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} (GeV/#it{c}^{2})");
   h1_control_offDiagonal_massC_data->GetYaxis()->SetTitle("Events / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,40.);
+  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,60.);
 
   TH1D *h1_control_offDiagonal_massC_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
   h1_control_offDiagonal_massC_template->Scale( h1_control_offDiagonal_massC_data->Integral("width") / h1_control_offDiagonal_massC_template->Integral("width") );
@@ -352,7 +353,7 @@ void PlotBBbar() {
   h1_control_offDiagonal_massF_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} (GeV/#it{c}^{2})");
   h1_control_offDiagonal_massF_data->GetYaxis()->SetTitle("Events / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,40.);
+  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,60.);
 
   TH1D *h1_control_offDiagonal_massF_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
   h1_control_offDiagonal_massF_template->Scale( h1_control_offDiagonal_massF_data->Integral("width") / h1_control_offDiagonal_massF_template->Integral("width") );
@@ -403,7 +404,7 @@ void PlotBBbar() {
   h1_control_offDiagonal_data->SetMarkerStyle(20);
   h1_control_offDiagonal_data->GetXaxis()->SetTitle("m_{#mu#mu_{i}} (i=1,2) [GeV/#it{c}^{2}]");
   h1_control_offDiagonal_data->GetYaxis()->SetTitle("Events #times 2 / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_data->GetYaxis()->SetRangeUser(0.,60.);
+  h1_control_offDiagonal_data->GetYaxis()->SetRangeUser(0.,80.);
 
   TH1D *h1_control_offDiagonal_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
   TH1D *h1_control_offDiagonal_template_Y = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
@@ -456,7 +457,7 @@ void PlotBBbar() {
   TH1D *h1_control_offDiagonal_Jpsi = new TH1D("h1_control_offDiagonal_Jpsi", "h1_control_offDiagonal_Jpsi", 5, 2.95, 3.2);
   h1_control_offDiagonal_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{i}} (i=1,2) [GeV/#it{c}^{2}]");
   h1_control_offDiagonal_Jpsi->GetYaxis()->SetTitle("Events #times 2 / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_Jpsi->GetYaxis()->SetRangeUser(0.,70.);
+  h1_control_offDiagonal_Jpsi->GetYaxis()->SetRangeUser(0.,100.);
 
   TCanvas * c_control_offDiagonal_Jpsi = new TCanvas("c_control_offDiagonal_Jpsi", "c_control_offDiagonal_Jpsi");
   c_control_offDiagonal_Jpsi->cd();
