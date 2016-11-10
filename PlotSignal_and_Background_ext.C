@@ -118,28 +118,42 @@ void PlotSignal_and_Background_ext() {
   TH2D* h2_Template2D_diagonal    = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",1000,1000);
   TH2D* h2_Template2D_offDiagonal = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",1000,1000);
 
+  float Area_2Jpsi=0., Area_NO2Jpsi=0., Area_2Jpsi_w=0., Area_NO2Jpsi_w=0.;
+  float offd_Area_2Jpsi=0., offd_Area_NO2Jpsi=0., offd_Area_2Jpsi_w=0., offd_Area_NO2Jpsi_w=0.;
   for(int i=1;i<=1000;i++) {
     for(int j=1;j<=1000;j++) {
 	double m_1 = h2_Template2D_offDiagonal->GetXaxis()->GetBinCenter(i);
 	double m_2 = h2_Template2D_offDiagonal->GetYaxis()->GetBinCenter(j);
 	if ( fabs(m_1 - m_2) < (kA + kB*(m_1 + m_2)/2.) ) {
+	  if( fabs(m_1-3.1)<0.25 && fabs(m_2-3.1)<0.25 ){ Area_2Jpsi++; Area_2Jpsi_w+=h2_Template2D_offDiagonal->GetBinContent(i,j); }
+	  else{ Area_NO2Jpsi++; Area_NO2Jpsi_w+=h2_Template2D_offDiagonal->GetBinContent(i,j); }
 	  h2_Template2D_offDiagonal->SetBinContent(i,j,0.);
-	} else {
+	}
+	else {
+	  if( fabs(m_1-3.1)<0.25 || fabs(m_2-3.1)<0.25 ){ offd_Area_2Jpsi++; offd_Area_2Jpsi_w+=h2_Template2D_diagonal->GetBinContent(i,j); }
+	  else{ offd_Area_NO2Jpsi++; offd_Area_NO2Jpsi_w+=h2_Template2D_diagonal->GetBinContent(i,j); }
 	  h2_Template2D_diagonal->SetBinContent(i,j,0.);
 	}
     }
   }
-  cout << " -> Template2D_offDiagonal integral: " << h2_Template2D_offDiagonal->Integral() << std::endl;
-  cout << " -> Template2D_diagonal integral:    " << h2_Template2D_diagonal->Integral() << std::endl;
+  cout<<"Diagonal J/Psi probablity:"<<endl;
+  cout<<"2J/Psi Area is " << Area_2Jpsi/(Area_NO2Jpsi+Area_2Jpsi) << " of the rest of the signal region ("<<Area_2Jpsi<<" "<<Area_NO2Jpsi<<")."<<endl;
+  cout<<"2J/Psi Area weighted is " << Area_2Jpsi_w/(Area_NO2Jpsi_w+Area_2Jpsi_w) << " of the rest of the signal region ("<<Area_2Jpsi_w<<" "<<Area_NO2Jpsi_w<<")."<<endl;
+  cout<<"NON Diagonal J/Psi probablity:"<<endl;
+  cout<<"2J/Psi Area is " << offd_Area_2Jpsi/(offd_Area_NO2Jpsi+offd_Area_2Jpsi) << " of the rest of the signal region ("<<offd_Area_2Jpsi<<" "<<offd_Area_NO2Jpsi<<")."<<endl;
+  cout<<"2J/Psi Area weighted is " << offd_Area_2Jpsi_w/(offd_Area_NO2Jpsi_w+offd_Area_2Jpsi_w) << " of the rest of the signal region ("<<offd_Area_2Jpsi_w<<" "<<offd_Area_NO2Jpsi_w<<")."<<endl;
+
+  cout<<" -> Template2D_offDiagonal integral: "<<h2_Template2D_offDiagonal->Integral()<<endl;
+  cout<<" -> Template2D_diagonal integral:    "<<h2_Template2D_diagonal->Integral()<<endl;
 
   //Signal: ISO +off Diag
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1,m2",1000,1000);
-  cout << "Signal ISO + offDiag: " << h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << std::endl;
+  cout<<"Signal ISO + offDiag: " << h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<endl;
 
-  cout << "Scaled as: "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" / "<<h2_Template2D->Integral()<<" * "<<(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral()<<endl;
+  cout<<"Scaled as: "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" / "<<h2_Template2D->Integral()<<" * "<<(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral()<<endl;
   //Scale to: DimuDimu_iso_offDiag / Template2D_Area (normalize to the off-diag part of the data) * bb_ALL/bb_offDiag (scale factor to pass from a normalization off-diag. to a normalization to the whole area.)
   h2_Template2D->Scale(h2_dimudimu_control_Iso_offDiagonal_2D->Integral()/h2_Template2D->Integral()*(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral());
-  cout << "Scaled bb_2D template integral: " << h2_Template2D->Integral() <<" That means " << h2_Template2D->Integral()-h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << " events in signal region "<< std::endl;
+  cout<<"Scaled bb_2D template integral: " << h2_Template2D->Integral() <<" That means " << h2_Template2D->Integral()-h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << " events in signal region "<< std::endl;
 
   TH2D * h2_background = new TH2D( *h2_Jpsi_2D );
   h2_background->Add( h2_Template2D );
@@ -248,41 +262,6 @@ h2_background->SetContour(nb);
 ////  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerSize(2.0);
   //  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->Draw("same");
 
-  //  -------------------2012----------------------
-  // diagonal area
-  //************************************
-  //*    Row   *     massC *     massF *
-  //************************************
-  //*        0 * 0.3292791 * 0.2173234 *
-  //************************************
-
-  // off-diagonal area
-  // Add new recovered points November 24 2014
-  //  ************************************************************
-  //  *    Row   * diMuonF_M * diMuonC_M * muJetC_mi * muJetF_mi *
-  //  ************************************************************
-  //  *    46463 * 1.9292701 *  2.414361 * 0.0020144 * 0.0002593 * x
-  //  *    58035 * 2.2670404 * 1.7858715 * 0.0017198 * 0.0002601 * <-- new
-  //  *   133195 * 1.4747750 * 2.9838371 * 0.0040867 * 0.0082415 * x
-  //  *   154301 * 0.2553945 * 0.7071084 * 0.0006586 * 0.0148904 * x
-  //  *   229405 * 0.8524319 * 3.1144735 * 0.0073431 * 0.0008649 * x
-  //  *   245649 * 2.1131937 * 1.1794409 * 0.0033571 * 0.0056471 * x
-  //  *   252508 * 2.6572125 * 0.6805820 * 0.0001614 * 0.0029167 * <-- new
-  //  *   317676 * 2.0427842 * 2.3976006 * 0.0017126 * 0.0560831 * x
-  //  *   413525 * 2.7330377 * 0.7881325 * 0.0079877 * 0.0034239 * x
-  //  ************************************************************
-  //  ************************************
-  //  *    Row   *     massC *     massF *
-  //  ************************************
-  //  *        0 *  2.414361 * 1.9292701 *
-  //  *        1 * 2.9838371 * 1.4747750 *
-  //  *        2 * 1.1207234 * 1.7996511 * <-- lost
-  //  *        3 * 0.7071084 * 0.2553945 *
-  //  *        4 * 3.1144735 * 0.8524319 *
-  //  *        5 * 1.1794409 * 2.1131937 *
-  //  *        6 * 0.7881325 * 2.7330377 *
-  //  *        7 * 2.3976006 * 2.0427842 *
-  //  ************************************
   //  -------------------2015----------------------
   //------OffDiagonal SCAN------
   //************************************
@@ -293,39 +272,124 @@ h2_background->SetContour(nb);
   //*        1 * 1.7474905 * 2.7977094 *         0 * 0.7504828 *    260576 * 388414933 *       188 *
   //*        2 * 1.1979647 * 0.8495020 * 1.5138732 *         0 *    258714 *  14142382 *        10 *
   //*        3 * 1.2658947 * 2.3115363 *         0 *         0 *    256843 * 1.603e+09 *      1166 *
+  //************************************
+  //------Signal SCAN------
+  //************************************
+  //*    Row   *     massC *     massF *
+  //        0  0.4049646  0.5604345     256843  348750551        241 *
+  //************************************************************************
 
+  //  -------------------2016 BCDEF----------------------
+  //*        0 * 1.5225365 * 0.8431518 * 0.8962873 *         0 *    274969 * 837317792 *       456 *
+  //*        1 * 0.7942560 * 2.3587374 *         0 * 1.8426080 *    274968 * 1.550e+09 *       815 *
+  //*        2 * 3.0640931 * 2.6193141 *         0 * 1.8181604 *    274441 * 341665349 *       207 *
+  //*        3 * 0.6967173 * 2.0301356 * 1.4252665 * 1.2235757 *    274441 * 659054303 *       394 *
+  //*        4 * 3.0594613 * 2.5633280 *         0 * 1.4294159 *    275836 * -1.98e+09 *      1287 *
+  //*        5 * 0.3829744 * 0.6517009 *         0 *         0 *    276282 * 2.038e+09 *      1129 *
+  //*        6 * 3.0445525 * 0.4301351 * 0.9365223 * 1.5587855 *    276502 * 594211575 *       390 *
+  //*        7 * 0.7256926 * 3.0789272 *         0 * 0.8460569 *    276501 * 1.985e+09 *      1182 *
+  //*        8 * 0.3180795 * 2.0960705 * 0.7000579 * 0.6592856 *    276525 * 1.635e+09 *       961 *
+  //*        9 * 0.2748118 * 3.1098189 *         0 *         0 *    276525 * 757250117 *       490 *
+  //*       10 * 1.0963534 * 1.9935944 * 1.8272670 *         0 *    276437 * -67935356 *      2042 *
+  //*       11 * 0.2951213 * 7.9970874 *         0 *         0 *    276811 * 985305934 *       541 *
+  //*       12 * 3.1160290 * 0.9953680 *         0 *         0 *    276363 * 1.976e+09 *      1103 *
+  //*       13 * 2.0859162 * 3.2248451 *         0 *         0 *    276581 * 537441537 *       355 *
+  //*       14 * 6.4438476 * 3.0851912 *         0 *         0 *    277070 * 895118089 *       478 *
+  //*       15 * 1.9559303 * 0.2534542 * 0.7358005 * 0.7439422 *    276831 * 1.580e+09 *       882 *
+  //*       16 * 2.6904547 * 3.0699591 * 1.0419131 * 1.0449538 *    276831 * 373972636 *       244 *
+  //*       17 * 1.0854868 * 2.0424716 *         0 * 1.0831496 *    277194 * 2.054e+09 *      1171 *
+  //*       18 * 3.4007272 * 2.9169464 * 1.7980103 *         0 *    277194 * 1.170e+09 *       708 *
+  //*       19 * 1.6643008 * 1.1302868 *         0 *         0 *    278366 * 768530975 *       384 *
+  //*       20 * 2.2167325 * 1.3391919 *         0 *         0 *    278406 * 1.386e+09 *       815 *
+  //*       21 * 0.9294350 * 7.1592717 *         0 *         0 *    278509 * -2.00e+09 *      1351 *
+  //*       22 * 2.3811967 * 3.1188454 * 1.0696374 *         0 *    278239 * 1.263e+09 *       719 *
+  //*       23 * 0.5922431 * 1.2144465 * 0.5427458 * 0.6428673 *    278315 * 551943324 *       362 *
+  //*       24 * 3.1027426 * 1.1035094 *         0 *         0 *    278310 *  32888078 *        23 *
   //************************************
   //------Signal SCAN------
   //************************************
   //*    Row   *     massC *     massF *
   //************************************
-  //************************************************************************
-  //        0  0.4049646  0.5604345     256843  348750551        241 *
-  //************************************************************************
 
   // 2D histogram to nclude all points in new version of the analysis (November 2014). I can not use work space because I currently don't have it. So, all points are hard coded!
   TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_points = new TH2D("h2_dimudimu_control_Iso_offDiagonal_2D_points","h2_dimudimu_control_Iso_offDiagonal_2D_points", m_bins, m_min, m_max, m_bins, m_min, m_max);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerColor(kBlack);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerStyle(20);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerSize(3.0);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3789996, 1.8526362);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.2658947, 2.3115363);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.7474905, 2.7977094);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.1979647, 0.8495020);
+  //2015
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3789996, 1.8526362);
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.2658947, 2.3115363);
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.7474905, 2.7977094);
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.1979647, 0.8495020);
+  //2016
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.5225365, 0.8431518);  
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.7942560, 2.3587374);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0640931, 2.6193141);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.6967173, 2.0301356);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0594613, 2.5633280);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3829744, 0.6517009);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0445525, 0.4301351);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.7256926, 3.0789272);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3180795, 2.0960705);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2748118, 3.1098189);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0963534, 1.9935944);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2951213, 7.9970874);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1160290, 0.9953680);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.0859162, 3.2248451);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.4438476, 3.0851912);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.9559303, 0.2534542);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.6904547, 3.0699591);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0854868, 2.0424716);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.4007272, 2.9169464);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.6643008, 1.1302868);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.2167325, 1.3391919);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.9294350, 7.1592717);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.3811967, 3.1188454);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.5922431, 1.2144465);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1027426, 1.1035094);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Draw("same");
 
   TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp = new TH2D("h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp","h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp", m_bins, m_min, m_max, m_bins, m_min, m_max);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerColor(kWhite);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerStyle(20);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerSize(2.0);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3789996, 1.8526362);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.2658947, 2.3115363);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7474905, 2.7977094);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1979647, 0.8495020);
+  //2015
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3789996, 1.8526362);
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.2658947, 2.3115363);
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7474905, 2.7977094);
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1979647, 0.8495020);
+  //2016
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.5225365, 0.8431518);  
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.7942560, 2.3587374);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0640931, 2.6193141);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.6967173, 2.0301356);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0594613, 2.5633280);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3829744, 0.6517009);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0445525, 0.4301351);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.7256926, 3.0789272);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3180795, 2.0960705);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2748118, 3.1098189);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0963534, 1.9935944);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2951213, 7.9970874);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1160290, 0.9953680);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.0859162, 3.2248451);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.4438476, 3.0851912);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.9559303, 0.2534542);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.6904547, 3.0699591);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0854868, 2.0424716);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.4007272, 2.9169464);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.6643008, 1.1302868);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.2167325, 1.3391919);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.9294350, 7.1592717);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.3811967, 3.1188454);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.5922431, 1.2144465);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1027426, 1.1035094);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Draw("same");
 
   TH2D* h2_signal = new TH2D("h2_signal","h2_signal", m_bins, m_min, m_max, m_bins, m_min, m_max);
-  h2_signal->Fill(0.404, 0.560);
+  //2015
+  //h2_signal->Fill(0.404, 0.560);
+  //2016
 
   h2_signal->GetXaxis()->SetTitle("m_{1 #mu#mu} [GeV]");
   h2_signal->GetXaxis()->CenterTitle(true);

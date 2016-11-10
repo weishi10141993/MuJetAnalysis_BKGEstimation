@@ -1,0 +1,6 @@
+crab_Run2016B-PromptReco-v2_FINAL.root
+crab_Run2016C-PromptReco-v2_FINAL.root
+crab_Run2016D-PromptReco-v2_FINAL.root
+crab_Run2016E-PromptReco-v2_FINAL.root
+crab_Run2016F-PromptReco-v1_FINAL.root
+crab_Run2016G-PromptReco-v1_FINAL.root

@@ -57,7 +57,6 @@ void FitAndSave_Extended() {
   bool useTrig=true;
   TString iso_cut= "2";
   setTDRStyle();
-
   TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
   txtHeader->SetFillColor(kWhite);
   txtHeader->SetFillStyle(0);
@@ -72,7 +71,7 @@ void FitAndSave_Extended() {
   TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2/Events");
   TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2/Events_orphan");
 
-  std::ifstream Myfile( "Input_2015CD_v1_Ext.txt" );
+  std::ifstream Myfile( "Input_2016BCDE.txt" );
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
   while (std::getline(Myfile, Line)){
@@ -82,26 +81,17 @@ void FitAndSave_Extended() {
       chain_data_dimuorphan.Add(Line2.Data());
     }
   }
-  cout<<"Done with chain!"<<endl;
   const double       m_min  = 0.2113;
   const double       m_max  = 9;
   const unsigned int m_bins = 220;
 
-  //Efficiencies studies
-  float Pass_OffLine                 = chain_data_dimuorphan.Draw("orph_passOffLineSel>>hist","orph_passOffLineSel>0","goff");
-  float Pass_OffLine_pt              = chain_data_dimuorphan.Draw("orph_passOffLineSelPt>>hist","orph_passOffLineSelPt>0","goff");
-  float Pass_OffLine_pt1788          = chain_data_dimuorphan.Draw("orph_passOffLineSelPt1788>>hist","orph_passOffLineSelPt1788>0","goff");
-  float Pass_FiredTrig               = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig>0","goff");
-  float Pass_FiredTrig_pt            = chain_data_dimuorphan.Draw("orph_FiredTrig_pt>>hist","orph_FiredTrig_pt>0","goff");
-  float Pass_FiredTrig_ptColl        = chain_data_dimuorphan.Draw("orph_FiredTrig_ptColl>>hist","orph_FiredTrig_ptColl>0","goff");
-
-  float Pass_FiredTrig_notOff        = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig>0 && orph_passOffLineSelPt1788<1","goff");
-  float Pass_Offl_noFiredTrig        = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig<1 && orph_passOffLineSelPt1788>0","goff");
-
-  float Pass_OffLineFiredTrig        = chain_data_dimuorphan.Draw("orph_FiredTrig>>hist","orph_FiredTrig>0 && orph_passOffLineSelPt1788>0","goff");
-  float Pass_OffLineFiredTrig_pt     = chain_data_dimuorphan.Draw("orph_FiredTrig_pt>>hist","orph_FiredTrig_pt>0 && orph_passOffLineSelPt1788>0","goff");
-  float Pass_OffLineFiredTrig_ptColl = chain_data_dimuorphan.Draw("orph_FiredTrig_ptColl>>hist","orph_FiredTrig_ptColl>0 && orph_passOffLineSelPt1788>0","goff");
-  cout<<"Done with Efficiencies!"<<endl;
+  //4mu mass check
+  TCanvas * c0 = new TCanvas("c0");
+  TH1F *h_4mu = new TH1F("h_4mu","",100,0,30);
+  chain_data_dimudimu.Draw("Mass4Mu>>hist","Mass4Mu>0 && Mass4Mu<30","goff");
+  h_4mu->Draw();
+  c0->SaveAs("Mass4Mu.pdf");
+  delete c0;
 
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
   RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV/#it{c}^{2}");
@@ -124,7 +114,7 @@ void FitAndSave_Extended() {
   TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
-  TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.)";
+  TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
 
   cout<<"Starting TTree."<<endl;
   //bb
@@ -144,7 +134,7 @@ void FitAndSave_Extended() {
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   cout<<"------OffDiagonal non ISO SCAN------"<<endl;
   TTree* tree_dimudimu_control_nonIso                   = chain_data_dimudimu.CopyTree(cut_control_nonIso);
-  tree_dimudimu_control_nonIso->Scan("massC:massF:run:event:lumi");
+  //tree_dimudimu_control_nonIso->Scan("massC:massF:run:event:lumi");
   cout<<"------Signal SCAN------"<<endl;
   TTree* tree_dimudimu_signal_2D  = chain_data_dimudimu.CopyTree(cut_signal);
   tree_dimudimu_signal_2D->Scan("massC:massF:run:event:lumi:isoC_1mm:isoF_1mm");
@@ -298,8 +288,8 @@ void FitAndSave_Extended() {
   c_template1D_m1_RooPlot->SaveAs("template1D_m1_RooPlot.pdf");
   c_template1D_m1_RooPlot->SaveAs("template1D_m1_RooPlot.png");
   float chi2_C = plotC->chiSquare(20);
-  TH1 *h1 = w->pdf("template1D_m1")->createHistogram("m1");
-  h1->SaveAs("template1D_m1_RooPlot.root");
+  //TH1 *h1 = w->pdf("template1D_m1")->createHistogram("m1");
+  //h1->SaveAs("template1D_m1_RooPlot.root");
 
   //****************************************************************************
   //                         Create template for m2                             
@@ -436,14 +426,6 @@ void FitAndSave_Extended() {
   //****************************************************************************
 
   w->writeToFile("ws.root");
-
-  //cout<<"Efficiencies on bb: "<<endl;
-  //cout<<"--#Ev. Pass OffLine: "<<Pass_OffLine<<" but only "<<Pass_OffLine_pt<<" has Pt>17 and only "<<Pass_OffLine_pt1788<<" have pt 17 8 8"<<endl;
-  //cout<<" Times you have fired but no selection: "<<Pass_FiredTrig_notOff<<endl;
-  //cout<<" Times you have not fired but passed selection: "<<Pass_Offl_noFiredTrig<<endl;
-  //cout<<"--#Ev. FiredTrig: "<<Pass_FiredTrig<<" Eff. to OffLine: "<<Pass_FiredTrig/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig<<" #Ev. FiredTrigger && Offline. "<<Pass_OffLineFiredTrig/Pass_OffLine_pt<<endl;
-  //cout<<"--#Ev. FiredTrig+Pt: "<<Pass_FiredTrig_pt<<" Eff. to OffLine: "<<Pass_FiredTrig_pt/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_pt<<" #Ev. FiredTrigger+Pt && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
-  //cout<<"--#Ev. FiredTrig+PT+Coll: "<<Pass_FiredTrig_ptColl<<" Eff. to OffLine: "<<Pass_FiredTrig_ptColl/Pass_OffLine_pt<<". I have "<<Pass_OffLineFiredTrig_ptColl<<" #Ev. FiredTrigger+pt+Coll && Offline. "<<Pass_OffLineFiredTrig_ptColl/Pass_OffLine_pt<<endl;
   cout<<"template1D_m1_RooPlot has "<<chi2_C<<endl;
   cout<<"template1D_m2_RooPlot has "<<chi2_F<<endl;
 }
