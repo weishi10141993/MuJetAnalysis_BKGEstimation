@@ -44,7 +44,7 @@
 #include "RooGenericPdf.h"
 #include "RooCBShape.h"
 #include "RooAddPdf.h"
-#include "tdrStyle.C"
+#include "macros/tdrStyle.C"
 
 #ifndef __CINT__
 #include "RooCFunction1Binding.h"
@@ -52,10 +52,14 @@
 
 using namespace RooFit;
 
-void FitAndSave_Extended() {
-
+void FitAndSave() {
+  //Parameteres
   bool useTrig=true;
   TString iso_cut= "2";
+  const double       m_min  = 0.2113;
+  const double       m_max  = 9.;
+  const unsigned int m_bins = 220;
+  //Style
   setTDRStyle();
   TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
   txtHeader->SetFillColor(kWhite);
@@ -65,12 +69,11 @@ void FitAndSave_Extended() {
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
   txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 2.83 fb^{-1}");
-
+  //Output ws
   RooWorkspace* w = new RooWorkspace("w");
-
+  //Input file
   TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2/Events");
   TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2/Events_orphan");
-
   std::ifstream Myfile( "Input_2016BCDE.txt" );
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
@@ -81,46 +84,39 @@ void FitAndSave_Extended() {
       chain_data_dimuorphan.Add(Line2.Data());
     }
   }
-  const double       m_min  = 0.2113;
-  const double       m_max  = 9;
-  const unsigned int m_bins = 220;
-
-  //4mu mass check
+  //4mu invariant mass
   TCanvas * c0 = new TCanvas("c0");
   TH1F *h_4mu = new TH1F("h_4mu","",100,0,30);
-  chain_data_dimudimu.Draw("Mass4Mu>>hist","Mass4Mu>0 && Mass4Mu<30","goff");
+  chain_data_dimudimu.Draw("Mass4Mu>>hist","Mass4Mu>0 && Mass4Mu<100","goff");
   h_4mu->Draw();
-  c0->SaveAs("Mass4Mu.pdf");
+  c0->SaveAs("figures/Mass4Mu.pdf");
   delete c0;
-
+  //Define RooRealVar
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
   RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV/#it{c}^{2}");
   m1.setBins(m_bins);
   m2.setBins(m_bins);
   w->import(m1);
   w->import(m2);
-
+  //Selection bb Control Region
   ostringstream stream_cut_bg_m1_iso;
   if(useTrig) stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
   else        stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && ((orph_PtMu0>17 && TMath::Abs(orph_EtaMu0<0.9)) || (orph_PtMu1>17 && TMath::Abs(orph_EtaMu1<0.9))) && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-
   ostringstream stream_cut_bg_m2_iso;
   if(useTrig) stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
   else        stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && orph_PtOrph>17 && TMath::Abs(orph_EtaOrph)<0.9 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
+  //Selection Signal
   TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
-
-  cout<<"Starting TTree."<<endl;
-  //bb
-  TTree* tree_dimuorphan_bg_m1        = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
-  TTree* tree_dimuorphan_bg_m2        = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
-  //signal
+  //TTree: bb Control Region
+  TTree* tree_dimuorphan_bg_m1                          = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
+  TTree* tree_dimuorphan_bg_m2                          = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
+  //TTree: Signal
   TTree* tree_dimudimu_diagonal_2D                      = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massC                = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massF                = chain_data_dimudimu.CopyTree(cut_diagonal);
@@ -128,19 +124,20 @@ void FitAndSave_Extended() {
   TTree* tree_dimudimu_control_offDiagonal_1D_massC     = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
   TTree* tree_dimudimu_control_offDiagonal_1D_massF     = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
-  cout<<"------OffDiagonal SCAN------"<<endl;
-  tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF:isoC_1mm:isoF_1mm:run:event:lumi");
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
-  cout<<"------OffDiagonal non ISO SCAN------"<<endl;
   TTree* tree_dimudimu_control_nonIso                   = chain_data_dimudimu.CopyTree(cut_control_nonIso);
-  //tree_dimudimu_control_nonIso->Scan("massC:massF:run:event:lumi");
+  TTree* tree_dimudimu_signal_2D                        = chain_data_dimudimu.CopyTree(cut_signal);
+  cout<<"------OffDiagonal SCAN------"<<endl;
+  tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF:isoC_1mm:isoF_1mm:run:event:lumi");
   cout<<"------Signal SCAN------"<<endl;
-  TTree* tree_dimudimu_signal_2D  = chain_data_dimudimu.CopyTree(cut_signal);
   tree_dimudimu_signal_2D->Scan("massC:massF:run:event:lumi:isoC_1mm:isoF_1mm");
-  cout<<"Setting names."<<endl;
+  //cout<<"------OffDiagonal non ISO SCAN------"<<endl;
+  //tree_dimudimu_control_nonIso->Scan("massC:massF:run:event:lumi")
+  //Setting Names bb Control region
   tree_dimuorphan_bg_m1->GetBranch("orph_dimu_mass")->SetName("m1");
   tree_dimuorphan_bg_m2->GetBranch("orph_dimu_mass")->SetName("m2");
+  //Setting Names bb Signal
   tree_dimudimu_diagonal_2D->GetBranch("massC")->SetName("m1");
   tree_dimudimu_diagonal_2D->GetBranch("massF")->SetName("m2");
   tree_dimudimu_diagonal_1D_massC->GetBranch("massC")->SetName("m1");
@@ -153,34 +150,30 @@ void FitAndSave_Extended() {
   tree_dimudimu_control_Iso_offDiagonal_2D->GetBranch("massF")->SetName("m2");
   tree_dimudimu_control_Iso_offDiagonal_1D_massC->GetBranch("massC")->SetName("m1");
   tree_dimudimu_control_Iso_offDiagonal_1D_massF->GetBranch("massF")->SetName("m1");
-
   tree_dimudimu_signal_2D->GetBranch("massC")->SetName("m1");
   tree_dimudimu_signal_2D->GetBranch("massF")->SetName("m2");
-
+  //Creating dataset bb Control Region
   RooDataSet* ds_dimuorphan_bg_m1 = new RooDataSet("ds_dimuorphan_bg_m1","ds_dimuorphan_bg_m1", tree_dimuorphan_bg_m1, RooArgSet(m1));
   RooDataSet* ds_dimuorphan_bg_m2 = new RooDataSet("ds_dimuorphan_bg_m2","ds_dimuorphan_bg_m2", tree_dimuorphan_bg_m2, RooArgSet(m2));
-
+  ////Creating dataset Signal
   RooDataSet* ds_dimudimu_diagonal_2D = new RooDataSet("ds_dimudimu_diagonal_2D","ds_dimudimu_diagonal_2D", tree_dimudimu_diagonal_2D, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_diagonal_1D_massC = new RooDataSet("ds_dimudimu_diagonal_1D_massC","ds_dimudimu_diagonal_1D_massC", tree_dimudimu_diagonal_1D_massC, RooArgSet(m1));
   RooDataSet* ds_dimudimu_diagonal_1D_massF = new RooDataSet("ds_dimudimu_diagonal_1D_massF","ds_dimudimu_diagonal_1D_massF", tree_dimudimu_diagonal_1D_massF, RooArgSet(m1));
   RooDataSet* ds_dimudimu_diagonal_1D = new RooDataSet("ds_dimudimu_diagonal_1D","ds_dimudimu_diagonal_1D", tree_dimudimu_diagonal_1D_massC, RooArgSet(m1));
   ds_dimudimu_diagonal_1D->append(*ds_dimudimu_diagonal_1D_massF);
-
   RooDataSet* ds_dimudimu_control_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_offDiagonal_2D","ds_dimudimu_control_offDiagonal_2D", tree_dimudimu_control_offDiagonal_2D, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_control_offDiagonal_1D_massC = new RooDataSet("ds_dimudimu_control_offDiagonal_1D_massC","ds_dimudimu_control_offDiagonal_1D_massC", tree_dimudimu_control_offDiagonal_1D_massC, RooArgSet(m1));
   RooDataSet* ds_dimudimu_control_offDiagonal_1D_massF = new RooDataSet("ds_dimudimu_control_offDiagonal_1D_massF","ds_dimudimu_control_offDiagonal_1D_massF", tree_dimudimu_control_offDiagonal_1D_massF, RooArgSet(m1));
   RooDataSet* ds_dimudimu_control_offDiagonal_1D = new RooDataSet("ds_dimudimu_control_offDiagonal_1D","ds_dimudimu_control_offDiagonal_1D", tree_dimudimu_control_offDiagonal_1D_massC, RooArgSet(m1));
   ds_dimudimu_control_offDiagonal_1D->append(*ds_dimudimu_control_offDiagonal_1D_massF);
-
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D","ds_dimudimu_control_Iso_offDiagonal_2D", tree_dimudimu_control_Iso_offDiagonal_2D, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_1D_massC = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_1D_massC","ds_dimudimu_control_Iso_offDiagonal_1D_massC", tree_dimudimu_control_Iso_offDiagonal_1D_massC, RooArgSet(m1));
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_1D_massF = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_1D_massF","ds_dimudimu_control_Iso_offDiagonal_1D_massF", tree_dimudimu_control_Iso_offDiagonal_1D_massF, RooArgSet(m1));
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_1D = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_1D","ds_dimudimu_control_Iso_offDiagonal_1D", tree_dimudimu_control_Iso_offDiagonal_1D_massC, RooArgSet(m1));
   ds_dimudimu_control_Iso_offDiagonal_1D->append(*ds_dimudimu_control_Iso_offDiagonal_1D_massF);
-
   RooDataSet* ds_dimudimu_signal_2D = new RooDataSet("ds_dimudimu_signal_2D","ds_dimudimu_signal_2D", tree_dimudimu_signal_2D, RooArgSet(m1,m2));
 
-  cout<<"-----Now Printing the Datasets:-----"<<endl;
+  cout<<"-----Now Printing abd importing the Datasets:-----"<<endl;
   ds_dimuorphan_bg_m1->Print("s");
   ds_dimuorphan_bg_m2->Print("s");
   ds_dimudimu_diagonal_2D->Print("s");
@@ -195,9 +188,7 @@ void FitAndSave_Extended() {
   ds_dimudimu_control_Iso_offDiagonal_1D_massC->Print("s");
   ds_dimudimu_control_Iso_offDiagonal_1D_massF->Print("s");
   ds_dimudimu_control_Iso_offDiagonal_1D->Print("s");
-
   ds_dimudimu_signal_2D->Print("s");
-
   w->import(*ds_dimuorphan_bg_m1);
   w->import(*ds_dimuorphan_bg_m2);
   w->import(*ds_dimudimu_diagonal_2D);
@@ -212,10 +203,9 @@ void FitAndSave_Extended() {
   w->import(*ds_dimudimu_control_Iso_offDiagonal_1D_massC);
   w->import(*ds_dimudimu_control_Iso_offDiagonal_1D_massF);
   w->import(*ds_dimudimu_control_Iso_offDiagonal_1D);
-
   w->import(*ds_dimudimu_signal_2D);
 
-  //Draw before the fit
+  //Draw before fiting
   RooPlot* plotC1 = w->var("m1")->frame(Title("bb Tempale no FIT"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m1")->plotOn(plotC1, DataError(RooAbsData::SumW2), Name("data_m1"));
   float SizeBin1 = plotC1->GetXaxis()->GetBinCenter(3) - plotC1->GetXaxis()->GetBinCenter(2);
@@ -224,15 +214,13 @@ void FitAndSave_Extended() {
   TString Yname1 = "Events / (" + std::string(c_SizeBin1) + "[GeV])";
   plotC1->GetYaxis()->SetTitle( Yname1.Data() );
   TCanvas * c1 = new TCanvas("c1");
-  c1->cd();
-  plotC1->Draw();
-  txtHeader->Draw();
-  c1->SaveAs("h_dimuorphan_bg_m1.pdf");
-  RooPlot* plotC2 = w->var("m2")->frame(Title("bb Tempale no FIT"),Bins(m_bins));
+  c1->cd(); plotC1->Draw(); txtHeader->Draw();
+  c1->SaveAs("figures/h_dimuorphan_bg_m1.pdf");
+  RooPlot* plotC2 = w->var("m2")->frame(Title("bb data"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotC2, DataError(RooAbsData::SumW2), Name("data_m2"));
   plotC2->Draw();
   txtHeader->Draw();
-  c1->SaveAs("h_dimuorphan_bg_m2.pdf");
+  c1->SaveAs("figures/h_dimuorphan_bg_m2.pdf");
   delete c1; 
 
   //****************************************************************************
@@ -285,16 +273,15 @@ void FitAndSave_Extended() {
   c_template1D_m1_RooPlot->cd();
   plotC->Draw();
   txtHeader->Draw();
-  c_template1D_m1_RooPlot->SaveAs("template1D_m1_RooPlot.pdf");
-  c_template1D_m1_RooPlot->SaveAs("template1D_m1_RooPlot.png");
+  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.pdf");
+  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.png");
   float chi2_C = plotC->chiSquare(20);
   //TH1 *h1 = w->pdf("template1D_m1")->createHistogram("m1");
-  //h1->SaveAs("template1D_m1_RooPlot.root");
+  //h1->SaveAs("figures/template1D_m1_RooPlot.root");
 
   //****************************************************************************
   //                         Create template for m2                             
   //****************************************************************************
-
   //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
   w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0.0, 0.3], MmumuF_p[0.05, 0.0, 2.])");
   //                  // 0 or ruin the DPF                                                                                         FIRST KINK
@@ -337,24 +324,20 @@ void FitAndSave_Extended() {
 
   plotF->Draw();
   txtHeader->Draw();
-  c_template1D_m2_RooPlot->SaveAs("template1D_m2_RooPlot.pdf");
-  c_template1D_m2_RooPlot->SaveAs("template1D_m2_RooPlot.png");
+  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.pdf");
+  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.png");
   float chi2_F = plotF->chiSquare(20);
 
   //****************************************************************************
   //                     Create 2D template = m1 x m2                           
   //****************************************************************************
-
   w->factory("PROD::template2D(template1D_m1,template1D_m2)");
 
   //****************************************************************************
   //                       Create 1D templates for J/psi                        
   //****************************************************************************
-
   cout << "Create templates for J/psi" << endl;
-
   //  template for m1
-
   RooRealVar* JpsiC_mean_fitresult = (RooRealVar*) rC->floatParsFinal().find("JpsiC_mean");
   cout << "JpsiC_mean " << JpsiC_mean_fitresult->getVal() << endl;
   RooRealVar* JpsiC_sigma_fitresult = (RooRealVar*) rC->floatParsFinal().find("JpsiC_sigma");
@@ -381,11 +364,10 @@ void FitAndSave_Extended() {
   plot_Jpsi_m1->GetYaxis()->SetTitle( Yname.Data() );
   plot_Jpsi_m1->Draw();
   txtHeader->Draw();
-  c_template1D_Jpsi_m1_RooPlot->SaveAs("template1D_Jpsi_m1_RooPlot.pdf");
-  c_template1D_Jpsi_m1_RooPlot->SaveAs("template1D_Jpsi_m1_RooPlot.png");
+  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.pdf");
+  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.png");
 
   //  template for m2
-
   RooRealVar* JpsiF_mean_fitresult = (RooRealVar*) rF->floatParsFinal().find("JpsiF_mean");
   cout << "JpsiF_mean " << JpsiF_mean_fitresult->getVal() << endl;
   RooRealVar* JpsiF_sigma_fitresult = (RooRealVar*) rF->floatParsFinal().find("JpsiF_sigma");
@@ -412,19 +394,17 @@ void FitAndSave_Extended() {
   plot_Jpsi_m2->GetYaxis()->SetTitle( Yname.Data() );
   plot_Jpsi_m2->Draw();
   txtHeader->Draw();
-  c_template1D_Jpsi_m2_RooPlot->SaveAs("template1D_Jpsi_m2_RooPlot.pdf");
-  c_template1D_Jpsi_m2_RooPlot->SaveAs("template1D_Jpsi_m2_RooPlot.png");
+  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2_RooPlot.pdf");
+  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2_RooPlot.png");
 
   //****************************************************************************
   //                     Create 2D template (m1 x m2) for J/psi                 
   //****************************************************************************
-
   w->factory("PROD::Jpsi_2D(Jpsi_m1,Jpsi_m2)");
 
   //****************************************************************************
   //                           Save to Workspace                                
   //****************************************************************************
-
   w->writeToFile("ws.root");
   cout<<"template1D_m1_RooPlot has "<<chi2_C<<endl;
   cout<<"template1D_m2_RooPlot has "<<chi2_F<<endl;
