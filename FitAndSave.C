@@ -71,6 +71,8 @@ void FitAndSave() {
   txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 2.83 fb^{-1}");
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");
+  TString Comm = "mkdir -p figures/";
+  system( Comm.Data() );
   //Input file
   TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2/Events");
   TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2/Events_orphan");
