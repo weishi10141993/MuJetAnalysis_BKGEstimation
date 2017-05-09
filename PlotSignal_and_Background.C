@@ -42,7 +42,7 @@
 #include "RooChebychev.h"
 #include "RooGenericPdf.h"
 #include "RooAddPdf.h"
-#include "tdrStyle.C"
+#include "macros/tdrStyle.C"
 
 #ifndef __CINT__
 #include "RooCFunction1Binding.h"
@@ -50,7 +50,7 @@
 
 using namespace RooFit;
 
-void PlotSignal_and_Background_ext() {
+void PlotSignal_and_Background() {
 
   setTDRStyle();
 
@@ -69,7 +69,7 @@ void PlotSignal_and_Background_ext() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2015D  #sqrt{s} = 8 TeV   L_{int} = 2.83 fb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2015D  #sqrt{s} = 8 TeV   L_{int} = 35.9 fb^{-1}");
 
 
   TLegend *txtHeader_CMS = new TLegend(.2,0.81,0.7,0.86);
@@ -88,7 +88,7 @@ void PlotSignal_and_Background_ext() {
   txtHeader_lumi->SetTextFont(42);
   txtHeader_lumi->SetTextSize(0.042);
   txtHeader_lumi->SetTextAlign(32);
-  txtHeader_lumi->SetHeader("2.83 fb^{-1} (13 TeV)");
+  txtHeader_lumi->SetHeader("35.9 fb^{-1} (13 TeV)");
 
   TFile* file = new TFile("ws.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
@@ -101,7 +101,7 @@ void PlotSignal_and_Background_ext() {
   const double kA = 0.13;
   const double kB = 0.065;
 
-  double nEvents_Jpsi = 0.064; 
+  double nEvents_Jpsi = 0.12; 
 
   //****************************************************************************
   //                         Draw 2D template m1 x m2                           
@@ -136,19 +136,19 @@ void PlotSignal_and_Background_ext() {
 	}
     }
   }
-  cout<<"Diagonal J/Psi probablity:"<<endl;
+  cout<<"Probability one event should be in the J/Psi area (SIGNAL REGION):"<<endl;
   cout<<"2J/Psi Area is " << Area_2Jpsi/(Area_NO2Jpsi+Area_2Jpsi) << " of the rest of the signal region ("<<Area_2Jpsi<<" "<<Area_NO2Jpsi<<")."<<endl;
-  cout<<"2J/Psi Area weighted is " << Area_2Jpsi_w/(Area_NO2Jpsi_w+Area_2Jpsi_w) << " of the rest of the signal region ("<<Area_2Jpsi_w<<" "<<Area_NO2Jpsi_w<<")."<<endl;
-  cout<<"NON Diagonal J/Psi probablity:"<<endl;
+  cout<<"2J/Psi Area (weighted) is " << Area_2Jpsi_w/(Area_NO2Jpsi_w+Area_2Jpsi_w) << " of the rest of the signal region ("<<Area_2Jpsi_w<<" "<<Area_NO2Jpsi_w<<")."<<endl;
+  cout<<"Probability one event should be in the J/Psi area (OFF-DIAGONAL REGION):"<<endl;
   cout<<"2J/Psi Area is " << offd_Area_2Jpsi/(offd_Area_NO2Jpsi+offd_Area_2Jpsi) << " of the rest of the signal region ("<<offd_Area_2Jpsi<<" "<<offd_Area_NO2Jpsi<<")."<<endl;
-  cout<<"2J/Psi Area weighted is " << offd_Area_2Jpsi_w/(offd_Area_NO2Jpsi_w+offd_Area_2Jpsi_w) << " of the rest of the signal region ("<<offd_Area_2Jpsi_w<<" "<<offd_Area_NO2Jpsi_w<<")."<<endl;
+  cout<<"2J/Psi Area (weighted) is " << offd_Area_2Jpsi_w/(offd_Area_NO2Jpsi_w+offd_Area_2Jpsi_w) << " of the rest of the signal region ("<<offd_Area_2Jpsi_w<<" "<<offd_Area_NO2Jpsi_w<<")."<<endl;
 
   cout<<" -> Template2D_offDiagonal integral: "<<h2_Template2D_offDiagonal->Integral()<<endl;
   cout<<" -> Template2D_diagonal integral:    "<<h2_Template2D_diagonal->Integral()<<endl;
 
   //Signal: ISO +off Diag
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1,m2",1000,1000);
-  cout<<"Signal ISO + offDiag: " << h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<endl;
+  cout<<"#Event ISOLATED but offDiag: " << h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<endl;
 
   cout<<"Scaled as: "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" / "<<h2_Template2D->Integral()<<" * "<<(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral()<<endl;
   //Scale to: DimuDimu_iso_offDiag / Template2D_Area (normalize to the off-diag part of the data) * bb_ALL/bb_offDiag (scale factor to pass from a normalization off-diag. to a normalization to the whole area.)
@@ -212,8 +212,8 @@ h2_background->SetContour(nb);
   //txtHeader_CMS->Draw();
   //txtHeader_lumi->Draw();
 
-  c_template2D_m1_vs_m2->SaveAs("h2_background.pdf");// LP added
-  c_template2D_m1_vs_m2->SaveAs("h2_background.png");
+  c_template2D_m1_vs_m2->SaveAs("figures/h2_background.pdf");// LP added
+  c_template2D_m1_vs_m2->SaveAs("figures/h2_background.png");
 
   // This required to draw scatter plot without LogZ 
   TPad* pad = new TPad("pad", "pad",0,0,1,1);
@@ -437,6 +437,6 @@ h2_background->SetContour(nb);
   txtHeader_CMS->Draw();
   txtHeader_lumi->Draw();
 
-  c_template2D_m1_vs_m2->SaveAs("template2D_signal_and_background_m1_vs_m2.pdf");
-  c_template2D_m1_vs_m2->SaveAs("template2D_signal_and_background_m1_vs_m2.png");
+  c_template2D_m1_vs_m2->SaveAs("figures/template2D_signal_and_background_m1_vs_m2.pdf");
+  c_template2D_m1_vs_m2->SaveAs("figures/template2D_signal_and_background_m1_vs_m2.png");
 }

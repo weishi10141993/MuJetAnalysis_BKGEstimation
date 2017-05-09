@@ -52,12 +52,12 @@
 
 using namespace RooFit;
 
-void FitAndSave() {
+void FitAndSave_60() {
   //Parameteres
   bool useTrig=true;
   TString iso_cut= "2";
   const double       m_min  = 0.2113;
-  const double       m_max  = 9.;
+  const double       m_max  = 60.;
   const unsigned int m_bins = 220;
   //Style
   setTDRStyle();
@@ -68,14 +68,14 @@ void FitAndSave() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 35.9 fb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 27.8 fb^{-1}");
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");
-  TString Comm = "mkdir -p figures/";
+  TString Comm = "mkdir -p figures_60/";
   system( Comm.Data() );
   //Input file
-  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL2PXFL2_Data/Events");
-  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL2PXFL2_Data/Events_orphan");
+  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2/Events");
+  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2/Events_orphan");
   std::ifstream Myfile( "Input_2016BCDEFG.txt" );
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
@@ -91,7 +91,7 @@ void FitAndSave() {
   TH1F *h_4mu = new TH1F("h_4mu","",100,0,30);
   chain_data_dimudimu.Draw("Mass4Mu>>hist","Mass4Mu>0 && Mass4Mu<100","goff");
   h_4mu->Draw();
-  c0->SaveAs("figures/Mass4Mu.pdf");
+  c0->SaveAs("figures_60/Mass4Mu.pdf");
   delete c0;
   //Define RooRealVar
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
@@ -110,11 +110,11 @@ void FitAndSave() {
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
   //Selection Signal
-  TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 40. && massF > 0.25 && massF < 40.";
-  TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 40. && massF > 0.25 && massF < 40.";
-  TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 40. && massF > 0.25 && massF < 40.";
-  TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 40. && massF > 0.25 && massF < 40.";
-  TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 40. && massF > 0.25 && massF < 40.";
+  TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 60. && massF > 0.25 && massF < 60.";
+  TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 60. && massF > 0.25 && massF < 60.";
+  TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 60. && massF > 0.25 && massF < 60.";
+  TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 60. && massF > 0.25 && massF < 60.";
+  TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 60. && massF > 0.25 && massF < 60.";
   //TTree: bb Control Region
   TTree* tree_dimuorphan_bg_m1                          = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
   TTree* tree_dimuorphan_bg_m2                          = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
@@ -217,12 +217,12 @@ void FitAndSave() {
   plotC1->GetYaxis()->SetTitle( Yname1.Data() );
   TCanvas * c1 = new TCanvas("c1");
   c1->cd(); plotC1->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m1.pdf");
+  c1->SaveAs("figures_60/h_dimuorphan_bg_m1.pdf");
   RooPlot* plotC2 = w->var("m2")->frame(Title("bb data"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotC2, DataError(RooAbsData::SumW2), Name("data_m2"));
   plotC2->Draw();
   txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m2.pdf");
+  c1->SaveAs("figures_60/h_dimuorphan_bg_m2.pdf");
   delete c1; 
 
   //****************************************************************************
@@ -275,11 +275,11 @@ void FitAndSave() {
   c_template1D_m1_RooPlot->cd();
   plotC->Draw();
   txtHeader->Draw();
-  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.pdf");
-  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.png");
+  c_template1D_m1_RooPlot->SaveAs("figures_60/template1D_m1_RooPlot.pdf");
+  c_template1D_m1_RooPlot->SaveAs("figures_60/template1D_m1_RooPlot.png");
   float chi2_C = plotC->chiSquare(20);
   //TH1 *h1 = w->pdf("template1D_m1")->createHistogram("m1");
-  //h1->SaveAs("figures/template1D_m1_RooPlot.root");
+  //h1->SaveAs("figures_60/template1D_m1_RooPlot.root");
 
   //****************************************************************************
   //                         Create template for m2                             
@@ -326,8 +326,8 @@ void FitAndSave() {
 
   plotF->Draw();
   txtHeader->Draw();
-  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.pdf");
-  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.png");
+  c_template1D_m2_RooPlot->SaveAs("figures_60/template1D_m2_RooPlot.pdf");
+  c_template1D_m2_RooPlot->SaveAs("figures_60/template1D_m2_RooPlot.png");
   float chi2_F = plotF->chiSquare(20);
 
   //****************************************************************************
@@ -366,8 +366,8 @@ void FitAndSave() {
   plot_Jpsi_m1->GetYaxis()->SetTitle( Yname.Data() );
   plot_Jpsi_m1->Draw();
   txtHeader->Draw();
-  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.pdf");
-  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.png");
+  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures_60/template1D_Jpsi_m1_RooPlot.pdf");
+  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures_60/template1D_Jpsi_m1_RooPlot.png");
 
   //  template for m2
   RooRealVar* JpsiF_mean_fitresult = (RooRealVar*) rF->floatParsFinal().find("JpsiF_mean");
@@ -396,8 +396,8 @@ void FitAndSave() {
   plot_Jpsi_m2->GetYaxis()->SetTitle( Yname.Data() );
   plot_Jpsi_m2->Draw();
   txtHeader->Draw();
-  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2_RooPlot.pdf");
-  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2_RooPlot.png");
+  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures_60/template1D_Jpsi_m2_RooPlot.pdf");
+  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures_60/template1D_Jpsi_m2_RooPlot.png");
 
   //****************************************************************************
   //                     Create 2D template (m1 x m2) for J/psi                 
@@ -407,7 +407,7 @@ void FitAndSave() {
   //****************************************************************************
   //                           Save to Workspace                                
   //****************************************************************************
-  w->writeToFile("ws.root");
+  w->writeToFile("ws_60.root");
   cout<<"template1D_m1_RooPlot has "<<chi2_C<<endl;
   cout<<"template1D_m2_RooPlot has "<<chi2_F<<endl;
 }

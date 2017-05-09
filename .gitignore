@@ -1,0 +1,9 @@
+DR_PLOT_H2a4mu/*.d
+DR_PLOT_H2a4mu/*.so
+DR_PLOT_H2a4mu/*_rdict.pcm
+DR_PLOT_H2a4mu/dr_studies/*
+*_C.d
+*.so
+*dict_rdict.pcm
+figures/*
+files_ROOT/*.root
