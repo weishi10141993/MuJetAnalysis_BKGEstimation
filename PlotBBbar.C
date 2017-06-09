@@ -42,7 +42,7 @@
 #include "RooChebychev.h"
 #include "RooGenericPdf.h"
 #include "RooAddPdf.h"
-#include "tdrStyle.C"
+#include "macros/tdrStyle.C"
 
 #ifndef __CINT__
 #include "RooCFunction1Binding.h"
@@ -50,7 +50,7 @@
 
 using namespace RooFit;
 
-void PlotBBbar_ext() {
+void PlotBBbar() {
 
   setTDRStyle();
 
@@ -61,9 +61,9 @@ void PlotBBbar_ext() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2015  #sqrt{s} = 13 TeV   L_{int} = 2.83 fb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 35.9 fb^{-1}");
 
-  TFile* file = new TFile("ws.root");
+  TFile* file = new TFile("ws_FINAL.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   const double       m_min  = 0.2113;
@@ -93,8 +93,8 @@ void PlotBBbar_ext() {
   h1_ds_dimuorphan_bg_m1->Draw("E1");
   h1_template1D_m1->Draw("Lsame");
   txtHeader->Draw();
-  c_m1->SaveAs("template1D_m1.pdf");
-  c_m1->SaveAs("template1D_m1.png");
+  c_m1->SaveAs("figures/template1D_m1.pdf");
+  c_m1->SaveAs("figures/template1D_m1.png");
 
   //****************************************************************************
   //                           Draw template for m2                             
@@ -115,8 +115,8 @@ void PlotBBbar_ext() {
   h1_ds_dimuorphan_bg_m2->Draw("E1");
   h1_template1D_m2->Draw("Lsame");
   txtHeader->Draw();
-  c_m2->SaveAs("template1D_m2.pdf");
-  c_m2->SaveAs("template1D_m2.png");
+  c_m2->SaveAs("figures/template1D_m2.pdf");
+  c_m2->SaveAs("figures/template1D_m2.png");
 
   //****************************************************************************
   //            Draw 2D template m1 x m2 and data in off-diagonal region        
@@ -240,8 +240,8 @@ void PlotBBbar_ext() {
 
   txtHeader->Draw();
 
-  c_template2D_m1_vs_m2->SaveAs("template2D_m1_vs_m2.pdf");
-  c_template2D_m1_vs_m2->SaveAs("template2D_m1_vs_m2.png");
+  c_template2D_m1_vs_m2->SaveAs("figures/template2D_m1_vs_m2.pdf");
+  c_template2D_m1_vs_m2->SaveAs("figures/template2D_m1_vs_m2.png");
 
   TCanvas * c_template2D_m1_vs_m2_3DLog = new TCanvas("c_template2D_m1_vs_m2_3DLog", "c_template2D_m1_vs_m2_3DLog");
   c_template2D_m1_vs_m2_3DLog->cd();
@@ -265,8 +265,8 @@ void PlotBBbar_ext() {
   h2_Template2D_3DLog->Draw("Surf1 FB");
   txtHeader->Draw();
 
-  c_template2D_m1_vs_m2_3DLog->SaveAs("template2D_m1_vs_m2_3D.pdf");
-  c_template2D_m1_vs_m2_3DLog->SaveAs("template2D_m1_vs_m2_3D.png");
+  c_template2D_m1_vs_m2_3DLog->SaveAs("figures/template2D_m1_vs_m2_3D.pdf");
+  c_template2D_m1_vs_m2_3DLog->SaveAs("figures/template2D_m1_vs_m2_3D.png");
 
   //****************************************************************************
   //        Create 2D template = m1 x m2 without J/psi region                   
@@ -301,7 +301,7 @@ void PlotBBbar_ext() {
   h1_control_offDiagonal_massC_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} (GeV/#it{c}^{2})");
   h1_control_offDiagonal_massC_data->GetYaxis()->SetTitle("Events / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,60.);
+  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,280.);
 
   TH1D *h1_control_offDiagonal_massC_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
   h1_control_offDiagonal_massC_template->Scale( h1_control_offDiagonal_massC_data->Integral("width") / h1_control_offDiagonal_massC_template->Integral("width") );
@@ -314,8 +314,8 @@ void PlotBBbar_ext() {
   h1_control_offDiagonal_massC_data->Draw("e1");
   h1_control_offDiagonal_massC_template->Draw("same");
   txtHeader->Draw();
-  c_control_offDiagonal_massC->SaveAs("control_offDiagonal_m1.pdf");
-  c_control_offDiagonal_massC->SaveAs("control_offDiagonal_m1.png");
+  c_control_offDiagonal_massC->SaveAs("figures/control_offDiagonal_m1.pdf");
+  c_control_offDiagonal_massC->SaveAs("figures/control_offDiagonal_m1.png");
 
   // Isolation requirement applied
 
@@ -353,7 +353,7 @@ void PlotBBbar_ext() {
   h1_control_offDiagonal_massF_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} (GeV/#it{c}^{2})");
   h1_control_offDiagonal_massF_data->GetYaxis()->SetTitle("Events / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,60.);
+  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,200.);
 
   TH1D *h1_control_offDiagonal_massF_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
   h1_control_offDiagonal_massF_template->Scale( h1_control_offDiagonal_massF_data->Integral("width") / h1_control_offDiagonal_massF_template->Integral("width") );
@@ -366,8 +366,8 @@ void PlotBBbar_ext() {
   h1_control_offDiagonal_massF_data->Draw("e1");
   h1_control_offDiagonal_massF_template->Draw("same");
   txtHeader->Draw();
-  c_control_offDiagonal_massF->SaveAs("control_offDiagonal_m2.pdf");
-  c_control_offDiagonal_massF->SaveAs("control_offDiagonal_m2.png");
+  c_control_offDiagonal_massF->SaveAs("figures/control_offDiagonal_m2.pdf");
+  c_control_offDiagonal_massF->SaveAs("figures/control_offDiagonal_m2.png");
 
   // Isolation requirement applied
 
@@ -389,8 +389,8 @@ void PlotBBbar_ext() {
   h1_control_Iso_offDiagonal_massF_data->Draw("e1");
   h1_control_Iso_offDiagonal_massF_template->Draw("same");
   txtHeader->Draw();
-  c_control_Iso_offDiagonal_massF->SaveAs("control_Iso_offDiagonal_m2.pdf");
-  c_control_Iso_offDiagonal_massF->SaveAs("control_Iso_offDiagonal_m2.png");
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/control_Iso_offDiagonal_m2.pdf");
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/control_Iso_offDiagonal_m2.png");
 
   //****************************************************************************
   //                    Control region = off diagonal region                    
@@ -404,7 +404,7 @@ void PlotBBbar_ext() {
   h1_control_offDiagonal_data->SetMarkerStyle(20);
   h1_control_offDiagonal_data->GetXaxis()->SetTitle("m_{#mu#mu_{i}} (i=1,2) [GeV/#it{c}^{2}]");
   h1_control_offDiagonal_data->GetYaxis()->SetTitle("Events #times 2 / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_data->GetYaxis()->SetRangeUser(0.,80.);
+  h1_control_offDiagonal_data->GetYaxis()->SetRangeUser(0.,240.);
 
   TH1D *h1_control_offDiagonal_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
   TH1D *h1_control_offDiagonal_template_Y = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
@@ -419,8 +419,8 @@ void PlotBBbar_ext() {
   h1_control_offDiagonal_data->Draw("e1");
   h1_control_offDiagonal_template->Draw("same");
   txtHeader->Draw();
-  c_control_offDiagonal->SaveAs("control_offDiagonal.pdf");
-  c_control_offDiagonal->SaveAs("control_offDiagonal.png");
+  c_control_offDiagonal->SaveAs("figures/control_offDiagonal.pdf");
+  c_control_offDiagonal->SaveAs("figures/control_offDiagonal.png");
 
   // Isolation requirement applied
 
@@ -444,8 +444,8 @@ void PlotBBbar_ext() {
   h1_control_Iso_offDiagonal_data->Draw("e1");
   h1_control_Iso_offDiagonal_template->Draw("same");
   txtHeader->Draw();
-  c_control_Iso_offDiagonal->SaveAs("control_Iso_offDiagonal.pdf");
-  c_control_Iso_offDiagonal->SaveAs("control_Iso_offDiagonal.png");
+  c_control_Iso_offDiagonal->SaveAs("figures/control_Iso_offDiagonal.pdf");
+  c_control_Iso_offDiagonal->SaveAs("figures/control_Iso_offDiagonal.png");
 
   //****************************************************************************
   //       Control region = off diagonal region, m1 and m2 combined             
@@ -457,7 +457,7 @@ void PlotBBbar_ext() {
   TH1D *h1_control_offDiagonal_Jpsi = new TH1D("h1_control_offDiagonal_Jpsi", "h1_control_offDiagonal_Jpsi", 5, 2.95, 3.2);
   h1_control_offDiagonal_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{i}} (i=1,2) [GeV/#it{c}^{2}]");
   h1_control_offDiagonal_Jpsi->GetYaxis()->SetTitle("Events #times 2 / (0.05 GeV/#it{c}^{2})");
-  h1_control_offDiagonal_Jpsi->GetYaxis()->SetRangeUser(0.,100.);
+  h1_control_offDiagonal_Jpsi->GetYaxis()->SetRangeUser(0.,500.);
 
   TCanvas * c_control_offDiagonal_Jpsi = new TCanvas("c_control_offDiagonal_Jpsi", "c_control_offDiagonal_Jpsi");
   c_control_offDiagonal_Jpsi->cd();
@@ -465,8 +465,8 @@ void PlotBBbar_ext() {
   h1_control_offDiagonal_data->Draw("e1same");
   h1_control_offDiagonal_template->Draw("Csame");
   txtHeader->Draw();
-  c_control_offDiagonal_Jpsi->SaveAs("control_offDiagonal_Jpsi.pdf");
-  c_control_offDiagonal_Jpsi->SaveAs("control_offDiagonal_Jpsi.png");
+  c_control_offDiagonal_Jpsi->SaveAs("figures/control_offDiagonal_Jpsi.pdf");
+  c_control_offDiagonal_Jpsi->SaveAs("figures/control_offDiagonal_Jpsi.png");
 
   // Isolation requirement applied
 
@@ -481,8 +481,8 @@ void PlotBBbar_ext() {
   h1_control_Iso_offDiagonal_data->Draw("e1same");
   h1_control_Iso_offDiagonal_template->Draw("Csame");
   txtHeader->Draw();
-  c_control_Iso_offDiagonal_Jpsi->SaveAs("control_Iso_offDiagonal_Jpsi.pdf");
-  c_control_Iso_offDiagonal_Jpsi->SaveAs("control_Iso_offDiagonal_Jpsi.png");
+  c_control_Iso_offDiagonal_Jpsi->SaveAs("figures/control_Iso_offDiagonal_Jpsi.pdf");
+  c_control_Iso_offDiagonal_Jpsi->SaveAs("figures/control_Iso_offDiagonal_Jpsi.png");
 
   w->writeToFile("ws.root");
 }

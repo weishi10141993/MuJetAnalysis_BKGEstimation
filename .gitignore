@@ -7,3 +7,4 @@ DR_PLOT_H2a4mu/dr_studies/*
 *dict_rdict.pcm
 figures/*
 files_ROOT/*.root
+ws*root
