@@ -18,7 +18,7 @@
 #include <vector>
 #include <sstream>
 #include <iostream>
-#include <string> 
+#include <string>
 
 #include "RooAbsPdf.h"
 #include "RooProdPdf.h"
@@ -68,15 +68,15 @@ void FitAndSave() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2016  #sqrt{s} = 13 TeV   L_{int} = 35.9 fb^{-1}");
+  txtHeader->SetHeader("CMS Prelim. 2017C-F  #sqrt{s} = 13 TeV   L_{int} = XX.X fb^{-1}");
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");
   TString Comm = "mkdir -p figures/";
   system( Comm.Data() );
   //Input file
-  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL2PXFL2_Data/Events");
-  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL2PXFL2_Data/Events_orphan");
-  std::ifstream Myfile( "Input_2016BCDEFGnew.txt" );
+  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2_Data/Events");
+  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2_Data/Events_orphan");
+  std::ifstream Myfile( "Input_2017CDEF.txt" );
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
   while (std::getline(Myfile, Line)){
@@ -214,10 +214,10 @@ void FitAndSave() {
   plotC2->Draw();
   txtHeader->Draw();
   c1->SaveAs("figures/h_dimuorphan_bg_m2.pdf");
-  delete c1; 
+  delete c1;
 
   //****************************************************************************
-  //                         Create template for m1                             
+  //                         Create template for m1
   //****************************************************************************
   cout<<"-----Creating templates:-----"<<endl;
   //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
@@ -265,8 +265,8 @@ void FitAndSave() {
   c_template1D_m1_RooPlot->Clear();
   TPad *pad1 = new TPad("pad1", "pad1", 0, 0.3, 1, 1.0);
   pad1->SetBottomMargin(0);
-  pad1->Draw();            
-  pad1->cd();              
+  pad1->Draw();
+  pad1->cd();
   // THE FIT PART
   plotC->Draw("same");
   txtHeader->Draw("same");
@@ -295,7 +295,7 @@ void FitAndSave() {
   h_dataMC1->GetYaxis()->SetLabelSize(15);
   h_dataMC1->GetYaxis()->SetLabelFont(43);//#Absolute font size in pixel (precision 3)
   TH1F *hdata = (TH1F*) ds_dimuorphan_bg_m1->createHistogram("hdata",m1,Binning(m_bins, m_min, m_max));
-  TH1F* h_func = new TH1F("h_func","", m_bins, m_min, m_max); 
+  TH1F* h_func = new TH1F("h_func","", m_bins, m_min, m_max);
   w->pdf("template1D_m1")->fillHistogram(h_func, m1, hdata->GetEntries());
   for(unsigned int iB=1; iB<m_bins; iB++){
     float ratio = h_func->GetBinContent(iB)/hdata->GetBinContent(iB);
@@ -307,13 +307,13 @@ void FitAndSave() {
   h_dataMC1->Sumw2();
   h_dataMC1->SetStats(0);      // No statistics on lower plot
   h_dataMC1->SetMarkerStyle(21);
-  h_dataMC1->Draw("ep");  
+  h_dataMC1->Draw("ep");
   c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.pdf");
   c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.png");
   float chi2_C = plotC->chiSquare(23);
 
   //****************************************************************************
-  //                         Create template for m2                             
+  //                         Create template for m2
   //****************************************************************************
   //Initial combianatorial                                                                                                   //if small big bump       //also very important, before fix to 0.5
   w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0.0, 0.3], MmumuF_p[0.05, 0.0, 2.])");
@@ -360,8 +360,8 @@ void FitAndSave() {
   c_template1D_m2_RooPlot->Clear();
   TPad *pad1b = new TPad("pad1b", "pad1b", 0, 0.3, 1, 1.0);
   pad1b->SetBottomMargin(0);
-  pad1b->Draw();            
-  pad1b->cd();              
+  pad1b->Draw();
+  pad1b->cd();
   // THE FIT PART
   plotF->Draw("same");
   txtHeader->Draw("same");
@@ -390,7 +390,7 @@ void FitAndSave() {
   h_dataMC2->GetYaxis()->SetLabelSize(15);
   h_dataMC2->GetYaxis()->SetLabelFont(43);//#Absolute font size in pixel (precision 3)
   TH1F *hdata2 = (TH1F*) ds_dimuorphan_bg_m2->createHistogram("hdata2",m2,Binning(m_bins, m_min, m_max));
-  TH1F* h_func2 = new TH1F("h_func2","", m_bins, m_min, m_max); 
+  TH1F* h_func2 = new TH1F("h_func2","", m_bins, m_min, m_max);
   w->pdf("template1D_m2")->fillHistogram(h_func2, m2, hdata2->GetEntries());
   for(unsigned int iB=1; iB<m_bins; iB++){
     float ratio = h_func2->GetBinContent(iB)/hdata2->GetBinContent(iB);
@@ -402,18 +402,18 @@ void FitAndSave() {
   h_dataMC2->Sumw2();
   h_dataMC2->SetStats(0);      // No statistics on lower plot
   h_dataMC2->SetMarkerStyle(21);
-  h_dataMC2->Draw("ep");  
+  h_dataMC2->Draw("ep");
   c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.pdf");
   c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.png");
   float chi2_F = plotF->chiSquare(23);
 
   //****************************************************************************
-  //                     Create 2D template = m1 x m2                           
+  //                     Create 2D template = m1 x m2
   //****************************************************************************
   w->factory("PROD::template2D(template1D_m1,template1D_m2)");
 
   //****************************************************************************
-  //                       Create 1D templates for J/psi                        
+  //                       Create 1D templates for J/psi
   //****************************************************************************
   cout << "Create templates for J/psi" << endl;
   //  template for m1
@@ -491,12 +491,12 @@ void FitAndSave() {
   c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2_RooPlot.png");
 
   //****************************************************************************
-  //                     Create 2D template (m1 x m2) for J/psi                 
+  //                     Create 2D template (m1 x m2) for J/psi
   //****************************************************************************
   w->factory("PROD::Jpsi_2D(Jpsi_m1,Jpsi_m2)");
 
   //****************************************************************************
-  //                           Save to Workspace                                
+  //                           Save to Workspace
   //****************************************************************************
   w->writeToFile("ws.root");
   cout<<"template1D_m1_RooPlot has "<<chi2_C<<endl;
