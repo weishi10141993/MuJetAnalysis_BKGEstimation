@@ -74,8 +74,8 @@ void FitAndSave() {
   TString Comm = "mkdir -p figures/";
   system( Comm.Data() );
   //Input file
-  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2_Data/Events");
-  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2_Data/Events_orphan");
+  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2/Events");
+  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2/Events_orphan");
   std::ifstream Myfile( "Input_2017CDEF.txt" );
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
