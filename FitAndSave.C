@@ -57,8 +57,9 @@ void FitAndSave() {
   bool useTrig=true;
   TString iso_cut= "2";
   const double       m_min  = 0.2113;
-  const double       m_max  = 9.;
-  const unsigned int m_bins = 220;
+  const double       m_max  = 100.;
+  const unsigned int m_bins = 2000;
+
   //Style
   setTDRStyle();
   TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
