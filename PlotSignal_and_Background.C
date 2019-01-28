@@ -18,7 +18,7 @@
 
 #include <sstream>
 #include <iostream>
-#include <string> 
+#include <string>
 
 #include "RooAbsPdf.h"
 #include "RooProdPdf.h"
@@ -69,8 +69,7 @@ void PlotSignal_and_Background() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  //txtHeader->SetHeader("#bf{CMS}                                  35.9 fb^{-1} (13 TeV)");
-  txtHeader->SetHeader("#bf{CMS Preliminary}              35.9 fb^{-1} (13 TeV)");
+  txtHeader->SetHeader("#bf{CMS Preliminary}              36.734 fb^{-1} (13 TeV)");
 
   TLegend *txtHeader_CMS = new TLegend(.2,0.81,0.7,0.86);
   txtHeader_CMS->SetFillColor(kWhite);
@@ -89,23 +88,23 @@ void PlotSignal_and_Background() {
   txtHeader_lumi->SetTextFont(42);
   txtHeader_lumi->SetTextSize(0.042);
   txtHeader_lumi->SetTextAlign(32);
-  txtHeader_lumi->SetHeader("35.9 fb^{-1} (13 TeV)");
+  txtHeader_lumi->SetHeader("36.734 fb^{-1} (13 TeV)");
 
   TFile* file = new TFile("ws_FINAL.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   const double       m_min  = 0.2113;
-  const double       m_max  = 9.;
-  const unsigned int m_bins = 220;
+  const double       m_max  = 58.;
+  const unsigned int m_bins = 2000;
 
   // Diagonal region |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
   const double kA = 0.13;
   const double kB = 0.065;
 
-  double nEvents_Jpsi = 0.12; 
+  double nEvents_Jpsi = 0.12;
 
   //****************************************************************************
-  //                         Draw 2D template m1 x m2                           
+  //                         Draw 2D template m1 x m2
   //****************************************************************************
 
   TH2D* h2_Jpsi_2D = (TH2D*)w->pdf("Jpsi_2D")->createHistogram("m1,m2",2.0*m_bins,2.0*m_bins);
@@ -217,7 +216,7 @@ h2_background->SetContour(nb);
   system("ps2pdf figures/h2_background.ps figures/h2_background.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.png");
 
-  // This required to draw scatter plot without LogZ 
+  // This required to draw scatter plot without LogZ
   TPad* pad = new TPad("pad", "pad",0,0,1,1);
   pad->Draw();
   pad->cd();
@@ -321,7 +320,7 @@ h2_background->SetContour(nb);
   //2015
   //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3789996, 1.8526362);
   //2016
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.3394618, 4.8828525); 
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.3394618, 4.8828525);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1085057, 0.8863269);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0989241, 0.4605314);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.3275566, 2.9306011);
@@ -377,7 +376,7 @@ h2_background->SetContour(nb);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.2984790, 0.3616573);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(5.3474988, 3.1133358);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0882096, 1.4727710);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.3394618,4.8828525); 
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.3394618,4.8828525);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1085057,0.8863269);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0989241,0.4605314);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.3275566,2.9306011);
@@ -445,7 +444,7 @@ h2_background->SetContour(nb);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7474905, 2.7977094);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1979647, 0.8495020);
   //2016
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.3394618, 4.8828525); 
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.3394618, 4.8828525);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1085057, 0.8863269);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0989241, 0.4605314);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.3275566, 2.9306011);
@@ -501,7 +500,7 @@ h2_background->SetContour(nb);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.2984790, 0.3616573);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(5.3474988, 3.1133358);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0882096, 1.4727710);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.3394618,4.8828525); 
+  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.3394618,4.8828525);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1085057,0.8863269);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0989241,0.4605314);
   //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.3275566,2.9306011);
@@ -575,19 +574,19 @@ h2_background->SetContour(nb);
   //h2_signal->Fill(3.0722196, 3.2662851);
   //h2_signal->Fill(3.0728187, 3.0538983);
   //h2_signal->Fill(3.1553862, 2.8489651);
-  h2_signal->Fill(0.8079733, 0.7267103); 
-  h2_signal->Fill(2.8599584, 3.0017674); 
-  h2_signal->Fill(0.4258973, 0.5848349); 
-  h2_signal->Fill(3.0722196, 3.2662851); 
-  h2_signal->Fill(3.0728187, 3.0538983); 
-  h2_signal->Fill(3.0950253, 3.3617882); 
-  h2_signal->Fill(3.1521356, 2.8546791); 
-  h2_signal->Fill(2.8254406, 2.6496100); 
-  h2_signal->Fill(1.2541753, 1.1524148); 
-  h2_signal->Fill(2.3863873, 2.3582603); 
-  h2_signal->Fill(3.0641751, 3.0972354); 
-  h2_signal->Fill(1.9403913, 1.8196427); 
-  h2_signal->Fill(1.3540757, 1.4834892); 
+  h2_signal->Fill(0.8079733, 0.7267103);
+  h2_signal->Fill(2.8599584, 3.0017674);
+  h2_signal->Fill(0.4258973, 0.5848349);
+  h2_signal->Fill(3.0722196, 3.2662851);
+  h2_signal->Fill(3.0728187, 3.0538983);
+  h2_signal->Fill(3.0950253, 3.3617882);
+  h2_signal->Fill(3.1521356, 2.8546791);
+  h2_signal->Fill(2.8254406, 2.6496100);
+  h2_signal->Fill(1.2541753, 1.1524148);
+  h2_signal->Fill(2.3863873, 2.3582603);
+  h2_signal->Fill(3.0641751, 3.0972354);
+  h2_signal->Fill(1.9403913, 1.8196427);
+  h2_signal->Fill(1.3540757, 1.4834892);
 
   h2_signal->GetXaxis()->SetTitle("m_{(#mu#mu)_{1}} [GeV]");
   h2_signal->GetXaxis()->CenterTitle(true);
