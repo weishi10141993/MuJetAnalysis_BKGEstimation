@@ -499,7 +499,7 @@ void FitAndSave() {
   //****************************************************************************
   //                           Save to Workspace
   //****************************************************************************
-  w->writeToFile("ws.root");
+  w->writeToFile("ws_FINAL.root");
   cout<<"template1D_m1_RooPlot has "<<chi2_C<<endl;
   cout<<"template1D_m2_RooPlot has "<<chi2_F<<endl;
 }
