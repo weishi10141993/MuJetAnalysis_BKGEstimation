@@ -94,8 +94,8 @@ void PlotSignal_and_Background() {
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   const double       m_min  = 0.2113;
-  const double       m_max  = 58.;
-  const unsigned int m_bins = 2000;
+  const double       m_max  = 11.;
+  const unsigned int m_bins = 270;
 
   // Diagonal region |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
   const double kA = 0.13;
@@ -318,8 +318,11 @@ h2_background->SetContour(nb);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerStyle(20);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerSize(3.0);
   //2015
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3789996, 1.8526362);
+  /*
+  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3789996, 1.8526362);
+  */
   //2016
+  /*
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.3394618, 4.8828525);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1085057, 0.8863269);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0989241, 0.4605314);
@@ -376,62 +379,7 @@ h2_background->SetContour(nb);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.2984790, 0.3616573);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(5.3474988, 3.1133358);
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0882096, 1.4727710);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.3394618,4.8828525);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1085057,0.8863269);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0989241,0.4605314);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.3275566,2.9306011);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0705516,2.6184160);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.6725933,2.2082293);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.7733180,2.9909498);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0867397,2.5654206);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0961875,2.6408567);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.3725998,1.5676055);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2796572,1.3030284);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2739968,3.1119864);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0964052,1.9947856);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.0735573,3.2055511);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3029867,8.0022907);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3957569,2.0971429);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1111078,0.9851592);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.5590274,2.1472802);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1052675,4.2853865);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.1172916,0.3317201);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2526102,1.9579395);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.6937513,1.3820128);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.6968700,3.0599653);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0868136,2.0693941);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.8807374,3.0353784);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.7097760,1.9626674);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.3732197,3.1166579);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.9293151,7.1705985);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.6633046,1.1430702);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.5893211,1.2128995);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.0970430,2.8785300);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2659432,1.8314888);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0805194,1.8598787);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.9651384,1.4651534);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.1265718,4.8931441);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.3555525,3.0687544);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.5701347,1.2652914);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.4045932,1.0778753);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1077470,2.5274865);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(8.0901327,3.1087918);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.4548411,4.9593176);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.4335794,3.0383570);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.4601247,0.5195755);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.6861963,3.0976259);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.3287160,3.0902001);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.7560508,1.4533053);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.2971377,0.3618577);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.2727637,3.0747036);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.8686915,2.6802706);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.9575688,2.4791264);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.8503810,3.1030097);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3246510,8.8952770);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.8011589,0.3165149);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.2375977,1.3019703);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.8153872,2.4485802);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.0998075,1.3160567);
+  */
   h2_dimudimu_control_Iso_offDiagonal_2D_points->Draw("same");
 
   TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp = new TH2D("h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp","h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp", m_bins, m_min, m_max, m_bins, m_min, m_max);
@@ -439,11 +387,14 @@ h2_background->SetContour(nb);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerStyle(20);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerSize(2.0);
   //2015
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3789996, 1.8526362);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.2658947, 2.3115363);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7474905, 2.7977094);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1979647, 0.8495020);
+  /*
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3789996, 1.8526362);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.2658947, 2.3115363);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7474905, 2.7977094);
+  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1979647, 0.8495020);
+  */
   //2016
+  /*
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.3394618, 4.8828525);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1085057, 0.8863269);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0989241, 0.4605314);
@@ -500,80 +451,16 @@ h2_background->SetContour(nb);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.2984790, 0.3616573);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(5.3474988, 3.1133358);
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0882096, 1.4727710);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.3394618,4.8828525);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1085057,0.8863269);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0989241,0.4605314);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.3275566,2.9306011);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0705516,2.6184160);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.6725933,2.2082293);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.7733180,2.9909498);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0867397,2.5654206);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0961875,2.6408567);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.3725998,1.5676055);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2796572,1.3030284);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2739968,3.1119864);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0964052,1.9947856);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.0735573,3.2055511);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3029867,8.0022907);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3957569,2.0971429);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1111078,0.9851592);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.5590274,2.1472802);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1052675,4.2853865);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1172916,0.3317201);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2526102,1.9579395);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.6937513,1.3820128);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.6968700,3.0599653);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0868136,2.0693941);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.8807374,3.0353784);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7097760,1.9626674);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.3732197,3.1166579);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.9293151,7.1705985);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.6633046,1.1430702);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.5893211,1.2128995);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.0970430,2.8785300);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2659432,1.8314888);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0805194,1.8598787);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.9651384,1.4651534);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1265718,4.8931441);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.3555525,3.0687544);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.5701347,1.2652914);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.4045932,1.0778753);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1077470,2.5274865);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(8.0901327,3.1087918);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.4548411,4.9593176);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.4335794,3.0383570);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.4601247,0.5195755);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.6861963,3.0976259);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.3287160,3.0902001);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.7560508,1.4533053);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.2971377,0.3618577);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.2727637,3.0747036);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.8686915,2.6802706);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.9575688,2.4791264);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.8503810,3.1030097);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3246510,8.8952770);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.8011589,0.3165149);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.2375977,1.3019703);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.8153872,2.4485802);
-  //h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.0998075,1.3160567);
+  */
   h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Draw("same");
 
   TH2D* h2_signal = new TH2D("h2_signal","h2_signal", m_bins, m_min, m_max, m_bins, m_min, m_max);
   //2015
-  //h2_signal->Fill(0.404, 0.560);
+  /*
+  h2_signal->Fill(0.404, 0.560);
+  */
   //2016
-  //h2_signal->Fill(0.4258973, 0.5848349);
-  //h2_signal->Fill(0.9244344, 0.9522788);
-  //h2_signal->Fill(1.2550838, 1.1479498);
-  //h2_signal->Fill(1.3538074, 1.4859896);
-  //h2_signal->Fill(1.8218700, 1.8939131);
-  //h2_signal->Fill(1.9404293, 1.8155703);
-  //h2_signal->Fill(2.3835377, 2.3580303);
-  //h2_signal->Fill(2.8252353, 2.6458165);
-  //h2_signal->Fill(3.0625894, 3.0958375);
-  //h2_signal->Fill(3.0722196, 3.2662851);
-  //h2_signal->Fill(3.0728187, 3.0538983);
-  //h2_signal->Fill(3.1553862, 2.8489651);
+  /*
   h2_signal->Fill(0.8079733, 0.7267103);
   h2_signal->Fill(2.8599584, 3.0017674);
   h2_signal->Fill(0.4258973, 0.5848349);
@@ -587,7 +474,7 @@ h2_background->SetContour(nb);
   h2_signal->Fill(3.0641751, 3.0972354);
   h2_signal->Fill(1.9403913, 1.8196427);
   h2_signal->Fill(1.3540757, 1.4834892);
-
+  */
   h2_signal->GetXaxis()->SetTitle("m_{(#mu#mu)_{1}} [GeV]");
   h2_signal->GetXaxis()->CenterTitle(true);
   h2_signal->GetXaxis()->SetTitleOffset(0.93);

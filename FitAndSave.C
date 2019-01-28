@@ -57,8 +57,8 @@ void FitAndSave() {
   bool useTrig=true;
   TString iso_cut= "2";
   const double       m_min  = 0.2113;
-  const double       m_max  = 58.;
-  const unsigned int m_bins = 2000;
+  const double       m_max  = 11.;
+  const unsigned int m_bins = 270;
 
   //Style
   setTDRStyle();
