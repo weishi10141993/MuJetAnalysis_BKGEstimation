@@ -112,7 +112,7 @@ void FitAndSave() {
   //TTree: bb Control Region
   TTree* tree_dimuorphan_bg_m1                          = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
   TTree* tree_dimuorphan_bg_m2                          = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
-  //TTree: Signal
+  //TTree: not used in this macro, to be used in other macros (PlotSignal_and_Background and PlotBBbar)
   TTree* tree_dimudimu_diagonal_2D                      = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massC                = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massF                = chain_data_dimudimu.CopyTree(cut_diagonal);
@@ -169,7 +169,7 @@ void FitAndSave() {
   ds_dimudimu_control_Iso_offDiagonal_1D->append(*ds_dimudimu_control_Iso_offDiagonal_1D_massF);
   RooDataSet* ds_dimudimu_signal_2D = new RooDataSet("ds_dimudimu_signal_2D","ds_dimudimu_signal_2D", tree_dimudimu_signal_2D, RooArgSet(m1,m2));
 
-  cout<<"-----Now Printing abd importing the Datasets:-----"<<endl;
+  cout<<"-----Now Printing and importing the Datasets:-----"<<endl;
   ds_dimuorphan_bg_m1->Print("s");
   ds_dimuorphan_bg_m2->Print("s");
   ds_dimudimu_diagonal_2D->Print("s");
@@ -230,7 +230,7 @@ void FitAndSave() {
   //Initial combianatorial
   //also very important, before fix to 0.5
   w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.3], MmumuC_p[0.05, 0.0, 1.5])");
-  // 0 or ruin the DPF  FIRST KINK
+  //FIRST KINK
   w->factory("Bernstein::bgC(m1,{bC06[9.5766e+00,0.1,15.], bC16[ 1.0705e-01,0.,3.], bC26[3.5184e-05,0.,3.], bC36[1.259,0.,5.], bC46[2.5370e-03,0.,3.], bC56[5.7432e-01,0.,3.], bC66[3.9353e-01,0.1,4.]})");
   // Resonances
   w->factory("Gaussian::etaC(m1,0.548,0.033)");
@@ -254,7 +254,7 @@ void FitAndSave() {
   //Initial combianatorial
   //also very important, before fix to 0.5
   w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.3], MmumuC_p[0.05, 0.0, 1.5])");
-  // 0 or ruin the DPF  FIRST KINK
+  //FIRST KINK
   w->factory("Bernstein::bgC(m1,{bC06[9.5766e+00,0.1,15.], bC16[ 1.0705e-01,0.,3.], bC26[3.5184e-05,0.,3.], bC36[1.259,0.,5.], bC46[2.5370e-03,0.,3.], bC56[5.7432e-01,0.,3.], bC66[3.9353e-01,0.1,4.]})");
   // Resonances
   w->factory("Gaussian::etaC(m1,0.548,0.033)");
@@ -453,10 +453,10 @@ void FitAndSave() {
   w->factory("PROD::template2D(template1D_m1,template1D_m2)");
 
   //****************************************************************************
-  //                       Create 1D templates for J/psi
+  //                       Extract 1D J/psi template from template m1
   //****************************************************************************
   cout << "Create templates for J/psi" << endl;
-  //  template for m1
+
   RooRealVar* JpsiC_mean_fitresult = (RooRealVar*) rC->floatParsFinal().find("JpsiC_mean");
   cout << "JpsiC_mean " << JpsiC_mean_fitresult->getVal() << endl;
   RooRealVar* JpsiC_sigma_fitresult = (RooRealVar*) rC->floatParsFinal().find("JpsiC_sigma");
@@ -486,21 +486,9 @@ void FitAndSave() {
   c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.pdf");
   c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.png");
 
- // RooPlot* plot_exp_m1 = w->var("m1")->frame(Title("J/psi template m1"),Bins(m_bins));
- // RooCBShape Jpsi_m1("Jpsi_m1", "Jpsi_m1", m1, Jpsi_m1_mean, Jpsi_m1_sigma, Jpsi_m1_alpha, Jpsi_m1_n);
- // w->pdf("Jpsi_m1")->plotOn(plot_Jpsi_m1,LineColor(kRed),Precision(0.0001),Name("plot_Jpsi_m1"));
- // TCanvas * c_template1D_exp_m1_RooPlot = new TCanvas("c_template1D_exp_m1_RooPlot", "c_template1D_esp_m1_RooPlot");
- // c_template1D_exp_m1_RooPlot->cd();
- // SizeBin = plot_exp_m1->GetXaxis()->GetBinCenter(3) - plot_exp_m1->GetXaxis()->GetBinCenter(2);
- // snprintf(c_SizeBin,50,"%.2f",SizeBin);
- // Yname = "Events / (" + std::string(c_SizeBin) + "[GeV])";
- // plot_exp_m1->GetYaxis()->SetTitle( Yname.Data() );
- // plot_exp_m1->Draw();
- // txtHeader->Draw();
- // c_template1D_exp_m1_RooPlot->SaveAs("figures/template1D_Exp_m1_RooPlot.pdf");
- // c_template1D_exp_m1_RooPlot->SaveAs("figures/template1D_Exp_m1_RooPlot.png");
-
-  //  template for m2
+  //****************************************************************************
+  //                       Extract 1D J/psi template from template m2
+  //****************************************************************************
   RooRealVar* JpsiF_mean_fitresult = (RooRealVar*) rF->floatParsFinal().find("JpsiF_mean");
   cout << "JpsiF_mean " << JpsiF_mean_fitresult->getVal() << endl;
   RooRealVar* JpsiF_sigma_fitresult = (RooRealVar*) rF->floatParsFinal().find("JpsiF_sigma");

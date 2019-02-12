@@ -94,8 +94,8 @@ void PlotSignal_and_Background() {
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   const double       m_min  = 0.2113;
-  const double       m_max  = 11.;
-  const unsigned int m_bins = 270;
+  const double       m_max  = 9.;
+  const unsigned int m_bins = 220;
 
   // Diagonal region |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
   const double kA = 0.13;
