@@ -57,8 +57,8 @@ void FitAndSave() {
   bool useTrig=true;
   TString iso_cut= "2";
   const double       m_min  = 0.2113;
-  const double       m_max  = 11.;
-  const unsigned int m_bins = 270;
+  const double       m_max  = 9.;
+  const unsigned int m_bins = 220;
 
   //Style
   setTDRStyle();
@@ -107,8 +107,8 @@ void FitAndSave() {
   TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
-  TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
+  //TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
   //TTree: bb Control Region
   TTree* tree_dimuorphan_bg_m1                          = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
   TTree* tree_dimuorphan_bg_m2                          = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
@@ -122,12 +122,12 @@ void FitAndSave() {
   TTree* tree_dimudimu_control_Iso_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
-  TTree* tree_dimudimu_control_nonIso                   = chain_data_dimudimu.CopyTree(cut_control_nonIso);
   TTree* tree_dimudimu_signal_2D                        = chain_data_dimudimu.CopyTree(cut_signal);
-  cout<<"------OffDiagonal SCAN------"<<endl;
-//  tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF:isoC_1mm:isoF_1mm:run:event:lumi");
+  //TTree* tree_dimudimu_control_nonIso                   = chain_data_dimudimu.CopyTree(cut_control_nonIso);
+  //cout<<"------OffDiagonal SCAN------"<<endl;
+  //tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF:isoC_1mm:isoF_1mm:run:event:lumi");
   //cout<<"------Signal SCAN------"<<endl;
-//  tree_dimudimu_signal_2D->Scan("massC:massF:run:event:lumi:isoC_1mm:isoF_1mm");
+  //tree_dimudimu_signal_2D->Scan("massC:massF:run:event:lumi:isoC_1mm:isoF_1mm");
   //Setting Names bb Control region
   tree_dimuorphan_bg_m1->GetBranch("orph_dimu_mass")->SetName("m1");
   tree_dimuorphan_bg_m2->GetBranch("orph_dimu_mass")->SetName("m2");
