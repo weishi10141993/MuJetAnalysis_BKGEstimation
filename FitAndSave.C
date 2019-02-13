@@ -56,9 +56,14 @@ void FitAndSave() {
   //Parameteres
   bool useTrig=true;
   TString iso_cut= "2";
+  //dimu mass
   const double       m_min  = 0.2113;
   const double       m_max  = 9.;
   const unsigned int m_bins = 220;
+  //number of b jets
+  const double       b_min  = 0.;
+  const double       b_max  = 10.;
+  const unsigned int b_bins = 10;
 
   //Style
   setTDRStyle();
@@ -90,10 +95,28 @@ void FitAndSave() {
   //Define RooRealVar
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
   RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV/#it{c}^{2}");
+  RooRealVar m1TightBJet("m1TightBJet","m_{#mu#mu_{1}} TightBJet",b_min,b_max,"");
+  RooRealVar m1MediumBJet("m1MediumBJet","m_{#mu#mu_{1}} MediumBJet",b_min,b_max,"");
+  RooRealVar m1LooseBJet("m1LooseBJet","m_{#mu#mu_{1}} LooseBJet",b_min,b_max,"");
+  RooRealVar m2TightBJet("m2TightBJet","m_{#mu#mu_{2}} TightBJet",b_min,b_max,"");
+  RooRealVar m2MediumBJet("m2MediumBJet","m_{#mu#mu_{2}} MediumBJet",b_min,b_max,"");
+  RooRealVar m2LooseBJet("m2LooseBJet","m_{#mu#mu_{2}} LooseBJet",b_min,b_max,"");
   m1.setBins(m_bins);
   m2.setBins(m_bins);
+  m1TightBJet.setBins(b_bins);
+  m1MediumBJet.setBins(b_bins);
+  m1LooseBJet.setBins(b_bins);
+  m2TightBJet.setBins(b_bins);
+  m2MediumBJet.setBins(b_bins);
+  m2LooseBJet.setBins(b_bins);
   w->import(m1);
   w->import(m2);
+  w->import(m1TightBJet);
+  w->import(m1MediumBJet);
+  w->import(m1LooseBJet);
+  w->import(m2TightBJet);
+  w->import(m2MediumBJet);
+  w->import(m2LooseBJet);
   //Selection bb Control Region
   ostringstream stream_cut_bg_m1_iso;
   if(useTrig) stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
@@ -133,6 +156,13 @@ void FitAndSave() {
   //Setting Names bb Control region
   tree_dimuorphan_bg_m1->GetBranch("orph_dimu_mass")->SetName("m1");
   tree_dimuorphan_bg_m2->GetBranch("orph_dimu_mass")->SetName("m2");
+  //Get number of b-jets, for either m1 or m2 template, we expect at least 1 b-jet in each event
+  tree_dimuorphan_bg_m1->GetBranch("NPATJetTightB")->SetName("m1TightBJet");
+  tree_dimuorphan_bg_m1->GetBranch("NPATJetMediumB")->SetName("m1MediumBJet");
+  tree_dimuorphan_bg_m1->GetBranch("NPATJetLooseB")->SetName("m1LooseBJet");
+  tree_dimuorphan_bg_m2->GetBranch("NPATJetTightB")->SetName("m2TightBJet");
+  tree_dimuorphan_bg_m2->GetBranch("NPATJetMediumB")->SetName("m2MediumBJet");
+  tree_dimuorphan_bg_m2->GetBranch("NPATJetLooseB")->SetName("m2LooseBJet");
   //Setting Names bb Signal
   tree_dimudimu_diagonal_2D->GetBranch("massC")->SetName("m1");
   tree_dimudimu_diagonal_2D->GetBranch("massF")->SetName("m2");
@@ -151,7 +181,14 @@ void FitAndSave() {
   //Creating dataset bb Control Region
   RooDataSet* ds_dimuorphan_bg_m1 = new RooDataSet("ds_dimuorphan_bg_m1","ds_dimuorphan_bg_m1", tree_dimuorphan_bg_m1, RooArgSet(m1));
   RooDataSet* ds_dimuorphan_bg_m2 = new RooDataSet("ds_dimuorphan_bg_m2","ds_dimuorphan_bg_m2", tree_dimuorphan_bg_m2, RooArgSet(m2));
-  ////Creating dataset Signal
+  //For b-jets
+  RooDataSet* ds_dimuorphan_bg_m1TightBJet = new RooDataSet("ds_dimuorphan_bg_m1TightBJet","ds_dimuorphan_bg_m1TightBJet", tree_dimuorphan_bg_m1, RooArgSet(m1TightBJet));
+  RooDataSet* ds_dimuorphan_bg_m1MediumBJet = new RooDataSet("ds_dimuorphan_bg_m1MediumBJet","ds_dimuorphan_bg_m1MediumBJet", tree_dimuorphan_bg_m1, RooArgSet(m1MediumBJet));
+  RooDataSet* ds_dimuorphan_bg_m1LooseBJet = new RooDataSet("ds_dimuorphan_bg_m1LooseBJet","ds_dimuorphan_bg_m1LooseBJet", tree_dimuorphan_bg_m1, RooArgSet(m1LooseBJet));
+  RooDataSet* ds_dimuorphan_bg_m2TightBJet = new RooDataSet("ds_dimuorphan_bg_m2TightBJet","ds_dimuorphan_bg_m2TightBJet", tree_dimuorphan_bg_m2, RooArgSet(m2TightBJet));
+  RooDataSet* ds_dimuorphan_bg_m2MediumBJet = new RooDataSet("ds_dimuorphan_bg_m2MediumBJet","ds_dimuorphan_bg_m2MediumBJet", tree_dimuorphan_bg_m2, RooArgSet(m2MediumBJet));
+  RooDataSet* ds_dimuorphan_bg_m2LooseBJet = new RooDataSet("ds_dimuorphan_bg_m2LooseBJet","ds_dimuorphan_bg_m2LooseBJet", tree_dimuorphan_bg_m2, RooArgSet(m2LooseBJet));
+  //Creating dataset Signal
   RooDataSet* ds_dimudimu_diagonal_2D = new RooDataSet("ds_dimudimu_diagonal_2D","ds_dimudimu_diagonal_2D", tree_dimudimu_diagonal_2D, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_diagonal_1D_massC = new RooDataSet("ds_dimudimu_diagonal_1D_massC","ds_dimudimu_diagonal_1D_massC", tree_dimudimu_diagonal_1D_massC, RooArgSet(m1));
   RooDataSet* ds_dimudimu_diagonal_1D_massF = new RooDataSet("ds_dimudimu_diagonal_1D_massF","ds_dimudimu_diagonal_1D_massF", tree_dimudimu_diagonal_1D_massF, RooArgSet(m1));
@@ -172,6 +209,12 @@ void FitAndSave() {
   cout<<"-----Now Printing and importing the Datasets:-----"<<endl;
   ds_dimuorphan_bg_m1->Print("s");
   ds_dimuorphan_bg_m2->Print("s");
+  ds_dimuorphan_bg_m1TightBJet->Print("s");
+  ds_dimuorphan_bg_m1MediumBJet->Print("s");
+  ds_dimuorphan_bg_m1LooseBJet->Print("s");
+  ds_dimuorphan_bg_m2TightBJet->Print("s");
+  ds_dimuorphan_bg_m2MediumBJet->Print("s");
+  ds_dimuorphan_bg_m2LooseBJet->Print("s");
   ds_dimudimu_diagonal_2D->Print("s");
   ds_dimudimu_diagonal_1D_massC->Print("s");
   ds_dimudimu_diagonal_1D_massF->Print("s");
@@ -187,6 +230,12 @@ void FitAndSave() {
   ds_dimudimu_signal_2D->Print("s");
   w->import(*ds_dimuorphan_bg_m1);
   w->import(*ds_dimuorphan_bg_m2);
+  w->import(*ds_dimuorphan_bg_m1TightBJet);
+  w->import(*ds_dimuorphan_bg_m1MediumBJet);
+  w->import(*ds_dimuorphan_bg_m1LooseBJet);
+  w->import(*ds_dimuorphan_bg_m2TightBJet);
+  w->import(*ds_dimuorphan_bg_m2MediumBJet);
+  w->import(*ds_dimuorphan_bg_m2LooseBJet);
   w->import(*ds_dimudimu_diagonal_2D);
   w->import(*ds_dimudimu_diagonal_1D_massC);
   w->import(*ds_dimudimu_diagonal_1D_massF);
@@ -212,11 +261,43 @@ void FitAndSave() {
   TCanvas * c1 = new TCanvas("c1");
   c1->cd(); plotC1->Draw(); txtHeader->Draw();
   c1->SaveAs("figures/h_dimuorphan_bg_m1.pdf");
+
   RooPlot* plotC2 = w->var("m2")->frame(Title("bb data"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotC2, DataError(RooAbsData::SumW2), Name("data_m2"));
-  plotC2->Draw();
-  txtHeader->Draw();
+  plotC2->Draw(); txtHeader->Draw();
   c1->SaveAs("figures/h_dimuorphan_bg_m2.pdf");
+
+  //plot b-jets under m_i template cuts
+  RooPlot* plotB1 = w->var("m1TightBJet")->frame(Title("m1: TightBJet"),Bins(b_bins));
+  w->data("ds_dimuorphan_bg_m1TightBJet")->plotOn(plotB1, DataError(RooAbsData::SumW2), Name("data_m1TightBJet"));
+  plotB1->Draw(); txtHeader->Draw();
+  c1->SaveAs("figures/h_dimuorphan_bg_m1_TightBJet.png");
+
+  RooPlot* plotB2 = w->var("m1MediumBJet")->frame(Title("m1: MediumBJet"),Bins(b_bins));
+  w->data("ds_dimuorphan_bg_m1MediumBJet")->plotOn(plotB2, DataError(RooAbsData::SumW2), Name("data_m1MediumBJet"));
+  plotB2->Draw(); txtHeader->Draw();
+  c1->SaveAs("figures/h_dimuorphan_bg_m1_MediumBJet.png");
+
+  RooPlot* plotB3 = w->var("m1LooseBJet")->frame(Title("m1: LooseBJet"),Bins(b_bins));
+  w->data("ds_dimuorphan_bg_m1LooseBJet")->plotOn(plotB3, DataError(RooAbsData::SumW2), Name("data_m1LooseBJet"));
+  plotB3->Draw(); txtHeader->Draw();
+  c1->SaveAs("figures/h_dimuorphan_bg_m1_LooseBJet.png");
+
+  RooPlot* plotB4 = w->var("m2TightBJet")->frame(Title("m2: TightBJet"),Bins(b_bins));
+  w->data("ds_dimuorphan_bg_m2TightBJet")->plotOn(plotB4, DataError(RooAbsData::SumW2), Name("data_m2TightBJet"));
+  plotB4->Draw(); txtHeader->Draw();
+  c1->SaveAs("figures/h_dimuorphan_bg_m2_TightBJet.png");
+
+  RooPlot* plotB5 = w->var("m2MediumBJet")->frame(Title("m2: MediumBJet"),Bins(b_bins));
+  w->data("ds_dimuorphan_bg_m2MediumBJet")->plotOn(plotB5, DataError(RooAbsData::SumW2), Name("data_m2MediumBJet"));
+  plotB5->Draw(); txtHeader->Draw();
+  c1->SaveAs("figures/h_dimuorphan_bg_m2_MediumBJet.png");
+
+  RooPlot* plotB6 = w->var("m2LooseBJet")->frame(Title("m2: LooseBJet"),Bins(b_bins));
+  w->data("ds_dimuorphan_bg_m2LooseBJet")->plotOn(plotB6, DataError(RooAbsData::SumW2), Name("data_m2LooseBJet"));
+  plotB6->Draw(); txtHeader->Draw();
+  c1->SaveAs("figures/h_dimuorphan_bg_m2_LooseBJet.png");
+
   delete c1;
 
   //****************************************************************************
