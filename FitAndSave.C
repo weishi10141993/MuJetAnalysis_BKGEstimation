@@ -126,40 +126,23 @@ void FitAndSave() {
 
   //Selection for events going into 1D templates m1 and m2: use Events_orphan tree
   ostringstream stream_cut_bg_m1_iso;
-  stream_cut_bg_m1_iso << "orph_dimu_Mu0_isoTk0p3 < " << iso_cut << " && orph_dimu_Mu0_isoTk0p3 >= 0 &&
-                          ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) &&
-                          orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_AllTrackerMu &&
-                          (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " )
-                          || ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) &&
-                          orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m1_iso << "orph_dimu_Mu0_isoTk0p3 < " << iso_cut << " && orph_dimu_Mu0_isoTk0p3 >= 0 && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_AllTrackerMu && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) || ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
 
   ostringstream stream_cut_bg_m2_iso;
-  stream_cut_bg_m2_iso << "orph_dimu_Mu0_isoTk0p3 < " << iso_cut << " && orph_dimu_Mu0_isoTk0p3 >= 0 &&
-                          ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) &&
-                          orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_AllTrackerMu &&
-                          orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " &&
-                          orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m2_iso << "orph_dimu_Mu0_isoTk0p3 < " << iso_cut << " && orph_dimu_Mu0_isoTk0p3 >= 0 && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_AllTrackerMu && orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
 
   //Selection for signal: use Events tree, for validation of the method?
   ostringstream stream_cut_diagonal;
-  stream_cut_diagonal << "TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
-                          massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+  stream_cut_diagonal << "TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
 
   ostringstream stream_cut_signal;
-  stream_cut_signal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 &&
-                        diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 &&
-                        TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
-                        massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+  stream_cut_signal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
 
   ostringstream stream_cut_control_offDiagonal;
-  stream_cut_control_offDiagonal << "TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
-                                     massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+  stream_cut_control_offDiagonal << "TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
 
   ostringstream stream_cut_control_Iso_offDiagonal;
-  stream_cut_control_Iso_offDiagonal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 &&
-                                         diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 &&
-                                         TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
-                                         massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+  stream_cut_control_Iso_offDiagonal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
 
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
