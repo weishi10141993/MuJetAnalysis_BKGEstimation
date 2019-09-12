@@ -53,15 +53,16 @@
 using namespace RooFit;
 
 void FitAndSave() {
-  //Parameteres
-  bool useTrig=true;
-  TString iso_cut= "2";
-  //dimu mass
+  //Constants
+  TString iso_cut = "1.5";//isolation cut for leading muon in dimu for Run2 analysis
+  TString pT_cut = "17";
+  TString eta_cut = "0.9";
+
   const double       m_min  = 0.2113;
   const double       m_max  = 9.;
   const unsigned int m_bins = 220;
-  //number of b jets
-  const double       b_min  = 0.;
+
+  const double       b_min  = 0.;//for b jets
   const double       b_max  = 10.;
   const unsigned int b_bins = 10;
 
@@ -75,13 +76,15 @@ void FitAndSave() {
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
   txtHeader->SetHeader("CMS Prelim. 2017C-F  #sqrt{s} = 13 TeV   L_{int} = 36.734 fb^{-1}");
+
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");
   TString Comm = "mkdir -p figures/";
   system( Comm.Data() );
+
   //Input file
-  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL3PXFL2/Events");
-  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL3PXFL2/Events_orphan");
+  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL4PXFL3/Events_orphan");
   std::ifstream Myfile( "Input_2017CDEF.txt" );
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
@@ -92,6 +95,7 @@ void FitAndSave() {
       chain_data_dimuorphan.Add(Line2.Data());
     }
   }
+
   //Define RooRealVar
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
   RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV/#it{c}^{2}");
@@ -101,6 +105,7 @@ void FitAndSave() {
   RooRealVar m2TightBJet("m2TightBJet","m_{#mu#mu_{2}} TightBJet",b_min,b_max,"");
   RooRealVar m2MediumBJet("m2MediumBJet","m_{#mu#mu_{2}} MediumBJet",b_min,b_max,"");
   RooRealVar m2LooseBJet("m2LooseBJet","m_{#mu#mu_{2}} LooseBJet",b_min,b_max,"");
+
   m1.setBins(m_bins);
   m2.setBins(m_bins);
   m1TightBJet.setBins(b_bins);
@@ -109,6 +114,7 @@ void FitAndSave() {
   m2TightBJet.setBins(b_bins);
   m2MediumBJet.setBins(b_bins);
   m2LooseBJet.setBins(b_bins);
+
   w->import(m1);
   w->import(m2);
   w->import(m1TightBJet);
@@ -117,24 +123,57 @@ void FitAndSave() {
   w->import(m2TightBJet);
   w->import(m2MediumBJet);
   w->import(m2LooseBJet);
-  //Selection bb Control Region
+
+  //Selection for events going into 1D templates m1 and m2: use Events_orphan tree
   ostringstream stream_cut_bg_m1_iso;
-  if(useTrig) stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && containstrig2 > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-  else        stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && ((orph_PtMu0>17 && TMath::Abs(orph_EtaMu0<0.9)) || (orph_PtMu1>17 && TMath::Abs(orph_EtaMu1<0.9))) && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m1_iso << "orph_dimu_Mu0_isoTk0p3 < " << iso_cut << " && orph_dimu_Mu0_isoTk0p3 >= 0 &&
+                          ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) &&
+                          orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_AllTrackerMu &&
+                          (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " )
+                          || ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) &&
+                          orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
+
   ostringstream stream_cut_bg_m2_iso;
-  if(useTrig) stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && containstrig > 0 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
-  else        stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && orph_dimu_isoTk >= 0 && orph_PtOrph>17 && TMath::Abs(orph_EtaOrph)<0.9 && orph_dimu_mass > "<< m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m2_iso << "orph_dimu_Mu0_isoTk0p3 < " << iso_cut << " && orph_dimu_Mu0_isoTk0p3 >= 0 &&
+                          ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) &&
+                          orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_AllTrackerMu &&
+                          orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " &&
+                          orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
+
+  //Selection for signal: use Events tree, for validation of the method?
+  ostringstream stream_cut_diagonal;
+  stream_cut_diagonal << "TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
+                          massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+
+  ostringstream stream_cut_signal;
+  stream_cut_signal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 &&
+                        diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 &&
+                        TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
+                        massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+
+  ostringstream stream_cut_control_offDiagonal;
+  stream_cut_control_offDiagonal << "TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
+                                     massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+
+  ostringstream stream_cut_control_Iso_offDiagonal;
+  stream_cut_control_Iso_offDiagonal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 &&
+                                         diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 &&
+                                         TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) &&
+                                         massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
-  //Selection Signal
-  TString cut_diagonal                = "abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
-  TString cut_control_offDiagonal     = "abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
-  TString cut_control_Iso_offDiagonal = "isoC_1mm >= 0 && isoC_1mm < 2. && isoF_1mm >= 0 && isoF_1mm < 2. && abs(massC-massF) > (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
-  TString cut_signal                  = "isoC_1mm>=0 && isoC_1mm<2. && isoF_1mm>=0 && isoF_1mm<2. && abs(massC-massF) <= (0.13 + 0.065*(massC+massF)/2.) && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
+  TString cut_diagonal = stream_cut_diagonal.str();
+  TString cut_control_offDiagonal = stream_cut_control_offDiagonal.str();
+  TString cut_control_Iso_offDiagonal = stream_cut_control_Iso_offDiagonal.str();
+  TString cut_signal = stream_cut_signal.str();
+
   //TString cut_control_nonIso          = "isoC_1mm > 2. && isoC_1mm < 8. && isoF_1mm > 2. && isoF_1mm < 8. && massC > 0.25 && massC < 9. && massF > 0.25 && massF < 9.";
+
   //TTree: bb Control Region
   TTree* tree_dimuorphan_bg_m1                          = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso);
   TTree* tree_dimuorphan_bg_m2                          = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
+
   //TTree: not used in this macro, to be used in other macros (PlotSignal_and_Background and PlotBBbar)
   TTree* tree_dimudimu_diagonal_2D                      = chain_data_dimudimu.CopyTree(cut_diagonal);
   TTree* tree_dimudimu_diagonal_1D_massC                = chain_data_dimudimu.CopyTree(cut_diagonal);
