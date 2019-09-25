@@ -75,7 +75,7 @@ void FitAndSave() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Prelim. 2017C-F  #sqrt{s} = 13 TeV   L_{int} = 36.734 fb^{-1}");
+  txtHeader->SetHeader("CMS Preliminary 2017  #sqrt{s} = 13 TeV   L_{int} = 36.734 fb^{-1}");
 
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");
@@ -436,7 +436,7 @@ void FitAndSave() {
   h_dataFit1->Draw("ep");
   c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.pdf");
   c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.png");
-  float chi2_C = plotC->chiSquare(23);
+  float chi2_C = plotC->chiSquare(23); //d.o.f = 23
 
   //****************************************************************************
   //                         Create template for m2
@@ -630,6 +630,7 @@ void FitAndSave() {
   //                           Save to Workspace
   //****************************************************************************
   w->writeToFile("ws_FINAL.root");
+  //2016 fit: chi2_C ~ chi2_F (=chi^2/d.o.f.) ~ 1.3
   cout<<"template1D_m1_RooPlot has "<<chi2_C<<endl;
   cout<<"template1D_m2_RooPlot has "<<chi2_F<<endl;
 }

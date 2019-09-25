@@ -69,7 +69,7 @@ void PlotSignal_and_Background() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("#bf{CMS Preliminary}              36.734 fb^{-1} (13 TeV)");
+  txtHeader->SetHeader("#bf{CMS Preliminary 2017}              36.734 fb^{-1} (13 TeV)");
 
   TLegend *txtHeader_CMS = new TLegend(.2,0.81,0.7,0.86);
   txtHeader_CMS->SetFillColor(kWhite);
@@ -97,11 +97,12 @@ void PlotSignal_and_Background() {
   const double       m_max  = 9.;
   const unsigned int m_bins = 220;
 
-  // Diagonal region |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
-  const double kA = 0.13;
-  const double kB = 0.065;
+  // Diagonal region
+  // A SR is not always like this: |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
+  //const double kA = 0.13;
+  //const double kB = 0.065;
 
-  double nEvents_Jpsi = 0.12;
+  double nEvents_Jpsi = 0.12;//Value from 2016 analysis
 
   //****************************************************************************
   //                         Draw 2D template m1 x m2
