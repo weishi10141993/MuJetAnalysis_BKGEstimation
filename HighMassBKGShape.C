@@ -42,8 +42,8 @@ TString DATA_files[4] = {
   "HighMassBKGShape_2017F.root"
 };
 
-TString store = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/"; //main dir
-TString outFile = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/"; //output
+TString store = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/"; //input dir
+TString outFile = "/home/ws13/RunII2017/CMSSW_9_4_7/src/DataDrivenBKG/"; //output dir
 
 //****************************
 //* USER modify above ONLY   *
