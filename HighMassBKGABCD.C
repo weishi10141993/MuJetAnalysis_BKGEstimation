@@ -73,4 +73,14 @@ void HighMassBKGABCD() {
 
   cout<<"********************************************************************"<<endl;
 
+  //Draw <A> ErrA in one plot
+  TFile myPlot("ABCD_FINAL.root","RECREATE");
+  TCanvas *C1=new TCanvas("C1","Background Yield in A",700,500);
+  C1->cd();
+  TGraphErrors *Yield = new TGraphErrors(29, A, VarX, ErrA, 0);
+  Yield->Draw("ap");
+  //Add third axis
+  C1->Write();
+
+  myPlot.Close();
 }

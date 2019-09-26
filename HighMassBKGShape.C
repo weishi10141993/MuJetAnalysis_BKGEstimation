@@ -143,4 +143,6 @@ void HighMassBKGShape()
   DATA_SR_m2->Draw("ESAME");
   SR2->Write();
 
+  myPlot.Close();
+
 } // End function: void
