@@ -10,7 +10,6 @@
 #include "TCanvas.h"
 #include <vector>
 #include "stdio.h"
-#include "math.h"
 #include "TMath.h"
 #include "TGraph.h"
 #include "TSystem.h"
@@ -70,25 +69,29 @@ void HighMassBKGShape()
     std::cout << "Adding file #"<< i+1 << ": " << SM_BKG_MC_file_name.Data() << std::endl;
     file_tmp = TFile::Open(SM_BKG_MC_file_name);
 
-    BKGShapeCRmassC->Scale(SM_BKG_MC_ScaleFactors[i]);
-    BKGShapeCRmassC->SetFillColor(SM_BKG_MC_Colors[i]);
-    BKGShapeCRmassC->SetLineColor(SM_BKG_MC_Colors[i]);
-    SM_BKG_MC_hs_CR_m1->Add(BKGShapeCRmassC);
+    TH1F *CloneBKGShapeCRmassC = (TH1F*)file_tmp->Get("BKGShapeCRmassC")->Clone("CloneBKGShapeCRmassC");
+    CloneBKGShapeCRmassC->Scale(SM_BKG_MC_ScaleFactors[i]);
+    CloneBKGShapeCRmassC->SetFillColor(SM_BKG_MC_Colors[i]);
+    CloneBKGShapeCRmassC->SetLineColor(SM_BKG_MC_Colors[i]);
+    SM_BKG_MC_hs_CR_m1->Add(CloneBKGShapeCRmassC);
 
-    BKGShapeCRmassF->Scale(SM_BKG_MC_ScaleFactors[i]);
-    BKGShapeCRmassF->SetFillColor(SM_BKG_MC_Colors[i]);
-    BKGShapeCRmassF->SetLineColor(SM_BKG_MC_Colors[i]);
-    SM_BKG_MC_hs_CR_m2->Add(BKGShapeCRmassF);
+    TH1F *CloneBKGShapeCRmassF = (TH1F*)file_tmp->Get("BKGShapeCRmassF")->Clone("CloneBKGShapeCRmassF");
+    CloneBKGShapeCRmassF->Scale(SM_BKG_MC_ScaleFactors[i]);
+    CloneBKGShapeCRmassF->SetFillColor(SM_BKG_MC_Colors[i]);
+    CloneBKGShapeCRmassF->SetLineColor(SM_BKG_MC_Colors[i]);
+    SM_BKG_MC_hs_CR_m2->Add(CloneBKGShapeCRmassF);
 
-    BKGShapeSRmassC->Scale(SM_BKG_MC_ScaleFactors[i]);
-    BKGShapeSRmassC->SetFillColor(SM_BKG_MC_Colors[i]);
-    BKGShapeSRmassC->SetLineColor(SM_BKG_MC_Colors[i]);
-    SM_BKG_MC_hs_SR_m1->Add(BKGShapeSRmassC);
+    TH1F *CloneBKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("CloneBKGShapeSRmassC");
+    CloneBKGShapeSRmassC->Scale(SM_BKG_MC_ScaleFactors[i]);
+    CloneBKGShapeSRmassC->SetFillColor(SM_BKG_MC_Colors[i]);
+    CloneBKGShapeSRmassC->SetLineColor(SM_BKG_MC_Colors[i]);
+    SM_BKG_MC_hs_SR_m1->Add(CloneBKGShapeSRmassC);
 
-    BKGShapeSRmassF->Scale(SM_BKG_MC_ScaleFactors[i]);
-    BKGShapeSRmassF->SetFillColor(SM_BKG_MC_Colors[i]);
-    BKGShapeSRmassF->SetLineColor(SM_BKG_MC_Colors[i]);
-    SM_BKG_MC_hs_SR_m2->Add(BKGShapeSRmassF);
+    TH1F *CloneBKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("CloneBKGShapeSRmassF");
+    CloneBKGShapeSRmassF->Scale(SM_BKG_MC_ScaleFactors[i]);
+    CloneBKGShapeSRmassF->SetFillColor(SM_BKG_MC_Colors[i]);
+    CloneBKGShapeSRmassF->SetLineColor(SM_BKG_MC_Colors[i]);
+    SM_BKG_MC_hs_SR_m2->Add(CloneBKGShapeSRmassF);
 
     file_tmp->Close();
   }
@@ -99,9 +102,13 @@ void HighMassBKGShape()
     std::cout << "Adding file #"<< j+1 << ": " << DATA_file_name.Data() << std::endl;
     file_tmp = TFile::Open(DATA_file_name);
 
-    DATA_CR_m1->Add(BKGShapeCRmassC);
+    TH1F *DATABKGShapeCRmassC = (TH1F*)file_tmp->Get("BKGShapeCRmassC")->Clone("DATABKGShapeCRmassC");
+    DATA_CR_m1->Add(DATABKGShapeCRmassC);
+    TH1F *DATABKGShapeCRmassF = (TH1F*)file_tmp->Get("BKGShapeCRmassF")->Clone("DATABKGShapeCRmassF");
     DATA_CR_m2->Add(BKGShapeCRmassF);
+    TH1F *DATABKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("DATABKGShapeSRmassC");
     DATA_SR_m1->Add(BKGShapeSRmassC);
+    TH1F *DATABKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("DATABKGShapeSRmassF");
     DATA_SR_m2->Add(BKGShapeSRmassF);
 
     file_tmp->Close();

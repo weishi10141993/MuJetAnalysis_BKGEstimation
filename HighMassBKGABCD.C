@@ -41,8 +41,8 @@ void HighMassBKGABCD() {
   }
 
   //Print Table
-  cout<<"*********************************************************************"<<endl;
-  cout<<"* (VarX, VarY) *    B    *    C    *    D    *   <A>   *    ErrA    *"<<endl;
+  cout<<"********************************************************************"<<endl;
+  cout<<"* ( VarX, VarY ) *    B    *    C    *    D    *   <A>   *   ErrA  *"<<endl;
   for (int i = 0; i < 29; i++) {
     ostringstream stream_cut_B;
     stream_cut_B << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (diMuonC_m1_FittedVtx_hitpix_Phase1==1 || diMuonC_m2_FittedVtx_hitpix_Phase1) && (diMuonF_m1_FittedVtx_hitpix_Phase1==1 || diMuonF_m2_FittedVtx_hitpix_Phase1==1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && TMath::Max(diMuonCMu0_IsoTk0p3_FittedVtx,diMuonFMu0_IsoTk0p3_FittedVtx)<"<< VarY[i] <<" && TMath::Max(diMuonCMu0_IsoTk0p3_FittedVtx,diMuonFMu0_IsoTk0p3_FittedVtx)>=1.5 && TMath::Min(diMuonCMu0_IsoTk0p3_FittedVtx,diMuonFMu0_IsoTk0p3_FittedVtx)>=0 && fabs(massC-massF)-3*0.007025*(massC+massF)/2.0-3*0.000053*(massC+massF)*(massC+massF)/4.0<0.009132 && massC>11. && massC<60. && massF>11. && massF<60.";
@@ -66,11 +66,11 @@ void HighMassBKGABCD() {
     D[i] = tree_dimudimu_D->GetEntries();
     A[i] = B[i] * D[i] / C[i];
     ErrA[i] = A[i] * sqrt( 1/B[i] + 1/C[i] + 1/D[i]);
-    
-    cout<<"* ("<<setw(4)<<setprecision(2)<<VarX[i]<<", "<<setw(4)<<setprecision(2)<<VarY[i]<<") * "<<setw(9)<<setprecision(3)<<B[i]<<" * "<<setw(9)<<setprecision(3)<<C[i]<<" * "<<setw(8)<<setprecision(3)<<D[i]<<" * "<<setw(8)<<setprecision(3)<<A[i]<<" * "<<setw(13)<<setprecision(3)<<ErrA[i]<<" *"<<endl;
+
+    cout<<"* ("<<setw(5)<<setprecision(2)<<VarX[i]<<", "<<setw(5)<<setprecision(2)<<VarY[i]<<") * "<<setw(7)<<setprecision(3)<<B[i]<<" * "<<setw(7)<<setprecision(3)<<C[i]<<" * "<<setw(7)<<setprecision(3)<<D[i]<<" * "<<setw(7)<<setprecision(3)<<A[i]<<" * "<<setw(7)<<setprecision(2)<<ErrA[i]<<" *"<<endl;
 
   }//end for
 
-  cout<<"*********************************************************************"<<endl;
+  cout<<"********************************************************************"<<endl;
 
 }
