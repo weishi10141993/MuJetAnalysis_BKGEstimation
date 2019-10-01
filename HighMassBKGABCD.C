@@ -75,11 +75,20 @@ void HighMassBKGABCD() {
 
   //Draw <A> ErrA in one plot
   TFile myPlot("ABCD_FINAL.root","RECREATE");
-  TCanvas *C1=new TCanvas("C1","Background Yield in A",700,500);
+  TCanvas *C1=new TCanvas("C1","C1",700,500);
   C1->cd();
-  TGraphErrors *Yield = new TGraphErrors(29, A, VarX, ErrA, 0);
-  Yield->Draw("ap");
-  //Add third axis
+  TH1F *Yield = new TH1F();
+  for(unsigned int iB=1; iB<=29; iB++){
+    Yield->SetBinContent(iB, A[iB-1] );
+    Yield->SetBinError(iB, ErrA[iB-1]);
+    Yield->GetXaxis()->SetBinLabel(iB, Form("(%.0f, %.0f)", VarX[iB-1], VarY[iB-1]) );
+  }
+  Yield->SetMarkerStyle(20);
+  Yield->GetXaxis()->SetTitle("(Max VarX, Max VarY)");
+  Yield->GetYaxis()->SetTitle("Yield");
+  Yield->SetTitle("Background yield in A");
+  Yield->SetStats(0);
+  Yield->Draw();
   C1->Write();
 
   myPlot.Close();

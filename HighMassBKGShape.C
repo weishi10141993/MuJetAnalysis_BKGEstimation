@@ -44,7 +44,9 @@ TString DATA_files[4] = {
 };
 
 TString store = "/fdata/hepx/store/user/wshi/SMBKGatHighMass"; //input dir
-
+const double       m_min  = 11.0;
+const double       m_max  = 59.0;
+const unsigned int m_bins = 24;
 //****************************
 //* USER modify above ONLY   *
 //****************************
@@ -53,15 +55,15 @@ void HighMassBKGShape()
 {
   // Initialize empty file to access each file in the list
   TFile *file_tmp(0);
-  THStack *MC_hs_CR_m1 = new THStack("MC_hs_CR_m1","");
-  THStack *MC_hs_CR_m2 = new THStack("MC_hs_CR_m2","");
-  THStack *MC_hs_SR_m1 = new THStack("MC_hs_SR_m1","");
-  THStack *MC_hs_SR_m2 = new THStack("MC_hs_SR_m2","");
+  THStack *MC_hs_CR_m1 = new THStack("MC_hs_CR_m1", "");
+  THStack *MC_hs_CR_m2 = new THStack("MC_hs_CR_m2", "");
+  THStack *MC_hs_SR_m1 = new THStack("MC_hs_SR_m1", "");
+  THStack *MC_hs_SR_m2 = new THStack("MC_hs_SR_m2", "");
   //For plotting summed error for above stacked plots
-  TH1F *MC_CR_m1 = new TH1F("MC_CR_m1","",30,0.0,60.0);
-  TH1F *MC_CR_m2 = new TH1F("MC_CR_m2","",30,0.0,60.0);
-  TH1F *MC_SR_m1 = new TH1F("MC_SR_m1","",30,0.0,60.0);
-  TH1F *MC_SR_m2 = new TH1F("MC_SR_m2","",30,0.0,60.0);
+  TH1F *MC_CR_m1 = new TH1F("MC_CR_m1", "", m_bins, m_min, m_max);
+  TH1F *MC_CR_m2 = new TH1F("MC_CR_m2", "", m_bins, m_min, m_max);
+  TH1F *MC_SR_m1 = new TH1F("MC_SR_m1", "", m_bins, m_min, m_max);
+  TH1F *MC_SR_m2 = new TH1F("MC_SR_m2", "", m_bins, m_min, m_max);
 
   //SM BKG MC
   TString MC_file_name;
@@ -79,7 +81,6 @@ void HighMassBKGShape()
     MCBKGShapeCRmassC->SetLineColor(MC_Colors[i]);
     MCBKGShapeCRmassC->SetFillColor(MC_Colors[i]);
     MCBKGShapeCRmassC->SetMarkerColor(MC_Colors[i]);
-    MCBKGShapeCRmassC->GetXaxis()->SetRangeUser(10., 60.);
     MC_hs_CR_m1->Add(MCBKGShapeCRmassC);
     MC_CR_m1->Add(MCBKGShapeCRmassC);
 
@@ -88,7 +89,6 @@ void HighMassBKGShape()
     MCBKGShapeCRmassF->SetLineColor(MC_Colors[i]);
     MCBKGShapeCRmassF->SetFillColor(MC_Colors[i]);
     MCBKGShapeCRmassF->SetMarkerColor(MC_Colors[i]);
-    MCBKGShapeCRmassF->GetXaxis()->SetRangeUser(10., 60.);
     MC_hs_CR_m2->Add(MCBKGShapeCRmassF);
     MC_CR_m2->Add(MCBKGShapeCRmassF);
 
@@ -97,7 +97,6 @@ void HighMassBKGShape()
     MCBKGShapeSRmassC->SetLineColor(MC_Colors[i]);
     MCBKGShapeSRmassC->SetFillColor(MC_Colors[i]);
     MCBKGShapeSRmassC->SetMarkerColor(MC_Colors[i]);
-    MCBKGShapeSRmassC->GetXaxis()->SetRangeUser(10., 60.);
     MC_hs_SR_m1->Add(MCBKGShapeSRmassC);
     MC_SR_m1->Add(MCBKGShapeSRmassC);
 
@@ -106,17 +105,16 @@ void HighMassBKGShape()
     MCBKGShapeSRmassF->SetLineColor(MC_Colors[i]);
     MCBKGShapeSRmassF->SetFillColor(MC_Colors[i]);
     MCBKGShapeSRmassF->SetMarkerColor(MC_Colors[i]);
-    MCBKGShapeSRmassF->GetXaxis()->SetRangeUser(10., 60.);
     MC_hs_SR_m2->Add(MCBKGShapeSRmassF);
     MC_SR_m2->Add(MCBKGShapeSRmassF);
   }
 
   //DATA
   TString DATA_file_name;
-  TH1F *DATA_CR_m1 = new TH1F("DATA_CR_m1","",30,0.0,60.0);
-  TH1F *DATA_CR_m2 = new TH1F("DATA_CR_m2","",30,0.0,60.0);
-  TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1","",30,0.0,60.0);
-  TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2","",30,0.0,60.0);
+  TH1F *DATA_CR_m1 = new TH1F("DATA_CR_m1", "", m_bins, m_min, m_max);
+  TH1F *DATA_CR_m2 = new TH1F("DATA_CR_m2", "", m_bins, m_min, m_max);
+  TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1", "", m_bins, m_min, m_max);
+  TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2", "", m_bins, m_min, m_max);
 
   for (int j = 0; j < 4; j++) {
     DATA_file_name.Form( "%s/%s", store.Data(), DATA_files[j].Data() );
@@ -127,46 +125,68 @@ void HighMassBKGShape()
       return;
     }
 
-    TH1F *DATABKGShapeCRmassC = (TH1F*)file_tmp->Get("BKGShapeCRmassC")->Clone("DATABKGShapeCRmassC"); DATABKGShapeCRmassC->GetXaxis()->SetRangeUser(10., 60.); DATA_CR_m1->Add(DATABKGShapeCRmassC);
-    TH1F *DATABKGShapeCRmassF = (TH1F*)file_tmp->Get("BKGShapeCRmassF")->Clone("DATABKGShapeCRmassF"); DATABKGShapeCRmassF->GetXaxis()->SetRangeUser(10., 60.); DATA_CR_m2->Add(DATABKGShapeCRmassF);
-    TH1F *DATABKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("DATABKGShapeSRmassC"); DATABKGShapeSRmassC->GetXaxis()->SetRangeUser(10., 60.); DATA_SR_m1->Add(DATABKGShapeSRmassC);
-    TH1F *DATABKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("DATABKGShapeSRmassF"); DATABKGShapeSRmassF->GetXaxis()->SetRangeUser(10., 60.); DATA_SR_m2->Add(DATABKGShapeSRmassF);
+    TH1F *DATABKGShapeCRmassC = (TH1F*)file_tmp->Get("BKGShapeCRmassC")->Clone("DATABKGShapeCRmassC"); DATA_CR_m1->Add(DATABKGShapeCRmassC);
+    TH1F *DATABKGShapeCRmassF = (TH1F*)file_tmp->Get("BKGShapeCRmassF")->Clone("DATABKGShapeCRmassF"); DATA_CR_m2->Add(DATABKGShapeCRmassF);
+    TH1F *DATABKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("DATABKGShapeSRmassC"); DATA_SR_m1->Add(DATABKGShapeSRmassC);
+    TH1F *DATABKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("DATABKGShapeSRmassF"); DATA_SR_m2->Add(DATABKGShapeSRmassF);
   }
 
   //write to output file
   TFile myPlot("HighMassBKGShape_FINAL.root","RECREATE");
 
   TCanvas *CR1=new TCanvas("CR1","CR m1",700,500);
-  CR1->cd();
+  CR1->Clear();
+  //MC vs DATA
+  TPad *pad1 = new TPad("pad1", "pad1", 0, 0.3, 1, 1.0);
+  pad1->SetBottomMargin(0);
+  pad1->Draw();
+  pad1->cd();
   MC_hs_CR_m1->Draw("HIST");
   MC_hs_CR_m1->SetMaximum(50);
-  MC_hs_CR_m1->GetXaxis()->SetRangeUser(10, 60);
-  MC_hs_CR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
   MC_hs_CR_m1->GetYaxis()->SetTitle("Events/2GeV");
-  //Draw rectangle error
+  //Plotting error
   MC_CR_m1->SetLineColor(2);
   MC_CR_m1->SetFillColor(2);
   MC_CR_m1->SetFillStyle(3004);
   MC_CR_m1->Draw("E2 SAME");
   Double_t MC_CR_m1_error;
-  Double_t MC_CR_m1_integral = MC_CR_m1->IntegralAndError(6, 30, MC_CR_m1_error, ""); //nbins=30, 1,2...30, 6-30 integrates from 10-60 GeV
+  Double_t MC_CR_m1_integral = MC_CR_m1->IntegralAndError(1, m_bins, MC_CR_m1_error, "");
   std::cout << "MC CR m1 integral = " << MC_CR_m1_integral << " +/- " << MC_CR_m1_error << std::endl;
   DATA_CR_m1->SetFillColor(1);
   DATA_CR_m1->SetLineColor(1);
   DATA_CR_m1->SetMarkerStyle(20);
   DATA_CR_m1->Draw("E1 X0 SAME");//Draw Error bars
-  DATA_CR_m1->GetXaxis()->SetRangeUser(10, 60);
   Double_t DATA_CR_m1_error;
-  Double_t DATA_CR_m1_integral = DATA_CR_m1->IntegralAndError(6, 30, DATA_CR_m1_error, ""); // "" ... or ... "width"
+  Double_t DATA_CR_m1_integral = DATA_CR_m1->IntegralAndError(1, m_bins, DATA_CR_m1_error, ""); // "": width
   std::cout << "DATA CR m1 integral = " << DATA_CR_m1_integral << " +/- " << DATA_CR_m1_error << std::endl;
   gPad->RedrawAxis();
+  CR1->cd(); CR1->Update();
+  //For plotting pull distribution
+  TPad *pad2 = new TPad("pad2", "pad2", 0, 0.0, 1, 0.29);
+  pad2->SetTopMargin(0);
+  pad2->SetBottomMargin(0.35);
+  pad2->SetGridy();
+  pad2->Draw();
+  pad2->cd();
+  //fill pull histogram
+  TH1F *pull_CR_m1 = new TH1F("pull_CR_m1","", m_bins, m_min, m_max);
+  for(unsigned int iB=1; iB<=m_bins; iB++){
+    std::cout << "Bin #" << iB << "; Bin center: " << DATA_CR_m1->GetXaxis()->GetBinCenter(iB)<<" GeV" << std::endl;//Debug
+    float pull_CR_m1_iB = ( DATA_CR_m1->GetBinContent(iB) - MC_CR_m1->GetBinContent(iB) ) / DATA_CR_m1->GetBinError(iB);//pull definition
+    pull_CR_m1->SetBinContent(iB, pull_CR_m1_iB );
+  }
+  pull_CR_m1->GetYaxis()->SetTitle("Pull");
+  pull_CR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
+  pull_CR_m1->SetMinimum(-4);
+  pull_CR_m1->SetMaximum(4);
+  pull_CR_m1->SetMarkerStyle(20);
+  pull_CR_m1->Draw("P");
   CR1->Write();
 
   TCanvas *CR2=new TCanvas("CR2","CR m2",700,500);
   CR2->cd();
   MC_hs_CR_m2->Draw("HIST");
   MC_hs_CR_m2->SetMaximum(50);
-  MC_hs_CR_m2->GetXaxis()->SetRangeUser(10, 60);
   MC_hs_CR_m2->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]");
   MC_hs_CR_m2->GetYaxis()->SetTitle("Events/2GeV");
   MC_CR_m2->SetLineColor(2);
@@ -174,15 +194,14 @@ void HighMassBKGShape()
   MC_CR_m2->SetFillStyle(3004);
   MC_CR_m2->Draw("E2 SAME");
   Double_t MC_CR_m2_error;
-  Double_t MC_CR_m2_integral = MC_CR_m2->IntegralAndError(6, 30, MC_CR_m2_error, ""); // "" ... or ... "width"
+  Double_t MC_CR_m2_integral = MC_CR_m2->IntegralAndError(1, m_bins, MC_CR_m2_error, "");
   std::cout << "MC CR m2 integral = " << MC_CR_m2_integral << " +/- " << MC_CR_m2_error << std::endl;
   DATA_CR_m2->SetFillColor(1);
   DATA_CR_m2->SetLineColor(1);
   DATA_CR_m2->SetMarkerStyle(20);
   DATA_CR_m2->Draw("E1 X0 SAME");
-  DATA_CR_m2->GetXaxis()->SetRangeUser(10, 60);
   Double_t DATA_CR_m2_error;
-  Double_t DATA_CR_m2_integral = DATA_CR_m2->IntegralAndError(6, 30, DATA_CR_m2_error, ""); // "" ... or ... "width"
+  Double_t DATA_CR_m2_integral = DATA_CR_m2->IntegralAndError(1, m_bins, DATA_CR_m2_error, "");
   std::cout << "DATA CR m2 integral = " << DATA_CR_m2_integral << " +/- " << DATA_CR_m2_error << std::endl;
   gPad->RedrawAxis();
   CR2->Write();
@@ -192,7 +211,6 @@ void HighMassBKGShape()
   SR1->cd();
   MC_hs_SR_m1->Draw("HIST");
   MC_hs_SR_m1->SetMaximum(10);
-  MC_hs_SR_m1->GetXaxis()->SetRangeUser(10, 60);
   MC_hs_SR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
   MC_hs_SR_m1->GetYaxis()->SetTitle("Events/2GeV");
   MC_SR_m1->SetLineColor(2);
@@ -200,7 +218,7 @@ void HighMassBKGShape()
   MC_SR_m1->SetFillStyle(3004);
   MC_SR_m1->Draw("E2 SAME");
   Double_t MC_SR_m1_error;
-  Double_t MC_SR_m1_integral = MC_SR_m1->IntegralAndError(6, 30, MC_SR_m1_error, ""); // "" ... or ... "width"
+  Double_t MC_SR_m1_integral = MC_SR_m1->IntegralAndError(1, m_bins, MC_SR_m1_error, "");
   std::cout << "MC SR m1 integral = " << MC_SR_m1_integral << " +/- " << MC_SR_m1_error << std::endl;
   gPad->RedrawAxis();
   SR1->Write();
@@ -209,7 +227,6 @@ void HighMassBKGShape()
   SR2->cd();
   MC_hs_SR_m2->Draw("HIST");
   MC_hs_SR_m2->SetMaximum(10);
-  MC_hs_SR_m2->GetXaxis()->SetRangeUser(10, 60);
   MC_hs_SR_m2->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]");
   MC_hs_SR_m2->GetYaxis()->SetTitle("Events/2GeV");
   MC_SR_m2->SetLineColor(2);
@@ -217,7 +234,7 @@ void HighMassBKGShape()
   MC_SR_m2->SetFillStyle(3004);
   MC_SR_m2->Draw("E2 SAME");
   Double_t MC_SR_m2_error;
-  Double_t MC_SR_m2_integral = MC_SR_m2->IntegralAndError(6, 30, MC_SR_m2_error, ""); // "" ... or ... "width"
+  Double_t MC_SR_m2_integral = MC_SR_m2->IntegralAndError(1, m_bins, MC_SR_m2_error, "");
   std::cout << "MC SR m2 integral = " << MC_SR_m2_integral << " +/- " << MC_SR_m2_error << std::endl;
   gPad->RedrawAxis();
   SR2->Write();
