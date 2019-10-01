@@ -10,7 +10,6 @@
 #include "TCanvas.h"
 #include <vector>
 #include "stdio.h"
-#include "math.h"
 #include "TMath.h"
 #include "TGraph.h"
 #include "TSystem.h"
