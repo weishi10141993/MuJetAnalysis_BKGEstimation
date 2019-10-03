@@ -145,7 +145,7 @@ void HighMassBKGShape()
   //MC vs DATA
   CR1pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(50); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/2GeV");
+  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(50); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/4GeV");
   //Plot MC error
   MC_CR_m1->SetLineColor(2); MC_CR_m1->SetFillColor(2); MC_CR_m1->SetFillStyle(3004); MC_CR_m1->Draw("E2 SAME");
   Double_t MC_CR_m1_error;
@@ -219,7 +219,7 @@ void HighMassBKGShape()
   //MC vs DATA
   CR2pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(50); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/2GeV");
+  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(50); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/4GeV");
   //Plot MC error
   MC_CR_m2->SetLineColor(2); MC_CR_m2->SetFillColor(2); MC_CR_m2->SetFillStyle(3004); MC_CR_m2->Draw("E2 SAME");
   Double_t MC_CR_m2_error;
@@ -292,7 +292,7 @@ void HighMassBKGShape()
   MC_hs_SR_m1->Draw("HIST");
   MC_hs_SR_m1->SetMaximum(10);
   MC_hs_SR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
-  MC_hs_SR_m1->GetYaxis()->SetTitle("Events/2GeV");
+  MC_hs_SR_m1->GetYaxis()->SetTitle("Events/4GeV");
   MC_SR_m1->SetLineColor(2);
   MC_SR_m1->SetFillColor(2);
   MC_SR_m1->SetFillStyle(3004);
@@ -332,7 +332,7 @@ void HighMassBKGShape()
   MC_hs_SR_m2->Draw("HIST");
   MC_hs_SR_m2->SetMaximum(10);
   MC_hs_SR_m2->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]");
-  MC_hs_SR_m2->GetYaxis()->SetTitle("Events/2GeV");
+  MC_hs_SR_m2->GetYaxis()->SetTitle("Events/4GeV");
   MC_SR_m2->SetLineColor(2);
   MC_SR_m2->SetFillColor(2);
   MC_SR_m2->SetFillStyle(3004);
