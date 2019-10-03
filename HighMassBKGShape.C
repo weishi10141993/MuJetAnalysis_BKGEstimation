@@ -23,18 +23,19 @@
 //****************************
 //The order is important here: DY 0-2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L
 //Same order as ScaleFactors
-TString MC_files[6] = {
+TString MC_files[7] = {
   "HighMassBKGShape_DYToLL_0J.root",
   "HighMassBKGShape_DYToLL_1J.root",
   "HighMassBKGShape_DYToLL_2J.root",
   "HighMassBKGShape_ZZTo4L.root",
   "HighMassBKGShape_TTJets_DiLept.root",
-  "HighMassBKGShape_ggHToZZTo4L.root"
+  "HighMassBKGShape_ggHToZZTo4L.root",
+  "HighMassBKGShape_ggToZZTo4mu.root"
 };
 
 //Scale MC events to Data, not including analysis SF like trigger, muon id etc
-Float_t MC_ScaleFactors[6]={2.2398524E+00, 3.7937427E-01, 2.4801970E-01, 3.0278414E-03, 7.0805939E-02, 4.6355268E-04};
-Color_t MC_Colors[6]={20, 30, 40, 7, 8, 6};
+Float_t MC_ScaleFactors[7]={2.2398524E+00, 3.7937427E-01, 2.4801970E-01, 3.0278414E-03, 7.0805939E-02, 4.6355268E-04, 6.3245328E-05};
+Color_t MC_Colors[7]={20, 30, 40, 9, 8, 7, 6};
 TString DATA_files[4] = {
   "HighMassBKGShape_2017C.root",
   "HighMassBKGShape_2017D.root",
@@ -45,7 +46,7 @@ TString DATA_files[4] = {
 TString store = "/fdata/hepx/store/user/wshi/SMBKGatHighMass"; //input dir
 const double       m_min  = 11.0;
 const double       m_max  = 59.0;
-const unsigned int m_bins = 24;
+const unsigned int m_bins = 12;//bin size 4GeV
 //****************************
 //* USER modify above ONLY   *
 //****************************
@@ -66,7 +67,7 @@ void HighMassBKGShape()
 
   //SM BKG MC
   TString MC_file_name;
-  for (int i = 0; i < 6; i++) {
+  for (int i = 0; i < 7; i++) {
     MC_file_name.Form( "%s/%s", store.Data(), MC_files[i].Data() );
     std::cout << "Opening file #"<< i+1 << ": " << MC_file_name.Data() << std::endl;
     file_tmp = TFile::Open(MC_file_name);
@@ -172,8 +173,9 @@ void HighMassBKGShape()
     if (CR1pad1iEntry==4) CR1pad1li->SetLabel("qqToZZTo4L");
     if (CR1pad1iEntry==5) CR1pad1li->SetLabel("TTJetsToLL");
     if (CR1pad1iEntry==6) CR1pad1li->SetLabel("ggHToZZTo4L");
-    if (CR1pad1iEntry==7) {CR1pad1li->SetLabel("MC Error"); CR1pad1li->SetOption("f");}
-    if (CR1pad1iEntry==8) {CR1pad1li->SetLabel("Data"); CR1pad1li->SetOption("ep");}
+    if (CR1pad1iEntry==7) CR1pad1li->SetLabel("ggToZZTo4mu");
+    if (CR1pad1iEntry==8) {CR1pad1li->SetLabel("MC Error"); CR1pad1li->SetOption("f");}
+    if (CR1pad1iEntry==9) {CR1pad1li->SetLabel("Data"); CR1pad1li->SetOption("ep");}
   }
   CR1pad1->Update(); CR1pad1L->SetX1NDC(0.15); CR1pad1L->SetX2NDC(0.5); CR1pad1L->SetY1NDC(0.5); CR1pad1L->SetY2NDC(0.9); CR1pad1->Modified();
   gPad->RedrawAxis();
@@ -245,8 +247,9 @@ void HighMassBKGShape()
     if (CR2pad1iEntry==4) CR2pad1li->SetLabel("qqToZZTo4L");
     if (CR2pad1iEntry==5) CR2pad1li->SetLabel("TTJetsToLL");
     if (CR2pad1iEntry==6) CR2pad1li->SetLabel("ggHToZZTo4L");
-    if (CR2pad1iEntry==7) {CR2pad1li->SetLabel("MC Error"); CR2pad1li->SetOption("f");}
-    if (CR2pad1iEntry==8) {CR2pad1li->SetLabel("Data"); CR2pad1li->SetOption("ep");}
+    if (CR2pad1iEntry==7) CR2pad1li->SetLabel("ggToZZTo4mu");
+    if (CR2pad1iEntry==8) {CR2pad1li->SetLabel("MC Error"); CR2pad1li->SetOption("f");}
+    if (CR2pad1iEntry==9) {CR2pad1li->SetLabel("Data"); CR2pad1li->SetOption("ep");}
   }
   CR2pad1->Update(); CR2pad1L->SetX1NDC(0.15); CR2pad1L->SetX2NDC(0.5); CR2pad1L->SetY1NDC(0.65); CR2pad1L->SetY2NDC(0.9); CR2pad1->Modified();
   gPad->RedrawAxis();
@@ -282,6 +285,7 @@ void HighMassBKGShape()
   //***************
   //* For m1 at SR*
   //***************
+  //Consider to do a simple poly 0/1-fit on the shape
   //Data blinded until approval
   TCanvas *SR1=new TCanvas("SR1","SR m1",700,500);
   SR1->cd();
@@ -313,7 +317,8 @@ void HighMassBKGShape()
     if (SR1iEntry==4) SR1li->SetLabel("qqToZZTo4L");
     if (SR1iEntry==5) SR1li->SetLabel("TTJetsToLL");
     if (SR1iEntry==6) SR1li->SetLabel("ggHToZZTo4L");
-    if (SR1iEntry==7) {SR1li->SetLabel("MC Error"); SR1li->SetOption("f");}
+    if (SR1iEntry==7) SR1li->SetLabel("ggToZZTo4mu");
+    if (SR1iEntry==8) {SR1li->SetLabel("MC Error"); SR1li->SetOption("f");}
   }
   SR1->Update(); SR1L->SetX1NDC(0.15); SR1L->SetX2NDC(0.5); SR1L->SetY1NDC(0.5); SR1L->SetY2NDC(0.9); SR1->Modified();
   gPad->RedrawAxis();
@@ -352,7 +357,8 @@ void HighMassBKGShape()
     if (SR2iEntry==4) SR2li->SetLabel("qqToZZTo4L");
     if (SR2iEntry==5) SR2li->SetLabel("TTJetsToLL");
     if (SR2iEntry==6) SR2li->SetLabel("ggHToZZTo4L");
-    if (SR2iEntry==7) {SR2li->SetLabel("MC Error"); SR2li->SetOption("f");}
+    if (SR2iEntry==7) SR2li->SetLabel("ggToZZTo4mu");
+    if (SR2iEntry==8) {SR2li->SetLabel("MC Error"); SR2li->SetOption("f");}
   }
   SR2->Update(); SR2L->SetX1NDC(0.15); SR2L->SetX2NDC(0.5); SR2L->SetY1NDC(0.5); SR2L->SetY2NDC(0.9); SR2->Modified();
   gPad->RedrawAxis();
