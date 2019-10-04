@@ -60,7 +60,7 @@ void HighMassBKGShape()
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}    36.734 fb^{-1} (2017 13 TeV)");
+  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}                         36.734 fb^{-1} (2017 13 TeV)");
 
   // Initialize empty file to access each file in the list
   TFile *file_tmp(0);
@@ -161,7 +161,7 @@ void HighMassBKGShape()
   Double_t MC_CR_m1_integral = MC_CR_m1->IntegralAndError(1, m_bins, MC_CR_m1_error, "");
   std::cout << "MC CR m1 integral = " << MC_CR_m1_integral << " +/- " << MC_CR_m1_error << std::endl;
   //Overlay data
-  DATA_CR_m1->SetFillColor(1); DATA_CR_m1->SetLineColor(1); DATA_CR_m1->SetMarkerStyle(20); DATA_CR_m1->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");//Draw Error bars
+  DATA_CR_m1->SetFillColor(1); DATA_CR_m1->SetLineColor(1); DATA_CR_m1->SetMarkerStyle(20); DATA_CR_m1->SetMarkerSize(0.6); DATA_CR_m1->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");//Draw Error bars
   Double_t DATA_CR_m1_error;
   Double_t DATA_CR_m1_integral = DATA_CR_m1->IntegralAndError(1, m_bins, DATA_CR_m1_error, ""); // "": width
   std::cout << "DATA CR m1 integral = " << DATA_CR_m1_integral << " +/- " << DATA_CR_m1_error << std::endl;
@@ -194,7 +194,8 @@ void HighMassBKGShape()
   //fill pull histogram
   TH1F *pull_CR_m1 = new TH1F("pull_CR_m1","", m_bins, m_min, m_max);
   for(unsigned int iB=1; iB<=m_bins; iB++){
-    float pull_CR_m1_iB = ( DATA_CR_m1->GetBinContent(iB) - MC_CR_m1->GetBinContent(iB) ) / DATA_CR_m1->GetBinError(iB);//pull definition
+    //pull definition: considering data and MC error
+    float pull_CR_m1_iB = ( DATA_CR_m1->GetBinContent(iB) - MC_CR_m1->GetBinContent(iB) ) / sqrt( pow(DATA_CR_m1->GetBinError(iB), 2) + pow(MC_CR_m1->GetBinError(iB), 2) );
     pull_CR_m1->SetBinContent(iB, pull_CR_m1_iB );//iB starts from #1
   }
   pull_CR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
@@ -210,10 +211,11 @@ void HighMassBKGShape()
   pull_CR_m1->GetYaxis()->SetTitleOffset(.9);
   pull_CR_m1->GetYaxis()->SetLabelSize(15);
   pull_CR_m1->GetYaxis()->SetLabelFont(43);
-  pull_CR_m1->SetMinimum(-4);
-  pull_CR_m1->SetMaximum(4);
+  pull_CR_m1->SetMinimum(-3.5);
+  pull_CR_m1->SetMaximum(3.5);
   pull_CR_m1->SetStats(0);
   pull_CR_m1->SetMarkerStyle(20);
+  pull_CR_m1->SetMarkerSize(0.6);
   pull_CR_m1->Draw("P");
   CR1->Write();
 
@@ -235,7 +237,7 @@ void HighMassBKGShape()
   Double_t MC_CR_m2_integral = MC_CR_m2->IntegralAndError(1, m_bins, MC_CR_m2_error, "");
   std::cout << "MC CR m2 integral = " << MC_CR_m2_integral << " +/- " << MC_CR_m2_error << std::endl;
   //Overlay data
-  DATA_CR_m2->SetFillColor(1); DATA_CR_m2->SetLineColor(1); DATA_CR_m2->SetMarkerStyle(20); DATA_CR_m2->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
+  DATA_CR_m2->SetFillColor(1); DATA_CR_m2->SetLineColor(1); DATA_CR_m2->SetMarkerStyle(20); DATA_CR_m2->SetMarkerSize(0.6); DATA_CR_m2->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
   Double_t DATA_CR_m2_error;
   Double_t DATA_CR_m2_integral = DATA_CR_m2->IntegralAndError(1, m_bins, DATA_CR_m2_error, "");
   std::cout << "DATA CR m2 integral = " << DATA_CR_m2_integral << " +/- " << DATA_CR_m2_error << std::endl;
@@ -268,7 +270,7 @@ void HighMassBKGShape()
   //fill pull histogram
   TH1F *pull_CR_m2 = new TH1F("pull_CR_m2","", m_bins, m_min, m_max);
   for(unsigned int iB=1; iB<=m_bins; iB++){
-    float pull_CR_m2_iB = ( DATA_CR_m2->GetBinContent(iB) - MC_CR_m2->GetBinContent(iB) ) / DATA_CR_m2->GetBinError(iB);//pull definition
+    float pull_CR_m2_iB = ( DATA_CR_m2->GetBinContent(iB) - MC_CR_m2->GetBinContent(iB) ) / sqrt( pow(DATA_CR_m2->GetBinError(iB), 2) + pow(MC_CR_m2->GetBinError(iB), 2) );
     pull_CR_m2->SetBinContent(iB, pull_CR_m2_iB );
   }
   pull_CR_m2->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]");
@@ -284,10 +286,11 @@ void HighMassBKGShape()
   pull_CR_m2->GetYaxis()->SetTitleOffset(.9);
   pull_CR_m2->GetYaxis()->SetLabelSize(15);
   pull_CR_m2->GetYaxis()->SetLabelFont(43);
-  pull_CR_m2->SetMinimum(-4);
-  pull_CR_m2->SetMaximum(4);
+  pull_CR_m2->SetMinimum(-3.5);
+  pull_CR_m2->SetMaximum(3.5);
   pull_CR_m2->SetStats(0);
   pull_CR_m2->SetMarkerStyle(20);
+  pull_CR_m2->SetMarkerSize(0.6);
   pull_CR_m2->Draw("P");
   CR2->Write();
 
