@@ -75,7 +75,7 @@ void FitAndSave() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("CMS Preliminary 2017  #sqrt{s} = 13 TeV   L_{int} = 36.734 fb^{-1}");
+  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}    36.734 fb^{-1} (2017 13 TeV)");
 
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");

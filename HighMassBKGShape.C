@@ -53,6 +53,15 @@ const unsigned int m_bins = 12;//bin size 4GeV
 
 void HighMassBKGShape()
 {
+  TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
+  txtHeader->SetFillColor(kWhite);
+  txtHeader->SetFillStyle(0);
+  txtHeader->SetBorderSize(0);
+  txtHeader->SetTextFont(42);
+  txtHeader->SetTextSize(0.045);
+  txtHeader->SetTextAlign(22);
+  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}    36.734 fb^{-1} (2017 13 TeV)");
+
   // Initialize empty file to access each file in the list
   TFile *file_tmp(0);
   THStack *MC_hs_CR_m1 = new THStack("MC_hs_CR_m1", "");
@@ -145,14 +154,14 @@ void HighMassBKGShape()
   //MC vs DATA
   CR1pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(50); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(100); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/4GeV");
   //Plot MC error
   MC_CR_m1->SetLineColor(2); MC_CR_m1->SetFillColor(2); MC_CR_m1->SetFillStyle(3004); MC_CR_m1->Draw("E2 SAME");
   Double_t MC_CR_m1_error;
   Double_t MC_CR_m1_integral = MC_CR_m1->IntegralAndError(1, m_bins, MC_CR_m1_error, "");
   std::cout << "MC CR m1 integral = " << MC_CR_m1_integral << " +/- " << MC_CR_m1_error << std::endl;
   //Overlay data
-  DATA_CR_m1->SetFillColor(1); DATA_CR_m1->SetLineColor(1); DATA_CR_m1->SetMarkerStyle(20); DATA_CR_m1->Draw("E1 X0 SAME");//Draw Error bars
+  DATA_CR_m1->SetFillColor(1); DATA_CR_m1->SetLineColor(1); DATA_CR_m1->SetMarkerStyle(20); DATA_CR_m1->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");//Draw Error bars
   Double_t DATA_CR_m1_error;
   Double_t DATA_CR_m1_integral = DATA_CR_m1->IntegralAndError(1, m_bins, DATA_CR_m1_error, ""); // "": width
   std::cout << "DATA CR m1 integral = " << DATA_CR_m1_integral << " +/- " << DATA_CR_m1_error << std::endl;
@@ -201,8 +210,8 @@ void HighMassBKGShape()
   pull_CR_m1->GetYaxis()->SetTitleOffset(.9);
   pull_CR_m1->GetYaxis()->SetLabelSize(15);
   pull_CR_m1->GetYaxis()->SetLabelFont(43);
-  pull_CR_m1->SetMinimum(-3.5);
-  pull_CR_m1->SetMaximum(3.5);
+  pull_CR_m1->SetMinimum(-4);
+  pull_CR_m1->SetMaximum(4);
   pull_CR_m1->SetStats(0);
   pull_CR_m1->SetMarkerStyle(20);
   pull_CR_m1->Draw("P");
@@ -219,14 +228,14 @@ void HighMassBKGShape()
   //MC vs DATA
   CR2pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(50); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(100); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/4GeV");
   //Plot MC error
   MC_CR_m2->SetLineColor(2); MC_CR_m2->SetFillColor(2); MC_CR_m2->SetFillStyle(3004); MC_CR_m2->Draw("E2 SAME");
   Double_t MC_CR_m2_error;
   Double_t MC_CR_m2_integral = MC_CR_m2->IntegralAndError(1, m_bins, MC_CR_m2_error, "");
   std::cout << "MC CR m2 integral = " << MC_CR_m2_integral << " +/- " << MC_CR_m2_error << std::endl;
   //Overlay data
-  DATA_CR_m2->SetFillColor(1); DATA_CR_m2->SetLineColor(1); DATA_CR_m2->SetMarkerStyle(20); DATA_CR_m2->Draw("E1 X0 SAME");
+  DATA_CR_m2->SetFillColor(1); DATA_CR_m2->SetLineColor(1); DATA_CR_m2->SetMarkerStyle(20); DATA_CR_m2->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
   Double_t DATA_CR_m2_error;
   Double_t DATA_CR_m2_integral = DATA_CR_m2->IntegralAndError(1, m_bins, DATA_CR_m2_error, "");
   std::cout << "DATA CR m2 integral = " << DATA_CR_m2_integral << " +/- " << DATA_CR_m2_error << std::endl;
@@ -275,8 +284,8 @@ void HighMassBKGShape()
   pull_CR_m2->GetYaxis()->SetTitleOffset(.9);
   pull_CR_m2->GetYaxis()->SetLabelSize(15);
   pull_CR_m2->GetYaxis()->SetLabelFont(43);
-  pull_CR_m2->SetMinimum(-3.5);
-  pull_CR_m2->SetMaximum(3.5);
+  pull_CR_m2->SetMinimum(-4);
+  pull_CR_m2->SetMaximum(4);
   pull_CR_m2->SetStats(0);
   pull_CR_m2->SetMarkerStyle(20);
   pull_CR_m2->Draw("P");

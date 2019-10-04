@@ -3,6 +3,7 @@
 #include "TCanvas.h"
 #include "TTree.h"
 #include "TF1.h"
+#include "TF2.h"
 #include "TH1.h"
 #include "TH2.h"
 #include "TChain.h"
@@ -69,26 +70,7 @@ void PlotSignal_and_Background() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("#bf{CMS Preliminary 2017}              36.734 fb^{-1} (13 TeV)");
-
-  TLegend *txtHeader_CMS = new TLegend(.2,0.81,0.7,0.86);
-  txtHeader_CMS->SetFillColor(kWhite);
-  txtHeader_CMS->SetFillStyle(0);
-  txtHeader_CMS->SetBorderSize(0);
-  txtHeader_CMS->SetTextFont(61);
-  txtHeader_CMS->SetTextSize(0.055);
-  txtHeader_CMS->SetTextAlign(12);
-  //txtHeader_CMS->SetHeader("CMS");
-  txtHeader_CMS->SetHeader("CMS Preliminary");
-
-  TLegend *txtHeader_lumi = new TLegend(.5,0.95,0.85,1.0);
-  txtHeader_lumi->SetFillColor(kWhite);
-  txtHeader_lumi->SetFillStyle(0);
-  txtHeader_lumi->SetBorderSize(0);
-  txtHeader_lumi->SetTextFont(42);
-  txtHeader_lumi->SetTextSize(0.042);
-  txtHeader_lumi->SetTextAlign(32);
-  txtHeader_lumi->SetHeader("36.734 fb^{-1} (13 TeV)");
+  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}    36.734 fb^{-1} (2017 13 TeV)");
 
   TFile* file = new TFile("ws_FINAL.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
@@ -97,12 +79,7 @@ void PlotSignal_and_Background() {
   const double       m_max  = 9.;
   const unsigned int m_bins = 220;
 
-  // Diagonal region
-  // A SR is not always like this: |m1 - m2| < 5 sigma = kA + kB * (m1 + m2)/2
-  //const double kA = 0.13;
-  //const double kB = 0.065;
-
-  double nEvents_Jpsi = 0.12;//Value from 2016 analysis
+  double nEvents_Jpsi = 0.12;//from 2016 analysis
 
   //****************************************************************************
   //                         Draw 2D template m1 x m2
@@ -125,7 +102,7 @@ void PlotSignal_and_Background() {
     for(int j=1;j<=1000;j++) {
 	double m_1 = h2_Template2D_offDiagonal->GetXaxis()->GetBinCenter(i);
 	double m_2 = h2_Template2D_offDiagonal->GetYaxis()->GetBinCenter(j);
-	if ( fabs(m_1 - m_2) < (kA + kB*(m_1 + m_2)/2.) ) {
+	if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {//2017 mass consistency cut
 	  if( fabs(m_1-3.1)<0.25 && fabs(m_2-3.1)<0.25 ){ Area_2Jpsi++; Area_2Jpsi_w+=h2_Template2D_offDiagonal->GetBinContent(i,j); }
 	  else{ Area_NO2Jpsi++; Area_NO2Jpsi_w+=h2_Template2D_offDiagonal->GetBinContent(i,j); }
 	  h2_Template2D_offDiagonal->SetBinContent(i,j,0.);
@@ -173,13 +150,13 @@ void PlotSignal_and_Background() {
   h2_background->GetZaxis()->SetTitleFont(42);
 
   //gStyle->SetPalette(52); //Grey Scale
-Double_t Red[2]    = { 1.00, 0.00};
-Double_t Green[2]  = { 1.00, 0.00};
-Double_t Blue[2]   = { 1.00, 0.00};
-Double_t Length[2] = { 0.00, 1.00 };
-Int_t nb=50;
-TColor::CreateGradientColorTable(2,Length,Red,Green,Blue,nb);
-h2_background->SetContour(nb);
+  Double_t Red[2]    = { 1.00, 0.00};
+  Double_t Green[2]  = { 1.00, 0.00};
+  Double_t Blue[2]   = { 1.00, 0.00};
+  Double_t Length[2] = { 0.00, 1.00 };
+  Int_t nb=50;
+  TColor::CreateGradientColorTable(2,Length,Red,Green,Blue,nb);
+  h2_background->SetContour(nb);
 
 
   //const Int_t NCont = 99;
@@ -195,26 +172,7 @@ h2_background->SetContour(nb);
   //h2_background->SetContour(NCont);
   h2_background->Draw("Cont4 Colz");
 
-  //double diagonal_x1a = ( (1.0+kB/2.0)*m_min + kA )/( 1.0 - kB/2.0 );
-  //double diagonal_x2a = ( (1.0-kB/2.0)*m_max - kA )/( 1.0 + kB/2.0 );
-  //std::cout << "diagonal_x1a " << diagonal_x1a <<" "<<m_min<< std::endl;
-  //std::cout << "diagonal_x2a " << diagonal_x2a <<" "<<m_max<< std::endl;
-  //TLine *line1a = new TLine(m_min, diagonal_x1a, diagonal_x2a, m_max);
-  //line1a->SetLineColor(0);
-  //line1a->SetLineStyle(9);
-  //line1a->SetLineWidth(2);
-  //line1a->Draw(" ");
-  //TLine *line2a = new TLine(diagonal_x1a,m_min,m_max,diagonal_x2a);
-  //line2a->SetLineColor(0);
-  //line2a->SetLineStyle(9);
-  //line2a->SetLineWidth(2);
-  ////line2a->Draw();
-  //txtHeader_CMS->Draw();
-  //txtHeader_lumi->Draw();
-
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.pdf");
-  system("pdf2ps figures/h2_background.pdf  figures/h2_background.ps");
-  system("ps2pdf figures/h2_background.ps figures/h2_background.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.png");
 
   // This required to draw scatter plot without LogZ
@@ -503,28 +461,11 @@ h2_background->SetContour(nb);
   h2_signal_tmp->SetMarkerSize(2.0);
   h2_signal_tmp->Draw("same");
 
-  double diagonal_x1 = ( (1.0+kB/2.0)*m_min + kA )/( 1.0 - kB/2.0 );
-  double diagonal_x2 = ( (1.0-kB/2.0)*m_max - kA )/( 1.0 + kB/2.0 );
-  std::cout << "diagonal_x1 " << diagonal_x1 <<" "<<m_min<< std::endl;
-  std::cout << "diagonal_x2 " << diagonal_x2 <<" "<<m_max<< std::endl;
-
-  TLine *line1 = new TLine(m_min, diagonal_x1, diagonal_x2, m_max);
-  line1->SetLineColor(1);
-  line1->SetLineStyle(9);
-  line1->SetLineWidth(2);
-  line1->Draw();
-  TLine *line2 = new TLine(diagonal_x1,m_min,m_max,diagonal_x2);
-  line2->SetLineColor(1);
-  line2->SetLineStyle(9);
-  line2->SetLineWidth(2);
-  line2->Draw();
-
-  //txtHeader_CMS->Draw();
-  //txtHeader_lumi->Draw();
+  //Drawing signal corridor, x:m1; y:m2
+  TF2 *Mass2DCut = new TF2("Mass2DCut","fabs(x-y) - 3*(0.003044 + 0.007025*(x+y)/2.0 + 0.000053*(x+y)*(x+y)/4.0)",0.25, 60.0, 0.25, 60.0);
+  Mass2DCut->Draw();
   txtHeader->Draw();
 
   c_template2D_m1_vs_m2->SaveAs("figures/template2D_signal_and_background_m1_vs_m2.pdf");
-  //system("pdf2ps figures/template2D_signal_and_background_m1_vs_m2.pdf  figures/template2D_signal_and_background_m1_vs_m2.ps");
-  //system("ps2pdf figures/template2D_signal_and_background_m1_vs_m2.ps figures/template2D_signal_and_background_m1_vs_m2.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/template2D_signal_and_background_m1_vs_m2.png");
 }
