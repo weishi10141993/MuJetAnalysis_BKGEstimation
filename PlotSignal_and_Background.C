@@ -16,8 +16,6 @@
 #include "TMatrixDSym.h"
 #include "TMath.h"
 #include "TColor.h"
-#include "Math/WrappedTF1.h"
-#include "Math/BrentRootFinder.h"
 
 #include <sstream>
 #include <iostream>
