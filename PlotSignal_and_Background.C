@@ -16,6 +16,8 @@
 #include "TMatrixDSym.h"
 #include "TMath.h"
 #include "TColor.h"
+#include "Math/WrappedTF1.h"
+#include "Math/BrentRootFinder.h"
 
 #include <sstream>
 #include <iostream>
@@ -461,9 +463,18 @@ void PlotSignal_and_Background() {
   h2_signal_tmp->SetMarkerSize(2.0);
   h2_signal_tmp->Draw("same");
 
-  //Drawing signal corridor, x:m1; y:m2
-  TF2 *Mass2DCut = new TF2("Mass2DCut","fabs(x-y) - 3*(0.003044 + 0.007025*(x+y)/2.0 + 0.000053*(x+y)*(x+y)/4.0)",0.25, 60.0, 0.25, 60.0);
-  Mass2DCut->Draw();
+  //Pre-calculated m1 and m2 values for drawing the corridor curves:
+  //|m1-m2| - 3*(0.003044 + 0.007025*(m1+m2)/2.0 + 0.000053*(m1+m2)*(m1+m2)/4.0)
+  //double m1Input[18]={0.25,    0.4,     0.7,     1.0,     2.0,     5.0,     8.0,     10.0,     15.0,     20.0,     25.0,     30.0,     35.0,     40.0,     45.0,     50.0,     55.0,     60.0};
+  //double m2Small[18]={0.23574, 0.38259, 0.67629, 0.96995, 1.94863, 4.88284, 7.81428, 9.76704,  14.64356, 19.51244, 24.37369, 29.22732, 34.07335, 38.91180, 43.74269, 48.56604, 53.38186, 58.19017};
+  //double m2Large[18]={0.26456, 0.41777, 0.72422, 1.03069, 2.05248, 5.11984, 8.19015, 10.23867, 15.36576, 20.50111, 25.64475, 30.79670, 35.95697, 41.12560, 46.30259, 51.48797, 56.68177, 61.88399};
+  double m1Input[8]={0.25,    0.4,     0.7,     1.0,     2.0,     5.0,     8.0,     10.0};
+  double m2Small[8]={0.23574, 0.38259, 0.67629, 0.96995, 1.94863, 4.88284, 7.81428, 9.76704};
+  double m2Large[8]={0.26456, 0.41777, 0.72422, 1.03069, 2.05248, 5.11984, 8.19015, 10.23867};
+  TGraph* corridorDn = new TGraph(8, m1Input, m2Large);
+  TGraph* corridorUp = new TGraph(8, m1Input, m2Small);
+  corridorDn->SetLineColor(1); corridorDn->SetLineStyle(9); corridorDn->SetLineWidth(2); corridorDn->Draw("C");
+  corridorUp->SetLineColor(1); corridorUp->SetLineStyle(9); corridorUp->SetLineWidth(2); corridorUp->Draw("C");
   txtHeader->Draw();
 
   c_template2D_m1_vs_m2->SaveAs("figures/template2D_signal_and_background_m1_vs_m2.pdf");
