@@ -3,6 +3,7 @@
 //* Source most recent root version:                                                            *
 //* . /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.04/x86_64-centos7-gcc48-opt/bin/thisroot.sh *
 //* Run it as: root -l -b -q HighMassBKGShape.C                                                 *
+//* To request more time and memory: sintr -t 480 -m 102400                                     *
 //*                    Wei Shi @Sep 24, 2019, Rice U.                                           *
 //***********************************************************************************************
 #include "TFile.h"
@@ -21,7 +22,15 @@
 //****************************
 //* USER modify section      *
 //****************************
-//The order is important here: DY 0-2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L
+
+//Scale MC events to Data, not including analysis SF like trigger, muon id etc
+//The order of the processes is important here: DY 0J, 1J, 2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
+Float_t MC_ScaleFactors[7]={2.2491001E+00, 3.7980782E-01, 2.4748488E-01, 3.0278414E-03, 7.0425976E-02, 4.6355268E-04, 6.3245328E-05};
+Color_t MC_Colors[7]={20, 30, 40, 9, 8, 7, 6};
+TString store = "/fdata/hepx/store/user/wshi/SMBKGatHighMass"; //input dir
+const double       m_min  = 11.0;
+const double       m_max  = 59.0;
+const unsigned int m_bins = 12;//bin size 4GeV
 //Same order as ScaleFactors
 TString MC_files[7] = {
   "HighMassBKGShape_DYToLL_0J.root",
@@ -32,10 +41,6 @@ TString MC_files[7] = {
   "HighMassBKGShape_ggHToZZTo4L.root",
   "HighMassBKGShape_ggToZZTo4mu.root"
 };
-
-//Scale MC events to Data, not including analysis SF like trigger, muon id etc
-Float_t MC_ScaleFactors[7]={2.2398524E+00, 3.7937427E-01, 2.4801970E-01, 3.0278414E-03, 7.0805939E-02, 4.6355268E-04, 6.3245328E-05};
-Color_t MC_Colors[7]={20, 30, 40, 9, 8, 7, 6};
 TString DATA_files[4] = {
   "HighMassBKGShape_2017C.root",
   "HighMassBKGShape_2017D.root",
@@ -43,10 +48,6 @@ TString DATA_files[4] = {
   "HighMassBKGShape_2017F.root"
 };
 
-TString store = "/fdata/hepx/store/user/wshi/SMBKGatHighMass"; //input dir
-const double       m_min  = 11.0;
-const double       m_max  = 59.0;
-const unsigned int m_bins = 12;//bin size 4GeV
 //****************************
 //* USER modify above ONLY   *
 //****************************
