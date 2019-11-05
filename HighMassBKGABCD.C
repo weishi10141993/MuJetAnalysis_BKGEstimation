@@ -1,6 +1,7 @@
 //*****************************************************************************************************
 //* For estimating the bkg yield at high mass bins based on an ABCD method and check its stability    *
 //* Use: . /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.04/x86_64-centos7-gcc48-opt/bin/thisroot.sh  *
+//* To request more time and memory: sintr -t 480 -m 102400                                           *
 //*                                       Wei Shi @Sep 25, 2019, Rice U.                              *
 //*****************************************************************************************************
 #include "TFile.h"

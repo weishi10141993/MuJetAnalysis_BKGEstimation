@@ -3,7 +3,6 @@
 //* Source most recent root version:                                                            *
 //* . /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.04/x86_64-centos7-gcc48-opt/bin/thisroot.sh *
 //* Run it as: root -l -b -q HighMassBKGShape.C                                                 *
-//* To request more time and memory: sintr -t 480 -m 102400                                     *
 //*                    Wei Shi @Sep 24, 2019, Rice U.                                           *
 //***********************************************************************************************
 #include "TFile.h"
