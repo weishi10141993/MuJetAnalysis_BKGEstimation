@@ -31,6 +31,7 @@ const double       m_min  = 11.0;
 const double       m_max  = 59.0;
 const unsigned int m_bins = 12;//bin size 4GeV
 //Same order as ScaleFactors
+//The input files contain histograms from running the cut-flow script (with ModelBKGShape flag on) over each Ntuples
 TString MC_files[7] = {
   "HighMassBKGShape_DYToLL_0J.root",
   "HighMassBKGShape_DYToLL_1J.root",
@@ -66,11 +67,13 @@ void HighMassBKGShape()
   TFile *file_tmp(0);
   THStack *MC_hs_CR_m1 = new THStack("MC_hs_CR_m1", "");
   THStack *MC_hs_CR_m2 = new THStack("MC_hs_CR_m2", "");
+  THStack *MC_hs_CR_orphdimumass = new THStack("MC_hs_CR_orphdimumass", "");
   THStack *MC_hs_SR_m1 = new THStack("MC_hs_SR_m1", "");
   THStack *MC_hs_SR_m2 = new THStack("MC_hs_SR_m2", "");
   //For plotting summed error for above stacked plots
   TH1F *MC_CR_m1 = new TH1F("MC_CR_m1", "", m_bins, m_min, m_max);
   TH1F *MC_CR_m2 = new TH1F("MC_CR_m2", "", m_bins, m_min, m_max);
+  TH1F *MC_CR_orphdimumass = new TH1F("MC_CR_orphdimumass", "", m_bins, m_min, m_max);
   TH1F *MC_SR_m1 = new TH1F("MC_SR_m1", "", m_bins, m_min, m_max);
   TH1F *MC_SR_m2 = new TH1F("MC_SR_m2", "", m_bins, m_min, m_max);
 
@@ -101,6 +104,14 @@ void HighMassBKGShape()
     MC_hs_CR_m2->Add(MCBKGShapeCRmassF);
     MC_CR_m2->Add(MCBKGShapeCRmassF);
 
+    TH1F *MCBKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("MCBKGShapeOrphDimumass");
+    MCBKGShapeOrphDimumass->Scale(MC_ScaleFactors[i]);
+    MCBKGShapeOrphDimumass->SetLineColor(MC_Colors[i]);
+    MCBKGShapeOrphDimumass->SetFillColor(MC_Colors[i]);
+    MCBKGShapeOrphDimumass->SetMarkerColor(MC_Colors[i]);
+    MC_hs_CR_orphdimumass->Add(MCBKGShapeOrphDimumass);
+    MC_CR_orphdimumass->Add(MCBKGShapeOrphDimumass);
+
     TH1F *MCBKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("MCBKGShapeSRmassC");
     MCBKGShapeSRmassC->Scale(MC_ScaleFactors[i]);
     MCBKGShapeSRmassC->SetLineColor(MC_Colors[i]);
@@ -122,6 +133,7 @@ void HighMassBKGShape()
   TString DATA_file_name;
   TH1F *DATA_CR_m1 = new TH1F("DATA_CR_m1", "", m_bins, m_min, m_max);
   TH1F *DATA_CR_m2 = new TH1F("DATA_CR_m2", "", m_bins, m_min, m_max);
+  TH1F *DATA_CR_orphdimumass = new TH1F("DATA_CR_orphdimumass", "", m_bins, m_min, m_max);
   TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1", "", m_bins, m_min, m_max);
   TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2", "", m_bins, m_min, m_max);
 
@@ -136,6 +148,7 @@ void HighMassBKGShape()
 
     TH1F *DATABKGShapeCRmassC = (TH1F*)file_tmp->Get("BKGShapeCRmassC")->Clone("DATABKGShapeCRmassC"); DATA_CR_m1->Add(DATABKGShapeCRmassC);
     TH1F *DATABKGShapeCRmassF = (TH1F*)file_tmp->Get("BKGShapeCRmassF")->Clone("DATABKGShapeCRmassF"); DATA_CR_m2->Add(DATABKGShapeCRmassF);
+    TH1F *DATABKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("DATABKGShapeOrphDimumass"); DATA_CR_orphdimumass->Add(DATABKGShapeOrphDimumass);
     TH1F *DATABKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("DATABKGShapeSRmassC"); DATA_SR_m1->Add(DATABKGShapeSRmassC);
     TH1F *DATABKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("DATABKGShapeSRmassF"); DATA_SR_m2->Add(DATABKGShapeSRmassF);
   }
@@ -293,6 +306,81 @@ void HighMassBKGShape()
   pull_CR_m2->SetMarkerSize(0.6);
   pull_CR_m2->Draw("P");
   CR2->Write();
+
+  //******************
+  //* For orphan dimu*
+  //******************
+  TCanvas *CROrphDimuM=new TCanvas("CROrphDimuM","CR Orphan Dimu Mass",700,500); CROrphDimuM->Clear();
+  TPad *CROrphDimuMpad1 = new TPad("CROrphDimuMpad1", "CROrphDimuMpad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
+  CROrphDimuMpad1->SetBottomMargin(0); CROrphDimuMpad1->Draw();
+  TPad *CROrphDimuMpad2 = new TPad("CROrphDimuMpad2", "CROrphDimuMpad2", 0, 0.0, 1, 0.29);
+  CROrphDimuMpad2->SetTopMargin(0); CROrphDimuMpad2->SetBottomMargin(0.3); CROrphDimuMpad2->SetGridy(); CROrphDimuMpad2->Draw();
+  //MC vs DATA
+  CROrphDimuMpad1->cd();
+  //Plot stacked histogram from MC
+  MC_hs_CR_orphdimumass->Draw("HIST"); MC_hs_CR_orphdimumass->SetMaximum(100); MC_hs_CR_orphdimumass->GetYaxis()->SetTitle("Events/4GeV");
+  //Plot MC error
+  MC_CR_orphdimumass->SetLineColor(2); MC_CR_orphdimumass->SetFillColor(2); MC_CR_orphdimumass->SetFillStyle(3004); MC_CR_orphdimumass->Draw("E2 SAME");
+  Double_t MC_CR_orphdimumass_error;
+  Double_t MC_CR_orphdimumass_integral = MC_CR_orphdimumass->IntegralAndError(1, m_bins, MC_CR_orphdimumass_error, "");
+  std::cout << "MC CR orphan dimu mass integral = " << MC_CR_orphdimumass_integral << " +/- " << MC_CR_orphdimumass_error << std::endl;
+  //Overlay data
+  DATA_CR_orphdimumass->SetFillColor(1); DATA_CR_orphdimumass->SetLineColor(1); DATA_CR_orphdimumass->SetMarkerStyle(20); DATA_CR_orphdimumass->SetMarkerSize(0.6); DATA_CR_orphdimumass->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
+  Double_t DATA_CR_orphdimumass_error;
+  Double_t DATA_CR_orphdimumass_integral = DATA_CR_orphdimumass->IntegralAndError(1, m_bins, DATA_CR_orphdimumass_error, "");
+  std::cout << "DATA CR orphan dimu mass integral = " << DATA_CR_orphdimumass_integral << " +/- " << DATA_CR_orphdimumass_error << std::endl;
+  //Build Legend
+  TLegend* CROrphDimuMpad1L = CROrphDimuMpad1->BuildLegend();
+  CROrphDimuMpad1L->SetBorderSize(0); CROrphDimuMpad1L->SetFillStyle(0); CROrphDimuMpad1L->SetNColumns(2);
+  TList *CROrphDimuMpad1P = CROrphDimuMpad1L->GetListOfPrimitives();
+  TIter CROrphDimuMpad1next(CROrphDimuMpad1P);
+  TObject *CROrphDimuMpad1obj;
+  TLegendEntry *CROrphDimuMpad1li;
+  int CROrphDimuMpad1iEntry = 0;
+  while ((CROrphDimuMpad1obj = CROrphDimuMpad1next())) {
+    CROrphDimuMpad1li = (TLegendEntry*)CROrphDimuMpad1obj;
+    CROrphDimuMpad1iEntry++;
+    if (CROrphDimuMpad1iEntry==1) CROrphDimuMpad1li->SetLabel("DYToLL (0J)");
+    if (CROrphDimuMpad1iEntry==2) CROrphDimuMpad1li->SetLabel("DYToLL (1J)");
+    if (CROrphDimuMpad1iEntry==3) CROrphDimuMpad1li->SetLabel("DYToLL (2J)");
+    if (CROrphDimuMpad1iEntry==4) CROrphDimuMpad1li->SetLabel("qqToZZTo4L");
+    if (CROrphDimuMpad1iEntry==5) CROrphDimuMpad1li->SetLabel("TTJetsToLL");
+    if (CROrphDimuMpad1iEntry==6) CROrphDimuMpad1li->SetLabel("ggHToZZTo4L");
+    if (CROrphDimuMpad1iEntry==7) CROrphDimuMpad1li->SetLabel("ggToZZTo4mu");
+    if (CROrphDimuMpad1iEntry==8) {CROrphDimuMpad1li->SetLabel("MC Error"); CROrphDimuMpad1li->SetOption("f");}
+    if (CROrphDimuMpad1iEntry==9) {CROrphDimuMpad1li->SetLabel("Data"); CROrphDimuMpad1li->SetOption("ep");}
+  }
+  CROrphDimuMpad1->Update(); CROrphDimuMpad1L->SetX1NDC(0.15); CROrphDimuMpad1L->SetX2NDC(0.5); CROrphDimuMpad1L->SetY1NDC(0.65); CROrphDimuMpad1L->SetY2NDC(0.9); CROrphDimuMpad1->Modified();
+  gPad->RedrawAxis();
+  CROrphDimuM->cd(); CROrphDimuM->Update();
+  //Plot pull distribution
+  CROrphDimuMpad2->cd();
+  //fill pull histogram
+  TH1F *pull_CR_orphdimumass = new TH1F("pull_CR_orphdimumass","", m_bins, m_min, m_max);
+  for(unsigned int iB=1; iB<=m_bins; iB++){
+    float pull_CR_orphdimumass_iB = ( DATA_CR_orphdimumass->GetBinContent(iB) - MC_CR_orphdimumass->GetBinContent(iB) ) / sqrt( pow(DATA_CR_orphdimumass->GetBinError(iB), 2) + pow(MC_CR_orphdimumass->GetBinError(iB), 2) );
+    pull_CR_orphdimumass->SetBinContent(iB, pull_CR_orphdimumass_iB );
+  }
+  pull_CR_orphdimumass->GetXaxis()->SetTitle("m_{orphan-di#mu} [GeV]");
+  pull_CR_orphdimumass->GetXaxis()->SetTitleSize(15);
+  pull_CR_orphdimumass->GetXaxis()->SetTitleFont(43);
+  pull_CR_orphdimumass->GetXaxis()->SetTitleOffset(3.0);
+  pull_CR_orphdimumass->GetXaxis()->SetLabelSize(15);
+  pull_CR_orphdimumass->GetXaxis()->SetLabelFont(43);//text size in unit of pixel, not the size of the pad
+  pull_CR_orphdimumass->GetYaxis()->SetTitle("Pull");
+  pull_CR_orphdimumass->GetYaxis()->CenterTitle();
+  pull_CR_orphdimumass->GetYaxis()->SetTitleSize(15);
+  pull_CR_orphdimumass->GetYaxis()->SetTitleFont(43);
+  pull_CR_orphdimumass->GetYaxis()->SetTitleOffset(.9);
+  pull_CR_orphdimumass->GetYaxis()->SetLabelSize(15);
+  pull_CR_orphdimumass->GetYaxis()->SetLabelFont(43);
+  pull_CR_orphdimumass->SetMinimum(-3.5);
+  pull_CR_orphdimumass->SetMaximum(3.5);
+  pull_CR_orphdimumass->SetStats(0);
+  pull_CR_orphdimumass->SetMarkerStyle(20);
+  pull_CR_orphdimumass->SetMarkerSize(0.6);
+  pull_CR_orphdimumass->Draw("P");
+  CROrphDimuM->Write();
 
   //***************
   //* For m1 at SR*
