@@ -318,7 +318,7 @@ void HighMassBKGShape()
   //MC vs DATA
   CROrphDimuMpad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_orphdimumass->Draw("HIST"); MC_hs_CR_orphdimumass->SetMaximum(100); MC_hs_CR_orphdimumass->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_CR_orphdimumass->Draw("HIST"); MC_hs_CR_orphdimumass->SetMaximum(10000); MC_hs_CR_orphdimumass->GetYaxis()->SetTitle("Events/4GeV");
   //Plot MC error
   MC_CR_orphdimumass->SetLineColor(2); MC_CR_orphdimumass->SetFillColor(2); MC_CR_orphdimumass->SetFillStyle(3004); MC_CR_orphdimumass->Draw("E2 SAME");
   Double_t MC_CR_orphdimumass_error;
@@ -361,7 +361,7 @@ void HighMassBKGShape()
     float pull_CR_orphdimumass_iB = ( DATA_CR_orphdimumass->GetBinContent(iB) - MC_CR_orphdimumass->GetBinContent(iB) ) / sqrt( pow(DATA_CR_orphdimumass->GetBinError(iB), 2) + pow(MC_CR_orphdimumass->GetBinError(iB), 2) );
     pull_CR_orphdimumass->SetBinContent(iB, pull_CR_orphdimumass_iB );
   }
-  pull_CR_orphdimumass->GetXaxis()->SetTitle("m_{orphan-di#mu} [GeV]");
+  pull_CR_orphdimumass->GetXaxis()->SetTitle("m_{orphan di-#mu} [GeV]");
   pull_CR_orphdimumass->GetXaxis()->SetTitleSize(15);
   pull_CR_orphdimumass->GetXaxis()->SetTitleFont(43);
   pull_CR_orphdimumass->GetXaxis()->SetTitleOffset(3.0);
@@ -374,8 +374,8 @@ void HighMassBKGShape()
   pull_CR_orphdimumass->GetYaxis()->SetTitleOffset(.9);
   pull_CR_orphdimumass->GetYaxis()->SetLabelSize(15);
   pull_CR_orphdimumass->GetYaxis()->SetLabelFont(43);
-  pull_CR_orphdimumass->SetMinimum(-3.5);
-  pull_CR_orphdimumass->SetMaximum(3.5);
+  pull_CR_orphdimumass->SetMinimum(-50);
+  pull_CR_orphdimumass->SetMaximum(50);
   pull_CR_orphdimumass->SetStats(0);
   pull_CR_orphdimumass->SetMarkerStyle(20);
   pull_CR_orphdimumass->SetMarkerSize(0.6);
