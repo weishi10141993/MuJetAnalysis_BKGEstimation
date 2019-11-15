@@ -265,20 +265,20 @@ void FitAndSave() {
   //Initial combianatorial
   w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.3], MmumuC_p[0.05, 0.0, 1.5])");
   //Bulk shape
-  w->factory("Bernstein::bgC(m1, {bC06[9.5766e+00,0.1,15.], bC16[ 1.0705e-01,0.,3.], bC26[3.5184e-05,0.,3.], bC36[1.259,0.,5.], bC46[2.5370e-03,0.,3.], bC56[5.7432e-01,0.,3.], bC66[3.9353e-01,0.1,4.]})");
+  w->factory("Bernstein::bgC(m1, {bC06[9.5766e+00, 0.1, 15.], bC16[ 1.0705e-01, 0., 3.], bC26[3.5184e-05, 0., 3.], bC36[1.259, 0., 5.], bC46[2.5370e-03, 0., 3.], bC56[5.7432e-01, 0., 3.], bC66[3.9353e-01, 0.1, 4.]})");
   //Ad hoc gaussian to cover first bump and help other functions
-  w->factory("Gaussian::adHocC(m1, adHocC_mass[0.2,0.,0.6], adHocC_sigma[6.3097e-02,0.0001,0.1])");
+  w->factory("Gaussian::adHocC(m1, adHocC_mass[0.2, 0., 0.6], adHocC_sigma[6.3097e-02, 0.0001, 0.1])");
   //Resonances
   w->factory("Gaussian::etaC(m1, 0.54786, 0.007)");
   w->factory("Gaussian::rhoC(m1, 0.78265, 0.009)");
   w->factory("Gaussian::phiC(m1, 1.01946, 0.01)");
-  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.0969,3.0,3.35], JpsiC_sigma[0.1,0.001,0.3], JpsiC_alpha[1.2,0.4,7.0], JpsiC_n[2.0])");
+  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.0969, 3.0, 3.35], JpsiC_sigma[0.1, 0.001, 0.3], JpsiC_alpha[1.2, 0.4, 7.0], JpsiC_n[2.0])");
   w->factory("Gaussian::psiC(m1, 3.68609, psiC_sigma[0.031, 0.01, 0.04])");
   //w->factory("Gaussian::Up1C(m1, Up1C_mean[9.43, 9.39, 9.500], Up1C_sigma[0.101, 0.01, 0.20])");
   //w->factory("Gaussian::Up2C(m1, Up2C_mean[10.0, 9.90, 10.20], Up2C_sigma[0.060, 0.01, 0.15])");
   //w->factory("Gaussian::Up3C(m1, Up3C_mean[10.45, 10.2, 10.7], Up3C_sigma[0.050, 0.01, 0.15])");
   // FINAL PDF: Can be used to generate toy dataset:https://root.cern.ch/roofit-20-minutes
-  w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 10000.]*adHocC, norm_MmumuC[200., 0., 25000.]*MmumuC, norm_bgC[4400.,100.,20000.]*bgC, norm_etaC[1.3151e+01,0.,1000.]*etaC, norm_rhoC[1.0107e+02,0.,1000.]*rhoC, norm_phiC[9.8640e+01,0.,1000.]*phiC, norm_JpsiC[8000.,10.,10000.]*JpsiC, norm_psiC[50.,0.,1000.]*psiC)");
+  w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 10000.]*adHocC, norm_MmumuC[200., 0., 25000.]*MmumuC, norm_bgC[4400., 1000., 20000.]*bgC, norm_etaC[1.3151e+01, 0., 1000.]*etaC, norm_rhoC[1.0107e+02, 0., 1000.]*rhoC, norm_phiC[9.8640e+01, 0., 1000.]*phiC, norm_JpsiC[8000., 10., 10000.]*JpsiC, norm_psiC[50., 0., 1000.]*psiC)");
   //===============
   //End 2017 PDF m1
   //===============
@@ -383,20 +383,20 @@ void FitAndSave() {
   //Initial combianatorial
   w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0.0, 0.3], MmumuF_p[0.05, 0.0, 2.])");
   //FIRST KINK
-  w->factory("Bernstein::bgF(m2,{bF06[9.9751,0,15.], bF16[3.2971e-05,0.,3.], bF26[ 1.2361e-07,0.,3.], bF36[5.1545e-08,0.,2.], bF46[9.9017e-01,0.,3.], bF56[3.0607e-01,0.,3.], bF66[0.5,0.1,4.]})");
+  w->factory("Bernstein::bgF(m2,{bF06[9.9751, 0, 15.], bF16[3.2971e-05, 0., 3.], bF26[1.2361e-07, 0., 3.], bF36[5.1545e-08, 0., 2.], bF46[9.9017e-01, 0., 3.], bF56[3.0607e-01, 0., 3.], bF66[0.5, 0.1, 4.]})");
   // Ad hoc gaussian to cover first bump and help other functions
-  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.4,0.2,0.6],adHocF_sigma[0.01,0.001,0.1])");
+  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.4, 0.2, 0.6],adHocF_sigma[0.01, 0.001, 0.1])");
   // Resonances
-  w->factory("Gaussian::etaF(m2,0.548,0.02)");
-  w->factory("Gaussian::rhoF(m2,0.782,0.025)");
-  w->factory("Gaussian::phiF(m2,1.019,0.02)");
-  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.12,3.0,3.35], JpsiF_sigma[0.1,0.02,0.3], JpsiF_alpha[1.2,0.4,10.0], JpsiF_n[2.0])");
-  w->factory("Gaussian::psiF(m2,3.675,psiF_sigma[0.033,0.001,0.1])");
+  w->factory("Gaussian::etaF(m2, 0.54786, 0.007)");
+  w->factory("Gaussian::rhoF(m2, 0.78265, 0.009)");
+  w->factory("Gaussian::phiF(m2, 1.01946, 0.01)");
+  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.0969, 3.0, 3.35], JpsiF_sigma[0.1, 0.01, 0.3], JpsiF_alpha[1.2, 0.4, 10.0], JpsiF_n[2.0])");
+  w->factory("Gaussian::psiF(m2, 3.68609, psiF_sigma[0.031, 0.01, 0.04])");
   //w->factory("Gaussian::Up1F(m2,Up1F_mean[9.43,9.39,9.500], Up1F_sigma[0.101,0.01,0.20])");
   //w->factory("Gaussian::Up2F(m2,Up2F_mean[10.0,9.90,10.20], Up2F_sigma[0.060,0.01,0.15])");
   //w->factory("Gaussian::Up3F(m2,Up3F_mean[10.35,10.2,10.5], Up3F_sigma[0.050,0.01,0.10])");
   // FINAL PDF
-  w->factory("SUM::template1D_m2(norm_adHocF[10., 0., 500.]*adHocF,norm_MmumuF[200., 0., 10000.]*MmumuF, norm_bgF[4400.,0.,8000.]*bgF, norm_etaF[3.3894e-05,0.,1.]*etaF, norm_rhoF[9.,1.,100.]*rhoF, norm_phiF[100.,1.,1000.]*phiF, norm_JpsiF[5000.,0.,8000.]*JpsiF, norm_psiF[50.,0.,1000.]*psiF)");
+  w->factory("SUM::template1D_m2(norm_adHocF[150., 0., 500.]*adHocF, norm_MmumuF[10000., 0., 15000.]*MmumuF, norm_bgF[8000., 1000., 20000.]*bgF, norm_etaF[1., 0., 2.]*etaF, norm_rhoF[65., 1., 100.]*rhoF, norm_phiF[110., 1., 1000.]*phiF, norm_JpsiF[6400., 0., 10000.]*JpsiF, norm_psiF[250., 0., 1000.]*psiF)");
   //===============
   //End 2017 PDF m2
   //===============
