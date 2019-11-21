@@ -58,6 +58,9 @@ using namespace RooFit;
 
 void LowMassBKGPlot2D() {
 
+  const double       m_min  = 0.2113;
+  const double       m_max  = 9.;
+  const unsigned int m_bins = 220;
   setTDRStyle();
 
   TCanvas * c_template2D_m1_vs_m2 = new TCanvas("c_template2D_m1_vs_m2", "c_template2D_m1_vs_m2",0,1320,1044,928);
@@ -80,47 +83,41 @@ void LowMassBKGPlot2D() {
   TFile* file = new TFile("ws_FINAL.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
-  const double       m_min  = 0.2113;
-  const double       m_max  = 9.;
-  const unsigned int m_bins = 220;
-
-  //double nEvents_Jpsi = 0.12;//from 2016 analysis
-
   //****************************************************************************
   //                         Draw 2D template m1 x m2
   //****************************************************************************
-  //Create and fill ROOT 2D histogram (2*m_bins) with sampling of 2D pdf
-  TH2D* h2_Template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",2.0*m_bins,2.0*m_bins);
-  cout << "Template2D integral: " << h2_Template2D->Integral() << std::endl;//normalized to 1
-  TH2D* h2_Template2D_diagonal    = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",1000,1000);
-  cout << "Template2D_diagonal integral: " << h2_Template2D_diagonal->Integral() << std::endl;
-  TH2D* h2_Template2D_offDiagonal = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",1000,1000);
-  cout << "Template2D_offDiagonal integral: " << h2_Template2D_offDiagonal->Integral() << std::endl;
+  //Create and fill ROOT 2D histogram (2*m_bins) with sampling of 2D pdf, normalized to 1
+  TH2D* h2_Template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", 2.0*m_bins, 2.0*m_bins);
+  TH2D* h2_Template2D_diagonal    = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", 1000, 1000);
+  TH2D* h2_Template2D_offDiagonal = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", 1000, 1000);
 
   for(int i=1;i<=1000;i++) {
     for(int j=1;j<=1000;j++) {
       double m_1 = h2_Template2D_offDiagonal->GetXaxis()->GetBinCenter(i);
       double m_2 = h2_Template2D_offDiagonal->GetYaxis()->GetBinCenter(j);
+      //*************************
       //2017 mass consistency cut
+      //*************************
       if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {
-        h2_Template2D_offDiagonal->SetBinContent(i,j,0.);
+        h2_Template2D_offDiagonal->SetBinContent(i, j, 0.);
       }
       else {
-        h2_Template2D_diagonal->SetBinContent(i,j,0.);
+        h2_Template2D_diagonal->SetBinContent(i, j, 0.);
       }
     }
   }
 
-  cout<<" -> Template2D_offDiagonal integral: "<<h2_Template2D_offDiagonal->Integral()<<endl;
-  cout<<" -> Template2D_diagonal integral:    "<<h2_Template2D_diagonal->Integral()<<endl;
+  double Template2D_diagonal_integral  = h2_Template2D_diagonal->Integral();
+  double Template2D_offDiagonal_integral  = h2_Template2D_offDiagonal->Integral();
+  cout<<" -> Template2D_diagonal integral:    "<< Template2D_diagonal_integral <<endl;
+  cout<<" -> Template2D_offDiagonal integral: "<< Template2D_offDiagonal_integral <<endl;
 
   //2-dimu events at CR
-  TH2D* h2_dimudimu_control_Iso_offDiagonal_2D = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1,m2",1000,1000);
-  cout<<"#Event ISOLATED but offDiag: " << h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<endl;
-  cout<<"Scaled as: "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" * (1 + "<<h2_Template2D_diagonal->Integral()<<" / "<<h2_Template2D_offDiagonal->Integral()<<") = "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" * "<<1+(h2_Template2D_diagonal->Integral()/h2_Template2D_offDiagonal->Integral())<<" = "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()*(1+h2_Template2D_diagonal->Integral()/h2_Template2D_offDiagonal->Integral())<<endl;
-  //Scale to: DimuDimu_iso_offDiag / Template2D_Area (normalize to the off-diag part of the data) * bb_ALL/bb_offDiag (scale factor to pass from a normalization off-diag. to a normalization to the whole area.)
-  h2_Template2D->Scale(h2_dimudimu_control_Iso_offDiagonal_2D->Integral()/h2_Template2D->Integral()*(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral());
-  cout<<"Scaled bb_2D template integral: " << h2_Template2D->Integral() <<" That means " << h2_Template2D->Integral()-h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << " events in signal region "<< std::endl;
+  TH2D* h2_dimudimu_control_Iso_offDiagonal_2D = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1,m2", 1000, 1000);
+  double Signal_CR_Data_integral  = h2_dimudimu_control_Iso_offDiagonal_2D->Integral();
+  cout<<"2 dimuon events in DATA at CR: " << Signal_CR_Data_integral <<endl;
+  cout<<"Expected 2 dimuon events in DATA at SR: " << Signal_CR_Data_integral*Template2D_diagonal_integral/Template2D_offDiagonal_integral << std::endl;
+  h2_Template2D->Scale(Signal_CR_Data_integral*(1+Template2D_diagonal_integral/Template2D_offDiagonal_integral));
 
   TH2D * h2_background = new TH2D( *h2_Template2D );
   h2_background->GetXaxis()->SetTitle("m_{(#mu#mu)_{1}} [GeV]");
