@@ -1,3 +1,8 @@
+//*****************************************************************************************************
+//* cmsenv                                                                                            *
+//* To request more time: sintr -t 480                                                                *
+//*                                       Wei Shi @Nov 20, 2019, Rice U.                              *
+//*****************************************************************************************************
 #include "TFile.h"
 #include "TStopwatch.h"
 #include "TCanvas.h"
@@ -51,7 +56,7 @@
 
 using namespace RooFit;
 
-void PlotSignal_and_Background() {
+void LowMassBKGPlot2D() {
 
   setTDRStyle();
 
@@ -79,52 +84,37 @@ void PlotSignal_and_Background() {
   const double       m_max  = 9.;
   const unsigned int m_bins = 220;
 
-  double nEvents_Jpsi = 0.12;//from 2016 analysis
+  //double nEvents_Jpsi = 0.12;//from 2016 analysis
 
   //****************************************************************************
   //                         Draw 2D template m1 x m2
   //****************************************************************************
-
-  TH2D* h2_Jpsi_2D = (TH2D*)w->pdf("Jpsi_2D")->createHistogram("m1,m2",2.0*m_bins,2.0*m_bins);
-  h2_Jpsi_2D->Scale(nEvents_Jpsi);  //Double J/Psi
-  cout<<"Double J/Psi: "<<h2_Jpsi_2D->Integral()<<endl;
-
-  //bb 2D template
+  //Create and fill ROOT 2D histogram (2*m_bins) with sampling of 2D pdf
   TH2D* h2_Template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",2.0*m_bins,2.0*m_bins);
-  cout << "2D template integral: " << h2_Template2D->Integral() << std::endl;
-
+  cout << "Template2D integral: " << h2_Template2D->Integral() << std::endl;//normalized to 1
   TH2D* h2_Template2D_diagonal    = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",1000,1000);
+  cout << "Template2D_diagonal integral: " << h2_Template2D_diagonal->Integral() << std::endl;
   TH2D* h2_Template2D_offDiagonal = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2",1000,1000);
+  cout << "Template2D_offDiagonal integral: " << h2_Template2D_offDiagonal->Integral() << std::endl;
 
-  float Area_2Jpsi=0., Area_NO2Jpsi=0., Area_2Jpsi_w=0., Area_NO2Jpsi_w=0.;
-  float offd_Area_2Jpsi=0., offd_Area_NO2Jpsi=0., offd_Area_2Jpsi_w=0., offd_Area_NO2Jpsi_w=0.;
   for(int i=1;i<=1000;i++) {
     for(int j=1;j<=1000;j++) {
-	double m_1 = h2_Template2D_offDiagonal->GetXaxis()->GetBinCenter(i);
-	double m_2 = h2_Template2D_offDiagonal->GetYaxis()->GetBinCenter(j);
-	if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {//2017 mass consistency cut
-	  if( fabs(m_1-3.1)<0.25 && fabs(m_2-3.1)<0.25 ){ Area_2Jpsi++; Area_2Jpsi_w+=h2_Template2D_offDiagonal->GetBinContent(i,j); }
-	  else{ Area_NO2Jpsi++; Area_NO2Jpsi_w+=h2_Template2D_offDiagonal->GetBinContent(i,j); }
-	  h2_Template2D_offDiagonal->SetBinContent(i,j,0.);
-	}
-	else {
-	  if( fabs(m_1-3.1)<0.25 || fabs(m_2-3.1)<0.25 ){ offd_Area_2Jpsi++; offd_Area_2Jpsi_w+=h2_Template2D_diagonal->GetBinContent(i,j); }
-	  else{ offd_Area_NO2Jpsi++; offd_Area_NO2Jpsi_w+=h2_Template2D_diagonal->GetBinContent(i,j); }
-	  h2_Template2D_diagonal->SetBinContent(i,j,0.);
-	}
+      double m_1 = h2_Template2D_offDiagonal->GetXaxis()->GetBinCenter(i);
+      double m_2 = h2_Template2D_offDiagonal->GetYaxis()->GetBinCenter(j);
+      //2017 mass consistency cut
+      if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {
+        h2_Template2D_offDiagonal->SetBinContent(i,j,0.);
+      }
+      else {
+        h2_Template2D_diagonal->SetBinContent(i,j,0.);
+      }
     }
   }
-  cout<<"Probability one event should be in the J/Psi area (SIGNAL REGION):"<<endl;
-  cout<<"2J/Psi Area is " << Area_2Jpsi/(Area_NO2Jpsi+Area_2Jpsi) << " of the rest of the signal region ("<<Area_2Jpsi<<" "<<Area_NO2Jpsi<<")."<<endl;
-  cout<<"2J/Psi Area (weighted) is " << Area_2Jpsi_w/(Area_NO2Jpsi_w+Area_2Jpsi_w) << " of the rest of the signal region ("<<Area_2Jpsi_w<<" "<<Area_NO2Jpsi_w<<")."<<endl;
-  cout<<"Probability one event should be in the J/Psi area (OFF-DIAGONAL REGION):"<<endl;
-  cout<<"2J/Psi Area is " << offd_Area_2Jpsi/(offd_Area_NO2Jpsi+offd_Area_2Jpsi) << " of the rest of the signal region ("<<offd_Area_2Jpsi<<" "<<offd_Area_NO2Jpsi<<")."<<endl;
-  cout<<"2J/Psi Area (weighted) is " << offd_Area_2Jpsi_w/(offd_Area_NO2Jpsi_w+offd_Area_2Jpsi_w) << " of the rest of the signal region ("<<offd_Area_2Jpsi_w<<" "<<offd_Area_NO2Jpsi_w<<")."<<endl;
 
   cout<<" -> Template2D_offDiagonal integral: "<<h2_Template2D_offDiagonal->Integral()<<endl;
   cout<<" -> Template2D_diagonal integral:    "<<h2_Template2D_diagonal->Integral()<<endl;
 
-  //Signal: ISO +off Diag
+  //2-dimu events at CR
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1,m2",1000,1000);
   cout<<"#Event ISOLATED but offDiag: " << h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<endl;
   cout<<"Scaled as: "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" * (1 + "<<h2_Template2D_diagonal->Integral()<<" / "<<h2_Template2D_offDiagonal->Integral()<<") = "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()<<" * "<<1+(h2_Template2D_diagonal->Integral()/h2_Template2D_offDiagonal->Integral())<<" = "<<h2_dimudimu_control_Iso_offDiagonal_2D->Integral()*(1+h2_Template2D_diagonal->Integral()/h2_Template2D_offDiagonal->Integral())<<endl;
@@ -132,18 +122,14 @@ void PlotSignal_and_Background() {
   h2_Template2D->Scale(h2_dimudimu_control_Iso_offDiagonal_2D->Integral()/h2_Template2D->Integral()*(h2_Template2D_diagonal->Integral() + h2_Template2D_offDiagonal->Integral())/h2_Template2D_offDiagonal->Integral());
   cout<<"Scaled bb_2D template integral: " << h2_Template2D->Integral() <<" That means " << h2_Template2D->Integral()-h2_dimudimu_control_Iso_offDiagonal_2D->Integral() << " events in signal region "<< std::endl;
 
-  TH2D * h2_background = new TH2D( *h2_Jpsi_2D );
-  h2_background->Add( h2_Template2D );
+  TH2D * h2_background = new TH2D( *h2_Template2D );
   h2_background->GetXaxis()->SetTitle("m_{(#mu#mu)_{1}} [GeV]");
-  //h2_background->GetXaxis()->CenterTitle(true);
   h2_background->GetXaxis()->SetTitleOffset(0.93);
   h2_background->GetYaxis()->SetTitle("m_{(#mu#mu)_{2}} [GeV]");
-  //h2_background->GetYaxis()->CenterTitle(true);
   h2_background->GetYaxis()->SetTitleOffset(0.85);
   h2_background->GetZaxis()->SetTitle("Events / (0.025 GeV x 0.025 GeV)");
   h2_background->GetZaxis()->CenterTitle(true);
   h2_background->GetZaxis()->SetLabelFont(42);
-  //h2_background->GetZaxis()->SetLabelOffset(-0.005);
   h2_background->GetZaxis()->SetLabelSize(0.04);
   h2_background->GetZaxis()->SetTitleSize(0.04);
   h2_background->GetZaxis()->SetTitleOffset(1.42);
@@ -157,19 +143,6 @@ void PlotSignal_and_Background() {
   Int_t nb=50;
   TColor::CreateGradientColorTable(2,Length,Red,Green,Blue,nb);
   h2_background->SetContour(nb);
-
-
-  //const Int_t NCont = 99;
-  //const Int_t NRGBs = 5;
-  //Double_t stops[NRGBs] = { 0.00, 0.34, 0.61, 0.84, 1.00 };
-  //Double_t red[NRGBs]   = { 0.00, 0.00, 0.87, 1.00, 0.51 };
-  //Double_t green[NRGBs] = { 0.00, 0.81, 1.00, 0.20, 0.00 };
-  //Double_t blue[NRGBs]  = { 0.51, 1.00, 0.12, 0.00, 0.00 };
-  //Int_t FI = TColor::CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont);
-  //Int_t MyPalette[NCont];
-  //for ( int i=0; i<NCont; i++ ) MyPalette[i] = FI+i;
-  //gStyle->SetPalette(NCont, MyPalette);
-  //h2_background->SetContour(NCont);
   h2_background->Draw("Cont4 Colz");
 
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.pdf");

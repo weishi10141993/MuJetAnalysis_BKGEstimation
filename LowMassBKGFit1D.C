@@ -1,3 +1,8 @@
+//*****************************************************************************************************
+//* cmsenv                                                                                            *
+//* To request more time: sintr -t 480                                                                *
+//*                                       Wei Shi @Nov 20, 2019, Rice U.                              *
+//*****************************************************************************************************
 #include "TFile.h"
 #include "TStopwatch.h"
 #include "TCanvas.h"
@@ -52,7 +57,7 @@
 
 using namespace RooFit;
 
-void FitAndSave() {
+void LowMassBKGFit1D() {
   //Constants
   TString pT_cut  = "17";
   TString eta_cut = "0.9";
@@ -277,14 +282,14 @@ void FitAndSave() {
   //w->factory("Gaussian::Up1C(m1, Up1C_mean[9.43, 9.39, 9.500], Up1C_sigma[0.101, 0.01, 0.20])");
   //w->factory("Gaussian::Up2C(m1, Up2C_mean[10.0, 9.90, 10.20], Up2C_sigma[0.060, 0.01, 0.15])");
   //w->factory("Gaussian::Up3C(m1, Up3C_mean[10.45, 10.2, 10.7], Up3C_sigma[0.050, 0.01, 0.15])");
-  // FINAL PDF: Can be used to generate toy dataset:https://root.cern.ch/roofit-20-minutes
+  // FINAL PDF: Can be used to generate toy dataset: https://root.cern.ch/roofit-20-minutes
   w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 10000.]*adHocC, norm_MmumuC[200., 0., 25000.]*MmumuC, norm_bgC[4400., 1000., 20000.]*bgC, norm_etaC[1.3151e+01, 0., 1000.]*etaC, norm_rhoC[1.0107e+02, 0., 1000.]*rhoC, norm_phiC[9.8640e+01, 0., 1000.]*phiC, norm_JpsiC[8000., 10., 10000.]*JpsiC, norm_psiC[50., 0., 1000.]*psiC)");
   //===============
   //End 2017 PDF m1
   //===============
 
   RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));
-  cout<<"------------------RooPrintable 1---------------------"<<endl;
+  cout<<"------------------RooFitResult for m1---------------------"<<endl;
   rC->Print();
 
   RooPlot* plotC = w->var("m1")->frame(Title("BG template for orphan dimuon high pT"),Bins(m_bins));
@@ -396,12 +401,13 @@ void FitAndSave() {
   //w->factory("Gaussian::Up2F(m2,Up2F_mean[10.0,9.90,10.20], Up2F_sigma[0.060,0.01,0.15])");
   //w->factory("Gaussian::Up3F(m2,Up3F_mean[10.35,10.2,10.5], Up3F_sigma[0.050,0.01,0.10])");
   // FINAL PDF
-  w->factory("SUM::template1D_m2(norm_adHocF[150., 0., 500.]*adHocF, norm_MmumuF[10000., 0., 15000.]*MmumuF, norm_bgF[8000., 1000., 20000.]*bgF, norm_etaF[1., 0., 2.]*etaF, norm_rhoF[65., 1., 100.]*rhoF, norm_phiF[110., 1., 1000.]*phiF, norm_JpsiF[6400., 0., 10000.]*JpsiF, norm_psiF[250., 0., 1000.]*psiF)");
+  w->factory("SUM::template1D_m2(norm_adHocF[150., 0., 500.]*adHocF, norm_MmumuF[10000., 0., 15000.]*MmumuF, norm_bgF[4400., 1000., 20000.]*bgF, norm_etaF[1., 0., 2.]*etaF, norm_rhoF[65., 1., 100.]*rhoF, norm_phiF[110., 1., 1000.]*phiF, norm_JpsiF[6400., 0., 10000.]*JpsiF, norm_psiF[250., 0., 1000.]*psiF)");
   //===============
   //End 2017 PDF m2
   //===============
 
   RooFitResult *rF = w->pdf("template1D_m2")->fitTo(*(w->data("ds_dimuorphan_bg_m2")), Extended(1), Save(), SumW2Error(kTRUE));
+  cout<<"------------------RooFitResult for m2---------------------"<<endl;
   rF->Print();
 
   RooPlot* plotF = w->var("m2")->frame(Title("BG template for orphan dimuon no high pT"),Bins(m_bins));
@@ -469,12 +475,14 @@ void FitAndSave() {
   //****************************************************************************
   cout<<"-----Creating 2D template m1 * m2:-----"<<endl;
   w->factory("PROD::template2D(template1D_m1,template1D_m2)");
+  cout<<"1D template m1 fit chi^2/dof: "<<chi2_C<<endl;
+  cout<<"1D template m2 fit chi^2/dof: "<<chi2_F<<endl;
 
   //****************************************************************************
-  //                       Extract 1D J/psi template from template m1
+  //                     Extract 1D J/psi template from template m1
   //****************************************************************************
   cout << "Create templates for J/psi from m1" << endl;
-
+  //Get final fit parameter for the J/psi peak in rC and plot the Jpsi peak
   RooRealVar* JpsiC_mean_fitresult = (RooRealVar*) rC->floatParsFinal().find("JpsiC_mean");
   cout << "JpsiC_mean " << JpsiC_mean_fitresult->getVal() << endl;
   RooRealVar* JpsiC_sigma_fitresult = (RooRealVar*) rC->floatParsFinal().find("JpsiC_sigma");
@@ -646,7 +654,4 @@ void FitAndSave() {
   //****************************************************************************
   cout<<"Save to workspace"<<endl;
   w->writeToFile("ws_FINAL.root");
-  //2016 fit: chi2_C ~ chi2_F (=chi^2/d.o.f.) ~ 1.3
-  cout<<"1D template m1 fit chiSquare/d.o.f.: "<<chi2_C<<endl;
-  cout<<"1D template m2 fit chiSquare/d.o.f.: "<<chi2_F<<endl;
 }
