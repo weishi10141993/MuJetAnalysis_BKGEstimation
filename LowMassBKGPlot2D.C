@@ -88,6 +88,7 @@ void LowMassBKGPlot2D() {
   //****************************************************************************
   //Create and fill ROOT 2D histogram (2*m_bins) with sampling of 2D pdf, normalized to 1
   TH2D* h2_Template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", 2.0*m_bins, 2.0*m_bins);
+  //The following two will replace existing TH1: template2D__m1_m2 (Potential memory leak)
   TH2D* h2_Template2D_diagonal    = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", 1000, 1000);
   TH2D* h2_Template2D_offDiagonal = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", 1000, 1000);
 
@@ -117,12 +118,13 @@ void LowMassBKGPlot2D() {
   double Signal_CR_Data_integral  = h2_dimudimu_control_Iso_offDiagonal_2D->Integral();
   cout<<"2 dimuon events in DATA at CR: " << Signal_CR_Data_integral <<endl;
   cout<<"Expected 2 dimuon events in DATA at SR: " << Signal_CR_Data_integral*Template2D_diagonal_integral/Template2D_offDiagonal_integral << std::endl;
-  h2_Template2D->Scale(Signal_CR_Data_integral*(1+Template2D_diagonal_integral/Template2D_offDiagonal_integral));
 
+  //Scale 2D template to total # of events in 2D plane
+  h2_Template2D->Scale(Signal_CR_Data_integral*(1+Template2D_diagonal_integral/Template2D_offDiagonal_integral));
   TH2D * h2_background = new TH2D( *h2_Template2D );
-  h2_background->GetXaxis()->SetTitle("m_{(#mu#mu)_{1}} [GeV]");
+  h2_background->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h2_background->GetXaxis()->SetTitleOffset(0.93);
-  h2_background->GetYaxis()->SetTitle("m_{(#mu#mu)_{2}} [GeV]");
+  h2_background->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h2_background->GetYaxis()->SetTitleOffset(0.85);
   h2_background->GetZaxis()->SetTitle("Events / (0.025 GeV x 0.025 GeV)");
   h2_background->GetZaxis()->CenterTitle(true);
@@ -145,14 +147,13 @@ void LowMassBKGPlot2D() {
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.png");
 
-  // This required to draw scatter plot without LogZ
-  TPad* pad = new TPad("pad", "pad",0,0,1,1);
+  //Create pad to draw scatter plot without Logz because c_template2D_m1_vs_m2 is set to Logz
+  TPad* pad = new TPad("pad", "pad", 0, 0, 1, 1);
   pad->Draw();
   pad->cd();
   pad->SetLeftMargin(0.121);
   pad->SetRightMargin(0.17);//48);
   pad->SetTopMargin(0.05);
-
   pad->SetFillColor(0);
   pad->SetFillStyle(4000);
   pad->SetBorderMode(0);
@@ -164,272 +165,42 @@ void LowMassBKGPlot2D() {
   pad->SetFrameFillStyle(0);
   pad->SetFrameBorderMode(0);
 
-////  TH2D* h2_dimudimu_control_Iso_offDiagonal_2D_dummy = new TH2D("h2_dimudimu_control_Iso_offDiagonal_2D_dummy", "h2_dimudimu_control_Iso_offDiagonal_2D_dummy", 1000, m_min, m_max, 1000, m_min, m_max);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetXaxis()->SetTitle("m_{1 #mu#mu} [GeV]");
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetXaxis()->CenterTitle(true);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetXaxis()->SetTitleOffset(0.93);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetYaxis()->SetTitle("m_{2 #mu#mu} [GeV]");
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetYaxis()->CenterTitle(true);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetYaxis()->SetTitleOffset(0.95);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->SetTitle("Events / (0.025 GeV x 0.025 GeV)");
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->CenterTitle(true);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->SetLabelFont(42);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->SetLabelOffset(-0.005);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->SetLabelSize(0.044);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->SetTitleSize(0.044);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->SetTitleOffset(1.2);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->GetZaxis()->SetTitleFont(42);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_dummy->Draw("");
-////
-////  h2_dimudimu_control_Iso_offDiagonal_2D->SetMarkerColor(kBlack);
-////  h2_dimudimu_control_Iso_offDiagonal_2D->SetMarkerStyle(20);
-////  h2_dimudimu_control_Iso_offDiagonal_2D->SetMarkerSize(3.0);
-////  //  h2_dimudimu_control_Iso_offDiagonal_2D->Draw("same");
-////
-////  TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_tmp = new TH2D( *h2_dimudimu_control_Iso_offDiagonal_2D);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerColor(kWhite);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerStyle(20);
-////  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerSize(2.0);
-  //  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->Draw("same");
+  h2_dimudimu_control_Iso_offDiagonal_2D->SetMarkerColor(kBlack);
+  h2_dimudimu_control_Iso_offDiagonal_2D->SetMarkerStyle(20);
+  h2_dimudimu_control_Iso_offDiagonal_2D->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2_dimudimu_control_Iso_offDiagonal_2D->SetXTitle("");
+  h2_dimudimu_control_Iso_offDiagonal_2D->SetYTitle("");
+  h2_dimudimu_control_Iso_offDiagonal_2D->Draw("same");
 
-  //  -------------------2015----------------------
-  //------OffDiagonal SCAN------
-  //************************************
-  //*    Row   *     massC *     massF *
-  //************************************
-  //************************************************************************************************
-  //*        0 * 0.3789996 * 1.8526362 *         0 * 1.2943311 *    254790 * 859868610 *       611 *
-  //*        1 * 1.7474905 * 2.7977094 *         0 * 0.7504828 *    260576 * 388414933 *       188 *
-  //*        2 * 1.1979647 * 0.8495020 * 1.5138732 *         0 *    258714 *  14142382 *        10 *
-  //*        3 * 1.2658947 * 2.3115363 *         0 *         0 *    256843 * 1.603e+09 *      1166 *
-  //************************************
-  //------Signal SCAN------
-  //************************************
-  //*    Row   *     massC *     massF *
-  //        0  0.4049646  0.5604345     256843  348750551        241 *
-  //************************************************************************
+  TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_tmp = new TH2D( *h2_dimudimu_control_Iso_offDiagonal_2D);
+  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerColor(kWhite);
+  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerStyle(20);
+  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerSize(1.0);
+  h2_dimudimu_control_Iso_offDiagonal_2D_tmp->Draw("same");
 
-  //  -------------------2016 BCDEF----------------------
-  //*        0 * 1.5225365 * 0.8431518 * 0.8962873 *         0 *    274969 * 837317792 *       456 *
-  //*        1 * 0.7942560 * 2.3587374 *         0 * 1.8426080 *    274968 * 1.550e+09 *       815 *
-  //*        2 * 3.0640931 * 2.6193141 *         0 * 1.8181604 *    274441 * 341665349 *       207 *
-  //*        3 * 0.6967173 * 2.0301356 * 1.4252665 * 1.2235757 *    274441 * 659054303 *       394 *
-  //*        4 * 3.0594613 * 2.5633280 *         0 * 1.4294159 *    275836 * -1.98e+09 *      1287 *
-  //*        5 * 0.3829744 * 0.6517009 *         0 *         0 *    276282 * 2.038e+09 *      1129 *
-  //*        6 * 3.0445525 * 0.4301351 * 0.9365223 * 1.5587855 *    276502 * 594211575 *       390 *
-  //*        7 * 0.7256926 * 3.0789272 *         0 * 0.8460569 *    276501 * 1.985e+09 *      1182 *
-  //*        8 * 0.3180795 * 2.0960705 * 0.7000579 * 0.6592856 *    276525 * 1.635e+09 *       961 *
-  //*        9 * 0.2748118 * 3.1098189 *         0 *         0 *    276525 * 757250117 *       490 *
-  //*       10 * 1.0963534 * 1.9935944 * 1.8272670 *         0 *    276437 * -67935356 *      2042 *
-  //*       11 * 0.2951213 * 7.9970874 *         0 *         0 *    276811 * 985305934 *       541 *
-  //*       12 * 3.1160290 * 0.9953680 *         0 *         0 *    276363 * 1.976e+09 *      1103 *
-  //*       13 * 2.0859162 * 3.2248451 *         0 *         0 *    276581 * 537441537 *       355 *
-  //*       14 * 6.4438476 * 3.0851912 *         0 *         0 *    277070 * 895118089 *       478 *
-  //*       15 * 1.9559303 * 0.2534542 * 0.7358005 * 0.7439422 *    276831 * 1.580e+09 *       882 *
-  //*       16 * 2.6904547 * 3.0699591 * 1.0419131 * 1.0449538 *    276831 * 373972636 *       244 *
-  //*       17 * 1.0854868 * 2.0424716 *         0 * 1.0831496 *    277194 * 2.054e+09 *      1171 *
-  //*       18 * 3.4007272 * 2.9169464 * 1.7980103 *         0 *    277194 * 1.170e+09 *       708 *
-  //*       19 * 1.6643008 * 1.1302868 *         0 *         0 *    278366 * 768530975 *       384 *
-  //*       20 * 2.2167325 * 1.3391919 *         0 *         0 *    278406 * 1.386e+09 *       815 *
-  //*       21 * 0.9294350 * 7.1592717 *         0 *         0 *    278509 * -2.00e+09 *      1351 *
-  //*       22 * 2.3811967 * 3.1188454 * 1.0696374 *         0 *    278239 * 1.263e+09 *       719 *
-  //*       23 * 0.5922431 * 1.2144465 * 0.5427458 * 0.6428673 *    278315 * 551943324 *       362 *
-  //*       24 * 3.1027426 * 1.1035094 *         0 *         0 *    278310 *  32888078 *        23 *
-  //************************************
-  //------Signal SCAN------
-  //************************************
-  //*    Row   *     massC *     massF *
-  //************************************
+  //*****************************************************************************
+  //BEGIN: Placeholder for unblinding signal, after green light from pre-approval
+  //*****************************************************************************
+  /*
+  TH2D* h2_dimudimu_signal_2D = (TH2D*)w->data("ds_dimudimu_signal_2D")->createHistogram("m1,m2", 1000, 1000);
+  h2_dimudimu_signal_2D->SetMarkerColor(kBlack);
+  h2_dimudimu_signal_2D->SetMarkerStyle(22);
+  h2_dimudimu_signal_2D->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2_dimudimu_signal_2D->SetXTitle("");
+  h2_dimudimu_signal_2D->SetYTitle("");
+  h2_dimudimu_signal_2D->Draw("same");
 
-  // 2D histogram to nclude all points in new version of the analysis (November 2014). I can not use work space because I currently don't have it. So, all points are hard coded!
-  TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_points = new TH2D("h2_dimudimu_control_Iso_offDiagonal_2D_points","h2_dimudimu_control_Iso_offDiagonal_2D_points", m_bins, m_min, m_max, m_bins, m_min, m_max);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerColor(kBlack);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerStyle(20);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->SetMarkerSize(3.0);
-  //2015
-  /*
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3789996, 1.8526362);
+  TH2D * h2_dimudimu_signal_2D_tmp = new TH2D( *h2_dimudimu_signal_2D);
+  h2_dimudimu_signal_2D_tmp->SetMarkerColor(kYellow);
+  h2_dimudimu_signal_2D_tmp->SetMarkerStyle(22);
+  h2_dimudimu_signal_2D_tmp->SetMarkerSize(1.0);
+  h2_dimudimu_signal_2D_tmp->Draw("same");
   */
-  //2016
-  /*
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(6.3394618, 4.8828525);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1085057, 0.8863269);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0989241, 0.4605314);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.3275566, 2.9306011);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0705516, 2.6184160);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.6725933, 2.2082293);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.7733180, 2.9909498);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.3730475, 1.5679047);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3830212, 0.6524042);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0845816, 2.5646343);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2796572, 1.3030284);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.2739968, 3.1119864);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0964052, 1.9947856);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.0735573, 3.2055511);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3029867, 8.0022907);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3957569, 2.0971429);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1111078, 0.9851592);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.5590274, 2.1472802);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.6958830, 3.0606346);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(4.5877881, 0.9336586);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.9578526, 0.2527949);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.8998218, 3.9293952);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.8804173, 3.0341777);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.0866440, 2.0660750);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.9268618, 7.1526098);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0994384, 1.1065233);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.3750891, 3.1192662);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.5902231, 1.2115613);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.6644971, 1.1404482);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.2108738, 1.3358302);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(8.1372909, 3.1030330);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.4606950, 0.5183745);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.3274743, 3.0891082);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.1260975, 4.8807039);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.4039331, 1.0785657);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.5836787, 0.6993446);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.3601328, 3.0733373);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.6870803, 3.0973193);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.4318099, 3.0343155);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.1111371, 2.5319032);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.7588224, 1.4551333);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.9652634, 1.4736373);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(7.6566572, 1.4617062);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.5125466, 3.4488928);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.0834312, 3.5854518);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.2351813, 1.2998992);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0159301, 1.7288222);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.8026461, 0.3167102);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.2728815, 3.0707302);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(2.9555747, 2.4789545);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.3244402, 8.8903112);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(0.9500833, 2.3361797);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(1.8660776, 2.6829679);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.2984790, 0.3616573);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(5.3474988, 3.1133358);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Fill(3.0882096, 1.4727710);
-  */
-  h2_dimudimu_control_Iso_offDiagonal_2D_points->Draw("same");
-
-  TH2D * h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp = new TH2D("h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp","h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp", m_bins, m_min, m_max, m_bins, m_min, m_max);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerColor(kWhite);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerStyle(20);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->SetMarkerSize(2.0);
-  //2015
-  /*
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3789996, 1.8526362);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.2658947, 2.3115363);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.7474905, 2.7977094);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1979647, 0.8495020);
-  */
-  //2016
-  /*
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(6.3394618, 4.8828525);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1085057, 0.8863269);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0989241, 0.4605314);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.3275566, 2.9306011);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0705516, 2.6184160);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.6725933, 2.2082293);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.7733180, 2.9909498);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.3730475, 1.5679047);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3830212, 0.6524042);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0845816, 2.5646343);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2796572, 1.3030284);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.2739968, 3.1119864);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0964052, 1.9947856);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.0735573, 3.2055511);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3029867, 8.0022907);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3957569, 2.0971429);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1111078, 0.9851592);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.5590274, 2.1472802);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.6958830, 3.0606346);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(4.5877881, 0.9336586);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.9578526, 0.2527949);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.8998218, 3.9293952);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.8804173, 3.0341777);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.0866440, 2.0660750);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.9268618, 7.1526098);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0994384, 1.1065233);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.3750891, 3.1192662);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.5902231, 1.2115613);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.6644971, 1.1404482);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.2108738, 1.3358302);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(8.1372909, 3.1030330);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.4606950, 0.5183745);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.3274743, 3.0891082);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.1260975, 4.8807039);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.4039331, 1.0785657);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.5836787, 0.6993446);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.3601328, 3.0733373);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.6870803, 3.0973193);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.4318099, 3.0343155);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.1111371, 2.5319032);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.7588224, 1.4551333);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.9652634, 1.4736373);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(7.6566572, 1.4617062);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.5125466, 3.4488928);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.0834312, 3.5854518);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.2351813, 1.2998992);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0159301, 1.7288222);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.8026461, 0.3167102);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.2728815, 3.0707302);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(2.9555747, 2.4789545);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.3244402, 8.8903112);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(0.9500833, 2.3361797);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(1.8660776, 2.6829679);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.2984790, 0.3616573);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(5.3474988, 3.1133358);
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Fill(3.0882096, 1.4727710);
-  */
-  h2_dimudimu_control_Iso_offDiagonal_2D_points_tmp->Draw("same");
-
-  TH2D* h2_signal = new TH2D("h2_signal","h2_signal", m_bins, m_min, m_max, m_bins, m_min, m_max);
-  //2015
-  /*
-  h2_signal->Fill(0.404, 0.560);
-  */
-  //2016
-  /*
-  h2_signal->Fill(0.8079733, 0.7267103);
-  h2_signal->Fill(2.8599584, 3.0017674);
-  h2_signal->Fill(0.4258973, 0.5848349);
-  h2_signal->Fill(3.0722196, 3.2662851);
-  h2_signal->Fill(3.0728187, 3.0538983);
-  h2_signal->Fill(3.0950253, 3.3617882);
-  h2_signal->Fill(3.1521356, 2.8546791);
-  h2_signal->Fill(2.8254406, 2.6496100);
-  h2_signal->Fill(1.2541753, 1.1524148);
-  h2_signal->Fill(2.3863873, 2.3582603);
-  h2_signal->Fill(3.0641751, 3.0972354);
-  h2_signal->Fill(1.9403913, 1.8196427);
-  h2_signal->Fill(1.3540757, 1.4834892);
-  */
-  h2_signal->GetXaxis()->SetTitle("m_{(#mu#mu)_{1}} [GeV]");
-  h2_signal->GetXaxis()->CenterTitle(true);
-  h2_signal->GetXaxis()->SetTitleOffset(0.93);
-  h2_signal->GetYaxis()->SetTitle("m_{(#mu#mu)_{2}} [GeV]");
-  h2_signal->GetYaxis()->CenterTitle(true);
-  h2_signal->GetYaxis()->SetTitleOffset(0.95);
-  h2_signal->GetZaxis()->SetTitle("Events / (0.025 GeV x 0.025 GeV)");
-  h2_signal->GetZaxis()->CenterTitle(true);
-  h2_signal->GetZaxis()->SetLabelFont(42);
-  h2_signal->GetZaxis()->SetLabelOffset(-0.005);
-  h2_signal->GetZaxis()->SetLabelSize(0.044);
-  h2_signal->GetZaxis()->SetTitleSize(0.044);
-  h2_signal->GetZaxis()->SetTitleOffset(1.2);
-  h2_signal->GetZaxis()->SetTitleFont(42);
-  h2_signal->SetMarkerColor(kBlack);
-  h2_signal->SetMarkerStyle(22);
-  h2_signal->SetMarkerSize(3.0);
-  h2_signal->Draw("same");
-
-  TH2D * h2_signal_tmp = new TH2D( *h2_signal);
-  Int_t col_tmp = TColor::GetColorTransparent(1, 0.1);
-  h2_signal_tmp->SetMarkerColor(col_tmp);
-  h2_signal_tmp->SetMarkerColor(kYellow);
-  h2_signal_tmp->SetMarkerStyle(22);
-  h2_signal_tmp->SetMarkerSize(2.0);
-  h2_signal_tmp->Draw("same");
+  //***************************************************************************
+  //END: Placeholder for unblinding signal, after green light from pre-approval
+  //***************************************************************************
 
   //Pre-calculated m1 and m2 values for drawing the corridor curves:
   //|m1-m2| - 3*(0.003044 + 0.007025*(m1+m2)/2.0 + 0.000053*(m1+m2)*(m1+m2)/4.0)

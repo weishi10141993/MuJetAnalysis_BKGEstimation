@@ -102,11 +102,11 @@ void LowMassBKGFit1D() {
   }
 
   //Define RooRealVar
-  RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV/#it{c}^{2}");
+  RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV");
   RooRealVar m1TightBJet("m1TightBJet","m_{#mu#mu_{1}} TightBJet",b_min,b_max,"");
   RooRealVar m1MediumBJet("m1MediumBJet","m_{#mu#mu_{1}} MediumBJet",b_min,b_max,"");
   RooRealVar m1LooseBJet("m1LooseBJet","m_{#mu#mu_{1}} LooseBJet",b_min,b_max,"");
-  RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV/#it{c}^{2}");
+  RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV");
   RooRealVar m2TightBJet("m2TightBJet","m_{#mu#mu_{2}} TightBJet",b_min,b_max,"");
   RooRealVar m2MediumBJet("m2MediumBJet","m_{#mu#mu_{2}} MediumBJet",b_min,b_max,"");
   RooRealVar m2LooseBJet("m2LooseBJet","m_{#mu#mu_{2}} LooseBJet",b_min,b_max,"");
@@ -130,6 +130,7 @@ void LowMassBKGFit1D() {
   w->import(m2LooseBJet);
 
   //Selection for events going into 1D templates m1 and m2: use Events_orphan tree
+  //Other cuts to be added... now only mass and iso
   //m1: High pT mu is in orphan dimu
   ostringstream stream_cut_bg_m1_iso;
   stream_cut_bg_m1_iso << "orph_dimu_Mu0_isoTk0p3 < " << iso_cut << " && orph_dimu_Mu0_isoTk0p3 >= 0 && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_AllTrackerMu && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) || ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
@@ -189,7 +190,7 @@ void LowMassBKGFit1D() {
   float SizeBin1 = plotC1->GetXaxis()->GetBinCenter(3) - plotC1->GetXaxis()->GetBinCenter(2);
   char c_SizeBin1[10];
   snprintf(c_SizeBin1,50,"%.2f",SizeBin1);
-  TString Yname1 = "Events / (" + std::string(c_SizeBin1) + "[GeV])";
+  TString Yname1 = "Events / (" + std::string(c_SizeBin1) + "GeV)";
   plotC1->GetYaxis()->SetTitle( Yname1.Data() );
   TCanvas * c1 = new TCanvas("c1");
   c1->cd(); plotC1->Draw(); txtHeader->Draw();
@@ -298,7 +299,7 @@ void LowMassBKGFit1D() {
   float SizeBin = plotC->GetXaxis()->GetBinCenter(3) - plotC->GetXaxis()->GetBinCenter(2);
   char c_SizeBin[10];
   snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  TString Yname = "Events / (" + std::string(c_SizeBin) + "[GeV])";
+  TString Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
   plotC->GetYaxis()->SetTitle( Yname.Data() );
   //DATA-Fit ratio
   TCanvas * c_template1D_m1_RooPlot = new TCanvas("c_template1D_m1_RooPlot", "c_template1D_m1_RooPlot",800,800);
@@ -416,7 +417,7 @@ void LowMassBKGFit1D() {
 
   SizeBin = plotF->GetXaxis()->GetBinCenter(3) - plotF->GetXaxis()->GetBinCenter(2);
   snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  Yname = "Events / (" + std::string(c_SizeBin) + "[GeV])";
+  Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
   plotF->GetYaxis()->SetTitle( Yname.Data() );
   //DATA-Fit ratio
   TCanvas * c_template1D_m2_RooPlot = new TCanvas("c_template1D_m2_RooPlot", "c_template1D_m2_RooPlot",800,800);
@@ -505,7 +506,7 @@ void LowMassBKGFit1D() {
   c_template1D_Jpsi_m1_RooPlot->cd();
   SizeBin = plot_Jpsi_m1->GetXaxis()->GetBinCenter(3) - plot_Jpsi_m1->GetXaxis()->GetBinCenter(2);
   snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  Yname = "Events / (" + std::string(c_SizeBin) + "[GeV])";
+  Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
   plot_Jpsi_m1->GetYaxis()->SetTitle( Yname.Data() );
   plot_Jpsi_m1->Draw();
   txtHeader->Draw();
@@ -538,7 +539,7 @@ void LowMassBKGFit1D() {
   c_template1D_Jpsi_m2_RooPlot->cd();
   SizeBin = plot_Jpsi_m2->GetXaxis()->GetBinCenter(3) - plot_Jpsi_m2->GetXaxis()->GetBinCenter(2);
   snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  Yname = "Events / (" + std::string(c_SizeBin) + "[GeV])";
+  Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
   plot_Jpsi_m2->GetYaxis()->SetTitle( Yname.Data() );
   plot_Jpsi_m2->Draw();
   txtHeader->Draw();
@@ -552,50 +553,59 @@ void LowMassBKGFit1D() {
   w->factory("PROD::Jpsi_2D(Jpsi_m1,Jpsi_m2)");
 
   //****************************************************************************
-  //                     Additional trees on signal events for validation
+  //                     Validate the method using 2 dimu events at CR (no iso)
   //****************************************************************************
-  cout << "Create trees on signal events" << endl;
-  //TTree: not used in this macro, to be used in other macros (PlotSignal_and_Background and PlotBBbar)
-  ostringstream stream_cut_diagonal;
-  stream_cut_diagonal << "TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
-  TString cut_diagonal = stream_cut_diagonal.str();
-  TTree* tree_dimudimu_diagonal_2D       = chain_data_dimudimu.CopyTree(cut_diagonal);
-  TTree* tree_dimudimu_diagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_diagonal);
-  TTree* tree_dimudimu_diagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_diagonal);
-
-  ostringstream stream_cut_signal;
-  stream_cut_signal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
-  TString cut_signal = stream_cut_signal.str();
-  TTree* tree_dimudimu_signal_2D = chain_data_dimudimu.CopyTree(cut_signal);
-
+  //removed iso for large stats
   ostringstream stream_cut_control_offDiagonal;
-  stream_cut_control_offDiagonal << "TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+  stream_cut_control_offDiagonal << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
   TString cut_control_offDiagonal = stream_cut_control_offDiagonal.str();
   TTree* tree_dimudimu_control_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
   TTree* tree_dimudimu_control_offDiagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
   TTree* tree_dimudimu_control_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
 
+  tree_dimudimu_control_offDiagonal_2D->GetBranch("massC")->SetName("m1");
+  tree_dimudimu_control_offDiagonal_2D->GetBranch("massF")->SetName("m2");
+  tree_dimudimu_control_offDiagonal_1D_massC->GetBranch("massC")->SetName("m1");
+  tree_dimudimu_control_offDiagonal_1D_massF->GetBranch("massF")->SetName("m1");
+
+  RooDataSet* ds_dimudimu_control_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_offDiagonal_2D","ds_dimudimu_control_offDiagonal_2D", tree_dimudimu_control_offDiagonal_2D, RooArgSet(m1,m2));
+  RooDataSet* ds_dimudimu_control_offDiagonal_1D_massC = new RooDataSet("ds_dimudimu_control_offDiagonal_1D_massC","ds_dimudimu_control_offDiagonal_1D_massC", tree_dimudimu_control_offDiagonal_1D_massC, RooArgSet(m1));
+  RooDataSet* ds_dimudimu_control_offDiagonal_1D_massF = new RooDataSet("ds_dimudimu_control_offDiagonal_1D_massF","ds_dimudimu_control_offDiagonal_1D_massF", tree_dimudimu_control_offDiagonal_1D_massF, RooArgSet(m1));
+  RooDataSet* ds_dimudimu_control_offDiagonal_1D = new RooDataSet("ds_dimudimu_control_offDiagonal_1D","ds_dimudimu_control_offDiagonal_1D", tree_dimudimu_control_offDiagonal_1D_massC, RooArgSet(m1));
+  ds_dimudimu_control_offDiagonal_1D->append(*ds_dimudimu_control_offDiagonal_1D_massF);
+
+  ds_dimudimu_control_offDiagonal_2D->Print("s");
+  ds_dimudimu_control_offDiagonal_1D_massC->Print("s");
+  ds_dimudimu_control_offDiagonal_1D_massF->Print("s");
+  ds_dimudimu_control_offDiagonal_1D->Print("s");
+
+  w->import(*ds_dimudimu_control_offDiagonal_2D);
+  w->import(*ds_dimudimu_control_offDiagonal_1D_massC);
+  w->import(*ds_dimudimu_control_offDiagonal_1D_massF);
+  w->import(*ds_dimudimu_control_offDiagonal_1D);
+
+  //Placeholder
+
+  //****************************************************************************
+  //                     Additional trees on signal events
+  //****************************************************************************
+  cout << "Create trees on signal events" << endl;
+
+  //To be used for estimate BKG yield in SR later
   ostringstream stream_cut_control_Iso_offDiagonal;
-  stream_cut_control_Iso_offDiagonal << "diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+  stream_cut_control_Iso_offDiagonal << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
   TString cut_control_Iso_offDiagonal = stream_cut_control_Iso_offDiagonal.str();
   TTree* tree_dimudimu_control_Iso_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massC = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
   TTree* tree_dimudimu_control_Iso_offDiagonal_1D_massF = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
 
-  //cout<<"------OffDiagonal SCAN------"<<endl;
-  //tree_dimudimu_control_Iso_offDiagonal_2D->Scan("massC:massF:isoC_1mm:isoF_1mm:run:event:lumi");
-  //cout<<"------Signal SCAN------"<<endl;
-  //tree_dimudimu_signal_2D->Scan("massC:massF:run:event:lumi:isoC_1mm:isoF_1mm");
+  //To be used when unblinding the SR later
+  ostringstream stream_cut_signal;
+  stream_cut_signal << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) < 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
+  TString cut_signal = stream_cut_signal.str();
+  TTree* tree_dimudimu_signal_2D = chain_data_dimudimu.CopyTree(cut_signal);
 
-  //Setting Names: Signal
-  tree_dimudimu_diagonal_2D->GetBranch("massC")->SetName("m1");
-  tree_dimudimu_diagonal_2D->GetBranch("massF")->SetName("m2");
-  tree_dimudimu_diagonal_1D_massC->GetBranch("massC")->SetName("m1");
-  tree_dimudimu_diagonal_1D_massF->GetBranch("massF")->SetName("m1");
-  tree_dimudimu_control_offDiagonal_2D->GetBranch("massC")->SetName("m1");
-  tree_dimudimu_control_offDiagonal_2D->GetBranch("massF")->SetName("m2");
-  tree_dimudimu_control_offDiagonal_1D_massC->GetBranch("massC")->SetName("m1");
-  tree_dimudimu_control_offDiagonal_1D_massF->GetBranch("massF")->SetName("m1");
+  //Setting Names: 2 dimu sample
   tree_dimudimu_control_Iso_offDiagonal_2D->GetBranch("massC")->SetName("m1");
   tree_dimudimu_control_Iso_offDiagonal_2D->GetBranch("massF")->SetName("m2");
   tree_dimudimu_control_Iso_offDiagonal_1D_massC->GetBranch("massC")->SetName("m1");
@@ -604,16 +614,6 @@ void LowMassBKGFit1D() {
   tree_dimudimu_signal_2D->GetBranch("massF")->SetName("m2");
 
   //Creating dataset: Signal
-  RooDataSet* ds_dimudimu_diagonal_2D = new RooDataSet("ds_dimudimu_diagonal_2D","ds_dimudimu_diagonal_2D", tree_dimudimu_diagonal_2D, RooArgSet(m1,m2));
-  RooDataSet* ds_dimudimu_diagonal_1D_massC = new RooDataSet("ds_dimudimu_diagonal_1D_massC","ds_dimudimu_diagonal_1D_massC", tree_dimudimu_diagonal_1D_massC, RooArgSet(m1));
-  RooDataSet* ds_dimudimu_diagonal_1D_massF = new RooDataSet("ds_dimudimu_diagonal_1D_massF","ds_dimudimu_diagonal_1D_massF", tree_dimudimu_diagonal_1D_massF, RooArgSet(m1));
-  RooDataSet* ds_dimudimu_diagonal_1D = new RooDataSet("ds_dimudimu_diagonal_1D","ds_dimudimu_diagonal_1D", tree_dimudimu_diagonal_1D_massC, RooArgSet(m1));
-  ds_dimudimu_diagonal_1D->append(*ds_dimudimu_diagonal_1D_massF);
-  RooDataSet* ds_dimudimu_control_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_offDiagonal_2D","ds_dimudimu_control_offDiagonal_2D", tree_dimudimu_control_offDiagonal_2D, RooArgSet(m1,m2));
-  RooDataSet* ds_dimudimu_control_offDiagonal_1D_massC = new RooDataSet("ds_dimudimu_control_offDiagonal_1D_massC","ds_dimudimu_control_offDiagonal_1D_massC", tree_dimudimu_control_offDiagonal_1D_massC, RooArgSet(m1));
-  RooDataSet* ds_dimudimu_control_offDiagonal_1D_massF = new RooDataSet("ds_dimudimu_control_offDiagonal_1D_massF","ds_dimudimu_control_offDiagonal_1D_massF", tree_dimudimu_control_offDiagonal_1D_massF, RooArgSet(m1));
-  RooDataSet* ds_dimudimu_control_offDiagonal_1D = new RooDataSet("ds_dimudimu_control_offDiagonal_1D","ds_dimudimu_control_offDiagonal_1D", tree_dimudimu_control_offDiagonal_1D_massC, RooArgSet(m1));
-  ds_dimudimu_control_offDiagonal_1D->append(*ds_dimudimu_control_offDiagonal_1D_massF);
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D","ds_dimudimu_control_Iso_offDiagonal_2D", tree_dimudimu_control_Iso_offDiagonal_2D, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_1D_massC = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_1D_massC","ds_dimudimu_control_Iso_offDiagonal_1D_massC", tree_dimudimu_control_Iso_offDiagonal_1D_massC, RooArgSet(m1));
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_1D_massF = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_1D_massF","ds_dimudimu_control_Iso_offDiagonal_1D_massF", tree_dimudimu_control_Iso_offDiagonal_1D_massF, RooArgSet(m1));
@@ -621,28 +621,12 @@ void LowMassBKGFit1D() {
   ds_dimudimu_control_Iso_offDiagonal_1D->append(*ds_dimudimu_control_Iso_offDiagonal_1D_massF);
   RooDataSet* ds_dimudimu_signal_2D = new RooDataSet("ds_dimudimu_signal_2D","ds_dimudimu_signal_2D", tree_dimudimu_signal_2D, RooArgSet(m1,m2));
 
-  ds_dimudimu_diagonal_2D->Print("s");
-  ds_dimudimu_diagonal_1D_massC->Print("s");
-  ds_dimudimu_diagonal_1D_massF->Print("s");
-  ds_dimudimu_diagonal_1D->Print("s");
-  ds_dimudimu_control_offDiagonal_2D->Print("s");
-  ds_dimudimu_control_offDiagonal_1D_massC->Print("s");
-  ds_dimudimu_control_offDiagonal_1D_massF->Print("s");
-  ds_dimudimu_control_offDiagonal_1D->Print("s");
   ds_dimudimu_control_Iso_offDiagonal_2D->Print("s");
   ds_dimudimu_control_Iso_offDiagonal_1D_massC->Print("s");
   ds_dimudimu_control_Iso_offDiagonal_1D_massF->Print("s");
   ds_dimudimu_control_Iso_offDiagonal_1D->Print("s");
   ds_dimudimu_signal_2D->Print("s");
 
-  w->import(*ds_dimudimu_diagonal_2D);
-  w->import(*ds_dimudimu_diagonal_1D_massC);
-  w->import(*ds_dimudimu_diagonal_1D_massF);
-  w->import(*ds_dimudimu_diagonal_1D);
-  w->import(*ds_dimudimu_control_offDiagonal_2D);
-  w->import(*ds_dimudimu_control_offDiagonal_1D_massC);
-  w->import(*ds_dimudimu_control_offDiagonal_1D_massF);
-  w->import(*ds_dimudimu_control_offDiagonal_1D);
   w->import(*ds_dimudimu_control_Iso_offDiagonal_2D);
   w->import(*ds_dimudimu_control_Iso_offDiagonal_1D_massC);
   w->import(*ds_dimudimu_control_Iso_offDiagonal_1D_massF);
