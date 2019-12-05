@@ -83,9 +83,9 @@ void LowMassBKGPlot2D() {
   TFile* file = new TFile("ws_FINAL.root");
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
-  //****************************************************************************
-  //                         Draw 2D template m1 x m2
-  //****************************************************************************
+  //**************************************************************************************
+  //                   Draw 2D background (scale 2D template/pdf to data yield)
+  //**************************************************************************************
   //Create and fill ROOT 2D histogram (2*m_bins) with sampling of 2D pdf, normalized to 1
   TH2D* h2_Template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", 2.0*m_bins, 2.0*m_bins);
   //The following two will replace existing TH1: template2D__m1_m2 (Potential memory leak)
@@ -108,18 +108,19 @@ void LowMassBKGPlot2D() {
     }
   }
 
+  //Fractions of area for diagonal and offdiagonal in 2D template
   double Template2D_diagonal_integral  = h2_Template2D_diagonal->Integral();
   double Template2D_offDiagonal_integral  = h2_Template2D_offDiagonal->Integral();
   cout<<" -> Template2D_diagonal integral:    "<< Template2D_diagonal_integral <<endl;
   cout<<" -> Template2D_offDiagonal integral: "<< Template2D_offDiagonal_integral <<endl;
 
-  //2-dimu events at CR
+  //count 2-dimu data events at CR
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1,m2", 1000, 1000);
   double Signal_CR_Data_integral  = h2_dimudimu_control_Iso_offDiagonal_2D->Integral();
   cout<<"2 dimuon events in DATA at CR: " << Signal_CR_Data_integral <<endl;
   cout<<"Expected 2 dimuon events in DATA at SR: " << Signal_CR_Data_integral*Template2D_diagonal_integral/Template2D_offDiagonal_integral << std::endl;
 
-  //Scale 2D template to total # of events in 2D plane
+  //Scale 2D template to total EXPECTED # of events in 2D plane
   h2_Template2D->Scale(Signal_CR_Data_integral*(1+Template2D_diagonal_integral/Template2D_offDiagonal_integral));
   TH2D * h2_background = new TH2D( *h2_Template2D );
   h2_background->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
@@ -147,6 +148,9 @@ void LowMassBKGPlot2D() {
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/h2_background.png");
 
+  //**************************************************************************************
+  //        Draw scatter plot at CR from data (SR blinded)
+  //**************************************************************************************
   //Create pad to draw scatter plot without Logz because c_template2D_m1_vs_m2 is set to Logz
   TPad* pad = new TPad("pad", "pad", 0, 0, 1, 1);
   pad->Draw();
@@ -179,9 +183,9 @@ void LowMassBKGPlot2D() {
   h2_dimudimu_control_Iso_offDiagonal_2D_tmp->SetMarkerSize(1.0);
   h2_dimudimu_control_Iso_offDiagonal_2D_tmp->Draw("same");
 
-  //*****************************************************************************
-  //BEGIN: Placeholder for unblinding signal, after green light from pre-approval
-  //*****************************************************************************
+  //**************************************************************************************
+  //    !!!BEGIN: Placeholder for unblinding signal, after green light from pre-approval
+  //**************************************************************************************
   /*
   TH2D* h2_dimudimu_signal_2D = (TH2D*)w->data("ds_dimudimu_signal_2D")->createHistogram("m1,m2", 1000, 1000);
   h2_dimudimu_signal_2D->SetMarkerColor(kBlack);
@@ -198,11 +202,13 @@ void LowMassBKGPlot2D() {
   h2_dimudimu_signal_2D_tmp->SetMarkerSize(1.0);
   h2_dimudimu_signal_2D_tmp->Draw("same");
   */
-  //***************************************************************************
-  //END: Placeholder for unblinding signal, after green light from pre-approval
-  //***************************************************************************
+  //************************************************************************************
+  //    !!!END: Placeholder for unblinding signal, after green light from pre-approval
+  //************************************************************************************
 
-  //Pre-calculated m1 and m2 values for drawing the corridor curves:
+  //************************************************************************************
+  //          Pre-calculated m1 and m2 values for drawing the corridor curves
+  //************************************************************************************
   //|m1-m2| - 3*(0.003044 + 0.007025*(m1+m2)/2.0 + 0.000053*(m1+m2)*(m1+m2)/4.0)
   //double m1Input[18]={0.25,    0.4,     0.7,     1.0,     2.0,     5.0,     8.0,     10.0,     15.0,     20.0,     25.0,     30.0,     35.0,     40.0,     45.0,     50.0,     55.0,     60.0};
   //double m2Small[18]={0.23574, 0.38259, 0.67629, 0.96995, 1.94863, 4.88284, 7.81428, 9.76704,  14.64356, 19.51244, 24.37369, 29.22732, 34.07335, 38.91180, 43.74269, 48.56604, 53.38186, 58.19017};
@@ -218,4 +224,102 @@ void LowMassBKGPlot2D() {
 
   c_template2D_m1_vs_m2->SaveAs("figures/template2D_signal_and_background_m1_vs_m2.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/template2D_signal_and_background_m1_vs_m2.png");
+
+  //************************************************************************************
+  //           Validate the method with 2 dimu events at CR (iso & no-iso)
+  //************************************************************************************
+  //Validate m1 with non-iso data at CR
+  TH1D *h1_control_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m1",m_bins);
+  cout<<" -> validate m1 non-iso data CR integral: "<< h1_control_offDiagonal_massC_data->Integral() <<endl;
+  cout<<" -> validate m1 non-iso data CR integral (width): "<< h1_control_offDiagonal_massC_data->Integral("width") <<endl;
+  h1_control_offDiagonal_massC_data->SetStats(0);
+  h1_control_offDiagonal_massC_data->SetMarkerStyle(20);
+  h1_control_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h1_control_offDiagonal_massC_data->GetYaxis()->SetTitle("Events / 0.04 GeV");
+  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,320.);
+
+  TH1D *h1_control_offDiagonal_massC_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
+  cout<<" -> validate m1 template CR integral: "<< h1_control_offDiagonal_massC_template->Integral() <<endl;
+  cout<<" -> validate m1 template CR integral (width): "<< h1_control_offDiagonal_massC_template->Integral("width") <<endl;
+  h1_control_offDiagonal_massC_template->Scale( h1_control_offDiagonal_massC_data->Integral("width") / h1_control_offDiagonal_massC_template->Integral("width") );
+  h1_control_offDiagonal_massC_template->SetLineColor(kRed);
+  h1_control_offDiagonal_massC_template->SetLineWidth(3);
+  h1_control_offDiagonal_massC_template->SetMarkerColor(kRed);
+
+  TCanvas * c_control_offDiagonal_massC = new TCanvas("c_control_offDiagonal_massC", "c_control_offDiagonal_massC");
+  c_control_offDiagonal_massC->cd();
+  h1_control_offDiagonal_massC_data->Draw("e1");
+  h1_control_offDiagonal_massC_template->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.pdf");
+  c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.png");
+  c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.root");
+
+  //Validate m1 with iso data at CR: very low stats, just FYI
+  TH1D *h1_control_Iso_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1",m_bins);
+  h1_control_Iso_offDiagonal_massC_data->SetStats(0);
+  h1_control_Iso_offDiagonal_massC_data->SetMarkerStyle(20);
+  h1_control_Iso_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h1_control_Iso_offDiagonal_massC_data->GetYaxis()->SetTitle("Events / 0.04 GeV");
+  h1_control_Iso_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,10.);
+
+  TH1D *h1_control_Iso_offDiagonal_massC_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
+  h1_control_Iso_offDiagonal_massC_template->Scale( h1_control_Iso_offDiagonal_massC_data->Integral("width") / h1_control_Iso_offDiagonal_massC_template->Integral("width") );
+  h1_control_Iso_offDiagonal_massC_template->SetLineColor(kRed);
+  h1_control_Iso_offDiagonal_massC_template->SetLineWidth(3);
+  h1_control_Iso_offDiagonal_massC_template->SetMarkerColor(kRed);
+
+  TCanvas * c_control_Iso_offDiagonal_massC = new TCanvas("c_control_Iso_offDiagonal_massC", "c_control_Iso_offDiagonal_massC");
+  c_control_Iso_offDiagonal_massC->cd();
+  h1_control_Iso_offDiagonal_massC_data->Draw("e1");
+  h1_control_Iso_offDiagonal_massC_template->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.pdf");
+  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.png");
+  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.root");
+
+  //Validate m2 with no-iso data at CR
+  TH1D *h1_control_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m2",m_bins);
+  h1_control_offDiagonal_massF_data->SetStats(0);
+  h1_control_offDiagonal_massF_data->SetMarkerStyle(20);
+  h1_control_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h1_control_offDiagonal_massF_data->GetYaxis()->SetTitle("Events / 0.04 GeV");
+  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,250.);
+
+  TH1D *h1_control_offDiagonal_massF_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
+  h1_control_offDiagonal_massF_template->Scale( h1_control_offDiagonal_massF_data->Integral("width") / h1_control_offDiagonal_massF_template->Integral("width") );
+  h1_control_offDiagonal_massF_template->SetLineColor(kRed);
+  h1_control_offDiagonal_massF_template->SetLineWidth(3);
+  h1_control_offDiagonal_massF_template->SetMarkerColor(kRed);
+
+  TCanvas * c_control_offDiagonal_massF = new TCanvas("c_control_offDiagonal_massF", "c_control_offDiagonal_massF");
+  c_control_offDiagonal_massF->cd();
+  h1_control_offDiagonal_massF_data->Draw("e1");
+  h1_control_offDiagonal_massF_template->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.pdf");
+  c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.png");
+  c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.root");
+
+  //Validate m2 with iso data at CR: limited stats, just FYI
+  TH1D *h1_control_Iso_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m2",m_bins);
+  h1_control_Iso_offDiagonal_massF_data->SetStats(0);
+  h1_control_Iso_offDiagonal_massF_data->SetMarkerStyle(20);
+  h1_control_Iso_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h1_control_Iso_offDiagonal_massF_data->GetYaxis()->SetTitle("Events / 0.04 GeV");
+  h1_control_Iso_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,10.);
+
+  TH1D *h1_control_Iso_offDiagonal_massF_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
+  h1_control_Iso_offDiagonal_massF_template->Scale( h1_control_Iso_offDiagonal_massF_data->Integral("width") / h1_control_Iso_offDiagonal_massF_template->Integral("width") );
+  h1_control_Iso_offDiagonal_massF_template->SetLineColor(kRed);
+  h1_control_Iso_offDiagonal_massF_template->SetLineWidth(3);
+
+  TCanvas * c_control_Iso_offDiagonal_massF = new TCanvas("c_control_Iso_offDiagonal_massF", "c_control_Iso_offDiagonal_massF");
+  c_control_Iso_offDiagonal_massF->cd();
+  h1_control_Iso_offDiagonal_massF_data->Draw("e1");
+  h1_control_Iso_offDiagonal_massF_template->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.pdf");
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.png");
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.root");
 }
