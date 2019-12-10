@@ -1,6 +1,6 @@
 //*****************************************************************************************************
 //* cmsenv                                                                                            *
-//* To request more time: sintr -t 480                                                                *
+//* To request more time and memory: sintr -t 480 -m 102400                                           *
 //*                                       Wei Shi @Nov 20, 2019, Rice U.                              *
 //*****************************************************************************************************
 #include "TFile.h"
@@ -67,10 +67,6 @@ void LowMassBKGFit1D() {
   const double       m_max  = 9.;
   const unsigned int m_bins = 220;
 
-  const double       b_min  = 0.;//for b jets
-  const double       b_max  = 10.;
-  const unsigned int b_bins = 10;
-
   //Style
   setTDRStyle();
   TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
@@ -103,31 +99,11 @@ void LowMassBKGFit1D() {
 
   //Define RooRealVar
   RooRealVar m1("m1","m_{#mu#mu_{1}}",m_min,m_max,"GeV");
-  RooRealVar m1TightBJet("m1TightBJet","m_{#mu#mu_{1}} TightBJet",b_min,b_max,"");
-  RooRealVar m1MediumBJet("m1MediumBJet","m_{#mu#mu_{1}} MediumBJet",b_min,b_max,"");
-  RooRealVar m1LooseBJet("m1LooseBJet","m_{#mu#mu_{1}} LooseBJet",b_min,b_max,"");
   RooRealVar m2("m2","m_{#mu#mu_{2}}",m_min,m_max,"GeV");
-  RooRealVar m2TightBJet("m2TightBJet","m_{#mu#mu_{2}} TightBJet",b_min,b_max,"");
-  RooRealVar m2MediumBJet("m2MediumBJet","m_{#mu#mu_{2}} MediumBJet",b_min,b_max,"");
-  RooRealVar m2LooseBJet("m2LooseBJet","m_{#mu#mu_{2}} LooseBJet",b_min,b_max,"");
-
   m1.setBins(m_bins);
-  m1TightBJet.setBins(b_bins);
-  m1MediumBJet.setBins(b_bins);
-  m1LooseBJet.setBins(b_bins);
   m2.setBins(m_bins);
-  m2TightBJet.setBins(b_bins);
-  m2MediumBJet.setBins(b_bins);
-  m2LooseBJet.setBins(b_bins);
-
   w->import(m1);
-  w->import(m1TightBJet);
-  w->import(m1MediumBJet);
-  w->import(m1LooseBJet);
   w->import(m2);
-  w->import(m2TightBJet);
-  w->import(m2MediumBJet);
-  w->import(m2LooseBJet);
 
   //**********************************************************************************
   //     Select events for constructing 1D templates, identify high pT muon, m1!=m2
@@ -146,92 +122,35 @@ void LowMassBKGFit1D() {
 
   //Setting Names: Control region
   tree_dimuorphan_bg_m1->GetBranch("orph_dimu_mass")->SetName("m1");
-  tree_dimuorphan_bg_m1->GetBranch("NPATJetTightB")->SetName("m1TightBJet");
-  tree_dimuorphan_bg_m1->GetBranch("NPATJetMediumB")->SetName("m1MediumBJet");
-  tree_dimuorphan_bg_m1->GetBranch("NPATJetLooseB")->SetName("m1LooseBJet");
-
   tree_dimuorphan_bg_m2->GetBranch("orph_dimu_mass")->SetName("m2");
-  tree_dimuorphan_bg_m2->GetBranch("NPATJetTightB")->SetName("m2TightBJet");
-  tree_dimuorphan_bg_m2->GetBranch("NPATJetMediumB")->SetName("m2MediumBJet");
-  tree_dimuorphan_bg_m2->GetBranch("NPATJetLooseB")->SetName("m2LooseBJet");
 
   //Creating dataset using orphan dimu tree
   RooDataSet* ds_dimuorphan_bg_m1 = new RooDataSet("ds_dimuorphan_bg_m1","ds_dimuorphan_bg_m1", tree_dimuorphan_bg_m1, RooArgSet(m1));
-  RooDataSet* ds_dimuorphan_bg_m1TightBJet = new RooDataSet("ds_dimuorphan_bg_m1TightBJet","ds_dimuorphan_bg_m1TightBJet", tree_dimuorphan_bg_m1, RooArgSet(m1TightBJet));
-  RooDataSet* ds_dimuorphan_bg_m1MediumBJet = new RooDataSet("ds_dimuorphan_bg_m1MediumBJet","ds_dimuorphan_bg_m1MediumBJet", tree_dimuorphan_bg_m1, RooArgSet(m1MediumBJet));
-  RooDataSet* ds_dimuorphan_bg_m1LooseBJet = new RooDataSet("ds_dimuorphan_bg_m1LooseBJet","ds_dimuorphan_bg_m1LooseBJet", tree_dimuorphan_bg_m1, RooArgSet(m1LooseBJet));
-
   RooDataSet* ds_dimuorphan_bg_m2 = new RooDataSet("ds_dimuorphan_bg_m2","ds_dimuorphan_bg_m2", tree_dimuorphan_bg_m2, RooArgSet(m2));
-  RooDataSet* ds_dimuorphan_bg_m2TightBJet = new RooDataSet("ds_dimuorphan_bg_m2TightBJet","ds_dimuorphan_bg_m2TightBJet", tree_dimuorphan_bg_m2, RooArgSet(m2TightBJet));
-  RooDataSet* ds_dimuorphan_bg_m2MediumBJet = new RooDataSet("ds_dimuorphan_bg_m2MediumBJet","ds_dimuorphan_bg_m2MediumBJet", tree_dimuorphan_bg_m2, RooArgSet(m2MediumBJet));
-  RooDataSet* ds_dimuorphan_bg_m2LooseBJet = new RooDataSet("ds_dimuorphan_bg_m2LooseBJet","ds_dimuorphan_bg_m2LooseBJet", tree_dimuorphan_bg_m2, RooArgSet(m2LooseBJet));
 
   cout<<"-----Now Printing and importing the Datasets:-----"<<endl;
   ds_dimuorphan_bg_m1->Print("s");
-  ds_dimuorphan_bg_m1TightBJet->Print("s");
-  ds_dimuorphan_bg_m1MediumBJet->Print("s");
-  ds_dimuorphan_bg_m1LooseBJet->Print("s");
   ds_dimuorphan_bg_m2->Print("s");
-  ds_dimuorphan_bg_m2TightBJet->Print("s");
-  ds_dimuorphan_bg_m2MediumBJet->Print("s");
-  ds_dimuorphan_bg_m2LooseBJet->Print("s");
-
   w->import(*ds_dimuorphan_bg_m1);
-  w->import(*ds_dimuorphan_bg_m1TightBJet);
-  w->import(*ds_dimuorphan_bg_m1MediumBJet);
-  w->import(*ds_dimuorphan_bg_m1LooseBJet);
   w->import(*ds_dimuorphan_bg_m2);
-  w->import(*ds_dimuorphan_bg_m2TightBJet);
-  w->import(*ds_dimuorphan_bg_m2MediumBJet);
-  w->import(*ds_dimuorphan_bg_m2LooseBJet);
 
   //Draw before fiting
   RooPlot* plotC1 = w->var("m1")->frame(Title("m1 data tempalate NO FIT"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m1")->plotOn(plotC1, DataError(RooAbsData::SumW2), Name("data_m1"));
-  float SizeBin1 = plotC1->GetXaxis()->GetBinCenter(3) - plotC1->GetXaxis()->GetBinCenter(2);
-  char c_SizeBin1[10];
-  snprintf(c_SizeBin1,50,"%.2f",SizeBin1);
-  TString Yname1 = "Events / (" + std::string(c_SizeBin1) + "GeV)";
-  plotC1->GetYaxis()->SetTitle( Yname1.Data() );
+  plotC1->GetYaxis()->SetTitle("Events/0.04GeV");
   TCanvas * c1 = new TCanvas("c1");
   c1->cd(); plotC1->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m1.pdf");
-
-  //plot b-jets under m_i template cuts
-  RooPlot* plotB1 = w->var("m1TightBJet")->frame(Title("m1: TightBJet"),Bins(b_bins));
-  w->data("ds_dimuorphan_bg_m1TightBJet")->plotOn(plotB1, DataError(RooAbsData::SumW2), Name("data_m1TightBJet"));
-  plotB1->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m1_TightBJet.png");
-
-  RooPlot* plotB2 = w->var("m1MediumBJet")->frame(Title("m1: MediumBJet"),Bins(b_bins));
-  w->data("ds_dimuorphan_bg_m1MediumBJet")->plotOn(plotB2, DataError(RooAbsData::SumW2), Name("data_m1MediumBJet"));
-  plotB2->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m1_MediumBJet.png");
-
-  RooPlot* plotB3 = w->var("m1LooseBJet")->frame(Title("m1: LooseBJet"),Bins(b_bins));
-  w->data("ds_dimuorphan_bg_m1LooseBJet")->plotOn(plotB3, DataError(RooAbsData::SumW2), Name("data_m1LooseBJet"));
-  plotB3->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m1_LooseBJet.png");
+  c1->SaveAs("figures/dimuorphan_m1.pdf");
+  c1->SaveAs("figures/dimuorphan_m1.png");
+  c1->SaveAs("figures/dimuorphan_m1.root");
 
   RooPlot* plotC2 = w->var("m2")->frame(Title("m2 data tempalate NO FIT"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotC2, DataError(RooAbsData::SumW2), Name("data_m2"));
+  plotC2->GetYaxis()->SetTitle("Events/0.04GeV");
   plotC2->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m2.pdf");
-
-  RooPlot* plotB4 = w->var("m2TightBJet")->frame(Title("m2: TightBJet"),Bins(b_bins));
-  w->data("ds_dimuorphan_bg_m2TightBJet")->plotOn(plotB4, DataError(RooAbsData::SumW2), Name("data_m2TightBJet"));
-  plotB4->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m2_TightBJet.png");
-
-  RooPlot* plotB5 = w->var("m2MediumBJet")->frame(Title("m2: MediumBJet"),Bins(b_bins));
-  w->data("ds_dimuorphan_bg_m2MediumBJet")->plotOn(plotB5, DataError(RooAbsData::SumW2), Name("data_m2MediumBJet"));
-  plotB5->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m2_MediumBJet.png");
-
-  RooPlot* plotB6 = w->var("m2LooseBJet")->frame(Title("m2: LooseBJet"),Bins(b_bins));
-  w->data("ds_dimuorphan_bg_m2LooseBJet")->plotOn(plotB6, DataError(RooAbsData::SumW2), Name("data_m2LooseBJet"));
-  plotB6->Draw(); txtHeader->Draw();
-  c1->SaveAs("figures/h_dimuorphan_bg_m2_LooseBJet.png");
+  c1->SaveAs("figures/dimuorphan_m2.pdf");
+  c1->SaveAs("figures/dimuorphan_m2.png");
+  c1->SaveAs("figures/dimuorphan_m2.root");
 
   delete c1;
 
@@ -267,11 +186,7 @@ void LowMassBKGFit1D() {
   RooPlot* plotC = w->var("m1")->frame(Title("BG template for orphan dimuon high pT"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m1")->plotOn(plotC, DataError(RooAbsData::SumW2), Name("data_m1"));
   w->pdf("template1D_m1")->plotOn(plotC,LineColor(kRed),Precision(0.0001),Name("template1D_m1"));
-  float SizeBin = plotC->GetXaxis()->GetBinCenter(3) - plotC->GetXaxis()->GetBinCenter(2);
-  char c_SizeBin[10];
-  snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  TString Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
-  plotC->GetYaxis()->SetTitle( Yname.Data() );
+  plotC->GetYaxis()->SetTitle("Events/0.04GeV");
   //DATA-Fit ratio
   TCanvas * c_template1D_m1_RooPlot = new TCanvas("c_template1D_m1_RooPlot", "c_template1D_m1_RooPlot",800,800);
   c_template1D_m1_RooPlot->Clear();
@@ -320,8 +235,9 @@ void LowMassBKGFit1D() {
   h_dataFit1->SetStats(0);
   h_dataFit1->SetMarkerStyle(21);
   h_dataFit1->Draw("ep");
-  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.pdf");
-  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1_RooPlot.png");
+  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1.pdf");
+  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1.png");
+  c_template1D_m1_RooPlot->SaveAs("figures/template1D_m1.root");
   float chi2_C = plotC->chiSquare(23); //d.o.f = 23
 
   //****************************************************************************
@@ -356,11 +272,7 @@ void LowMassBKGFit1D() {
   RooPlot* plotF = w->var("m2")->frame(Title("BG template for orphan dimuon no high pT"),Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotF, DataError(RooAbsData::SumW2), Name("data_m2"));
   w->pdf("template1D_m2")->plotOn(plotF,LineColor(kRed),Precision(0.0001),Name("template_m2"));
-
-  SizeBin = plotF->GetXaxis()->GetBinCenter(3) - plotF->GetXaxis()->GetBinCenter(2);
-  snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
-  plotF->GetYaxis()->SetTitle( Yname.Data() );
+  plotF->GetYaxis()->SetTitle("Events/0.04GeV");
   //DATA-Fit ratio
   TCanvas * c_template1D_m2_RooPlot = new TCanvas("c_template1D_m2_RooPlot", "c_template1D_m2_RooPlot",800,800);
   c_template1D_m2_RooPlot->Clear();
@@ -409,8 +321,9 @@ void LowMassBKGFit1D() {
   h_dataFit2->SetStats(0);      // No statistics on lower plot
   h_dataFit2->SetMarkerStyle(21);
   h_dataFit2->Draw("ep");
-  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.pdf");
-  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2_RooPlot.png");
+  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2.pdf");
+  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2.png");
+  c_template1D_m2_RooPlot->SaveAs("figures/template1D_m2.root");
   float chi2_F = plotF->chiSquare(23);
 
   //****************************************************************************
@@ -446,14 +359,11 @@ void LowMassBKGFit1D() {
 
   TCanvas * c_template1D_Jpsi_m1_RooPlot = new TCanvas("c_template1D_Jpsi_m1_RooPlot", "c_template1D_Jpsi_m1_RooPlot");
   c_template1D_Jpsi_m1_RooPlot->cd();
-  SizeBin = plot_Jpsi_m1->GetXaxis()->GetBinCenter(3) - plot_Jpsi_m1->GetXaxis()->GetBinCenter(2);
-  snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
-  plot_Jpsi_m1->GetYaxis()->SetTitle( Yname.Data() );
-  plot_Jpsi_m1->Draw();
-  txtHeader->Draw();
-  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.pdf");
-  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1_RooPlot.png");
+  plot_Jpsi_m1->GetYaxis()->SetTitle("Events/0.04GeV");
+  plot_Jpsi_m1->Draw(); txtHeader->Draw();
+  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1.pdf");
+  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1.png");
+  c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1.root");
 
   //****************************************************************************
   //                       Extract 1D J/psi template from template m2
@@ -479,26 +389,17 @@ void LowMassBKGFit1D() {
 
   TCanvas * c_template1D_Jpsi_m2_RooPlot = new TCanvas("c_template1D_Jpsi_m2_RooPlot", "c_template1D_Jpsi_m2_RooPlot");
   c_template1D_Jpsi_m2_RooPlot->cd();
-  SizeBin = plot_Jpsi_m2->GetXaxis()->GetBinCenter(3) - plot_Jpsi_m2->GetXaxis()->GetBinCenter(2);
-  snprintf(c_SizeBin,50,"%.2f",SizeBin);
-  Yname = "Events / (" + std::string(c_SizeBin) + "GeV)";
-  plot_Jpsi_m2->GetYaxis()->SetTitle( Yname.Data() );
-  plot_Jpsi_m2->Draw();
-  txtHeader->Draw();
-  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2_RooPlot.pdf");
-  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2_RooPlot.png");
+  plot_Jpsi_m2->GetYaxis()->SetTitle("Events/0.04GeV");
+  plot_Jpsi_m2->Draw(); txtHeader->Draw();
+  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2.pdf");
+  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2.png");
+  c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2.root");
 
   //****************************************************************************
   //                     Create 2D template (m1 x m2) for J/psi
   //****************************************************************************
   cout << "Create 2D template (m1 * m2) for J/psi" << endl;
   w->factory("PROD::Jpsi_2D(Jpsi_m1,Jpsi_m2)");
-
-  //**************************************************************************************
-  //     First tryout to construct a generic 1D template, m1=m2,
-  //     Don't distinguish high pT muon in orphan dimu or not
-  //**************************************************************************************
-  //Placeholder
 
   //****************************************************************************
   //           For later use in LowMassBKGPlot2D.C: datasets of 2 dimu events
@@ -510,7 +411,7 @@ void LowMassBKGFit1D() {
   stream_cut_control_offDiagonal << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
   TString cut_control_offDiagonal = stream_cut_control_offDiagonal.str();
   TTree* tree_dimudimu_control_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_offDiagonal);
-  
+
   //To be used for scatter plot 2 dimu events @ CR later in LowMassBKGPlot2D.C
   ostringstream stream_cut_control_Iso_offDiagonal;
   stream_cut_control_Iso_offDiagonal << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
