@@ -60,6 +60,13 @@ void LowMassBKGPlot2D() {
   const double       m_min  = 0.2113;
   const double       m_max  = 9.;
   const unsigned int m_bins = 220;
+
+  //Used for excluding the J/psi region when constructing 1D/2D template
+  const double       m_Jpsi_dn = 2.72;
+  const double       m_Jpsi_up = 3.24;
+  const unsigned int m_bins_below_Jpsi = 63;//bin size is ~0.04GeV, as above
+  const unsigned int m_bins_above_Jpsi = 144;
+
   setTDRStyle();
 
   TCanvas * c_template2D_m1_vs_m2 = new TCanvas("c_template2D_m1_vs_m2", "c_template2D_m1_vs_m2",0,1320,1044,928);
@@ -85,33 +92,30 @@ void LowMassBKGPlot2D() {
   //**************************************************************************************
   //                   Draw 2D background (scale 2D template/pdf to data yield)
   //**************************************************************************************
-  //Create and fill ROOT 2D histogram (2*m_bins) with sampling of 2D pdf, normalized to 1
-  TH2D* h2_Template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", m_bins, m_bins);
-  //The following two will replace existing TH1: template2D__m1_m2 (Potential memory leak)
-  TH2D* h2_Template2D_diagonal    = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", m_bins, m_bins);
-  TH2D* h2_Template2D_offDiagonal = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", m_bins, m_bins);
+  //Create and fill ROOT 2D histogram with sampling of 2D pdf, normalized to 1
+  TH2D* h2D_template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", m_bins, m_bins);
+  TH2D *h2D_template2D_diagonal = (TH2D*)h2D_template2D->Clone();
+  TH2D *h2D_template2D_offDiagonal = (TH2D*)h2D_template2D->Clone();
 
-  //for(int i=1;i<=1000;i++) {
   for(int i=1;i<=m_bins;i++) {
-    //for(int j=1;j<=1000;j++) {
     for(int j=1;j<=m_bins;j++) {
-      double m_1 = h2_Template2D_offDiagonal->GetXaxis()->GetBinCenter(i);
-      double m_2 = h2_Template2D_offDiagonal->GetYaxis()->GetBinCenter(j);
+      double m_1 = h2D_template2D_offDiagonal->GetXaxis()->GetBinCenter(i);
+      double m_2 = h2D_template2D_offDiagonal->GetYaxis()->GetBinCenter(j);
       //*************************
       //2017 mass consistency cut
       //*************************
       if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {
-        h2_Template2D_offDiagonal->SetBinContent(i, j, 0.);
+        h2D_template2D_offDiagonal->SetBinContent(i, j, 0.);
       }
       else {
-        h2_Template2D_diagonal->SetBinContent(i, j, 0.);
+        h2D_template2D_diagonal->SetBinContent(i, j, 0.);
       }
     }
   }
 
   //Fractions of area for diagonal and offdiagonal in 2D template
-  double Template2D_diagonal_integral  = h2_Template2D_diagonal->Integral();
-  double Template2D_offDiagonal_integral  = h2_Template2D_offDiagonal->Integral();
+  double Template2D_diagonal_integral  = h2D_template2D_diagonal->Integral();
+  double Template2D_offDiagonal_integral  = h2D_template2D_offDiagonal->Integral();
   cout<<" -> Template2D_diagonal integral:    "<< Template2D_diagonal_integral <<endl;
   cout<<" -> Template2D_offDiagonal integral: "<< Template2D_offDiagonal_integral <<endl;
 
@@ -122,13 +126,13 @@ void LowMassBKGPlot2D() {
   cout<<"Expected 2 dimuon events in DATA at SR: " << Signal_CR_Data_integral*Template2D_diagonal_integral/Template2D_offDiagonal_integral << std::endl;
 
   //Scale 2D template to total EXPECTED # of events in 2D plane
-  h2_Template2D->Scale(Signal_CR_Data_integral*(1+Template2D_diagonal_integral/Template2D_offDiagonal_integral));
-  TH2D * h2_background = new TH2D( *h2_Template2D );
+  h2D_template2D->Scale(Signal_CR_Data_integral*(1+Template2D_diagonal_integral/Template2D_offDiagonal_integral));
+  TH2D * h2_background = new TH2D( *h2D_template2D );
   h2_background->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h2_background->GetXaxis()->SetTitleOffset(0.93);
   h2_background->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h2_background->GetYaxis()->SetTitleOffset(0.85);
-  h2_background->GetZaxis()->SetTitle("Events/(0.025 GeV x 0.025 GeV)");
+  h2_background->GetZaxis()->SetTitle("Events/(0.04 GeV x 0.04 GeV)");
   h2_background->GetZaxis()->CenterTitle(true);
   h2_background->GetZaxis()->SetLabelFont(42);
   h2_background->GetZaxis()->SetLabelSize(0.04);
@@ -137,15 +141,14 @@ void LowMassBKGPlot2D() {
   h2_background->GetZaxis()->SetTitleFont(42);
 
   //gStyle->SetPalette(52); //Grey Scale
-  Double_t Red[2]    = { 1.00, 0.00};
-  Double_t Green[2]  = { 1.00, 0.00};
-  Double_t Blue[2]   = { 1.00, 0.00};
-  Double_t Length[2] = { 0.00, 1.00 };
+  Double_t Red[2]    = {1.00, 0.00};
+  Double_t Green[2]  = {1.00, 0.00};
+  Double_t Blue[2]   = {1.00, 0.00};
+  Double_t Length[2] = {0.00, 1.00};
   Int_t nb=50;
   TColor::CreateGradientColorTable(2,Length,Red,Green,Blue,nb);
   h2_background->SetContour(nb);
   h2_background->Draw("Cont4 Colz");
-
   c_template2D_m1_vs_m2->SaveAs("figures/Expected_2D_background.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/Expected_2D_background.png");
   c_template2D_m1_vs_m2->SaveAs("figures/Expected_2D_background.root");
@@ -189,7 +192,7 @@ void LowMassBKGPlot2D() {
   //    !!!BEGIN: Placeholder for unblinding signal, after green light from pre-approval
   //**************************************************************************************
   /*
-  TH2D* h2_dimudimu_signal_2D = (TH2D*)w->data("ds_dimudimu_signal_2D")->createHistogram("m1,m2", 1000, 1000);
+  TH2D* h2_dimudimu_signal_2D = (TH2D*)w->data("ds_dimudimu_signal_2D")->createHistogram("m1,m2", m_bins, m_bins);
   h2_dimudimu_signal_2D->SetMarkerColor(kBlack);
   h2_dimudimu_signal_2D->SetMarkerStyle(22);
   h2_dimudimu_signal_2D->SetMarkerSize(1.5);
@@ -223,7 +226,6 @@ void LowMassBKGPlot2D() {
   corridorDn->SetLineColor(1); corridorDn->SetLineStyle(9); corridorDn->SetLineWidth(2); corridorDn->Draw("C");
   corridorUp->SetLineColor(1); corridorUp->SetLineStyle(9); corridorUp->SetLineWidth(2); corridorUp->Draw("C");
   txtHeader->Draw();
-
   c_template2D_m1_vs_m2->SaveAs("figures/DATA_and_Expected_2D_background.pdf");
   c_template2D_m1_vs_m2->SaveAs("figures/DATA_and_Expected_2D_background.png");
   c_template2D_m1_vs_m2->SaveAs("figures/DATA_and_Expected_2D_background.root");
@@ -233,17 +235,13 @@ void LowMassBKGPlot2D() {
   //************************************************************************************
   //Validate m1 with non-iso data at CR
   TH1D *h1_control_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m1",m_bins);
-  cout<<" -> validate m1 non-iso data CR integral: "<< h1_control_offDiagonal_massC_data->Integral() <<endl;
-  cout<<" -> validate m1 non-iso data CR integral (width): "<< h1_control_offDiagonal_massC_data->Integral("width") <<endl;
   h1_control_offDiagonal_massC_data->SetStats(0);
   h1_control_offDiagonal_massC_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h1_control_offDiagonal_massC_data->GetYaxis()->SetTitle("Events/0.04 GeV");
   h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,350.);
 
-  TH1D *h1_control_offDiagonal_massC_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
-  cout<<" -> validate m1 template CR integral: "<< h1_control_offDiagonal_massC_template->Integral() <<endl;
-  cout<<" -> validate m1 template CR integral (width): "<< h1_control_offDiagonal_massC_template->Integral("width") <<endl;
+  TH1D *h1_control_offDiagonal_massC_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionX() );
   h1_control_offDiagonal_massC_template->Scale( h1_control_offDiagonal_massC_data->Integral() / h1_control_offDiagonal_massC_template->Integral() );
   h1_control_offDiagonal_massC_template->SetLineColor(kRed);
   h1_control_offDiagonal_massC_template->SetLineWidth(2);
@@ -266,7 +264,7 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massC_data->GetYaxis()->SetTitle("Events/0.04 GeV");
   h1_control_Iso_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,35.);
 
-  TH1D *h1_control_Iso_offDiagonal_massC_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionX() );
+  TH1D *h1_control_Iso_offDiagonal_massC_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionX() );
   h1_control_Iso_offDiagonal_massC_template->Scale( h1_control_Iso_offDiagonal_massC_data->Integral() / h1_control_Iso_offDiagonal_massC_template->Integral() );
   h1_control_Iso_offDiagonal_massC_template->SetLineColor(kRed);
   h1_control_Iso_offDiagonal_massC_template->SetLineWidth(2);
@@ -289,7 +287,7 @@ void LowMassBKGPlot2D() {
   h1_control_offDiagonal_massF_data->GetYaxis()->SetTitle("Events/0.04 GeV");
   h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,250.);
 
-  TH1D *h1_control_offDiagonal_massF_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
+  TH1D *h1_control_offDiagonal_massF_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionY() );
   h1_control_offDiagonal_massF_template->Scale( h1_control_offDiagonal_massF_data->Integral() / h1_control_offDiagonal_massF_template->Integral() );
   h1_control_offDiagonal_massF_template->SetLineColor(kRed);
   h1_control_offDiagonal_massF_template->SetLineWidth(2);
@@ -312,7 +310,7 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massF_data->GetYaxis()->SetTitle("Events/0.04 GeV");
   h1_control_Iso_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,10.);
 
-  TH1D *h1_control_Iso_offDiagonal_massF_template = new TH1D( *h2_Template2D_offDiagonal->ProjectionY() );
+  TH1D *h1_control_Iso_offDiagonal_massF_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionY() );
   h1_control_Iso_offDiagonal_massF_template->Scale( h1_control_Iso_offDiagonal_massF_data->Integral() / h1_control_Iso_offDiagonal_massF_template->Integral() );
   h1_control_Iso_offDiagonal_massF_template->SetLineColor(kRed);
   h1_control_Iso_offDiagonal_massF_template->SetLineWidth(2);
@@ -326,4 +324,293 @@ void LowMassBKGPlot2D() {
   c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.pdf");
   c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.png");
   c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.root");
+
+  //**************************************************************************************
+  //         Similar version to above except Exclude J/psi when construct 2D template
+  //**************************************************************************************
+  /*
+  //TH2D* h2D_template2D_m1_belowJpsi_m2_belowJpsi = (TH2D*)w->pdf("template2D_m1_belowJpsi_m2_belowJpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);
+  //TH2D* h2D_template2D_m1_belowJpsi_m2_aboveJpsi = (TH2D*)w->pdf("template2D_m1_belowJpsi_m2_aboveJpsi")->createHistogram("m1_below_Jpsi,m2_above_Jpsi", m_bins_below_Jpsi, m_bins_above_Jpsi);
+  //TH2D* h2D_template2D_m1_aboveJpsi_m2_belowJpsi = (TH2D*)w->pdf("template2D_m1_aboveJpsi_m2_belowJpsi")->createHistogram("m1_above_Jpsi,m2_below_Jpsi", m_bins_above_Jpsi, m_bins_below_Jpsi);
+  //TH2D* h2D_template2D_m1_aboveJpsi_m2_aboveJpsi = (TH2D*)w->pdf("template2D_m1_aboveJpsi_m2_aboveJpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);
+
+  //Add entries from above hist into one hist over all range
+  TH2D* h2D_template2D_exclude_Jpsi = new TH2D("h2D_template2D_exclude_Jpsi", "", m_bins, m_min, m_max, m_bins, m_min, m_max);
+  for(int i=1;i<=m_bins;i++) {
+    for(int j=1;j<=m_bins;j++) {
+      if(i<=m_bins_below_Jpsi && j<=m_bins_below_Jpsi){ //i:1-63, j:1-63
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_belowJpsi_m2_belowJpsi->GetBinContent(i, j) );
+      }
+      else if(i<=m_bins_below_Jpsi && j>= m_bins-m_bins_above_Jpsi+1){ //i:1-63, j:77-220
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_belowJpsi_m2_aboveJpsi->GetBinContent(i, j-m_bins+m_bins_above_Jpsi ) );
+      }
+      else if(i>= m_bins-m_bins_above_Jpsi+1 && j<= m_bins_below_Jpsi){//i:77-220, j:1-63
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_aboveJpsi_m2_belowJpsi->GetBinContent(i-m_bins+m_bins_above_Jpsi, j ) );
+      }
+      else if(i>= m_bins-m_bins_above_Jpsi+1 && j>= m_bins-m_bins_above_Jpsi+1){//i:77-220, j:77-220
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_aboveJpsi_m2_aboveJpsi->GetBinContent(i-m_bins+m_bins_above_Jpsi, j-m_bins+m_bins_above_Jpsi ) );
+      }
+      else{//excluded Jpsi region
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, 0);
+      }
+    }//end j
+  }//end i
+  */
+
+  TH1D* h1D_template1D_m1_below_Jpsi = (TH1D*)w->pdf("template1D_m1_below_Jpsi")->createHistogram("m1_below_Jpsi", m_bins_below_Jpsi);//normalized to 1
+  TH1D* h1D_template1D_m1_above_Jpsi = (TH1D*)w->pdf("template1D_m1_above_Jpsi")->createHistogram("m1_above_Jpsi", m_bins_above_Jpsi);
+  TH1D* h1D_template1D_m2_below_Jpsi = (TH1D*)w->pdf("template1D_m2_below_Jpsi")->createHistogram("m2_below_Jpsi", m_bins_below_Jpsi);
+  TH1D* h1D_template1D_m2_above_Jpsi = (TH1D*)w->pdf("template1D_m2_above_Jpsi")->createHistogram("m2_above_Jpsi", m_bins_above_Jpsi);
+  //Scale them according to the actual fitted data entry 2017
+  cout<<" ds_dimuorphan_bg_m1_below_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m1_below_Jpsi")->sumEntries() <<endl;
+  cout<<" ds_dimuorphan_bg_m1_above_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m1_above_Jpsi")->sumEntries() <<endl;
+  cout<<" ds_dimuorphan_bg_m2_below_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m2_below_Jpsi")->sumEntries() <<endl;
+  cout<<" ds_dimuorphan_bg_m2_above_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m2_above_Jpsi")->sumEntries() <<endl;
+  h1D_template1D_m1_below_Jpsi->Scale(w->data("ds_dimuorphan_bg_m1_below_Jpsi")->sumEntries());
+  h1D_template1D_m1_above_Jpsi->Scale(w->data("ds_dimuorphan_bg_m1_above_Jpsi")->sumEntries());
+  h1D_template1D_m2_below_Jpsi->Scale(w->data("ds_dimuorphan_bg_m2_below_Jpsi")->sumEntries());
+  h1D_template1D_m2_above_Jpsi->Scale(w->data("ds_dimuorphan_bg_m2_above_Jpsi")->sumEntries());
+
+  //Combine into 2D histo use 1D histo
+  TH2D* h2D_template2D_exclude_Jpsi = new TH2D("h2D_template2D_exclude_Jpsi", "", m_bins, m_min, m_max, m_bins, m_min, m_max);
+  for(int i=1;i<=m_bins;i++) {
+    for(int j=1;j<=m_bins;j++) {
+      if(i<=m_bins_below_Jpsi && j<=m_bins_below_Jpsi){ //i:1-63, j:1-63
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h1D_template1D_m1_below_Jpsi->GetBinContent(i)*h1D_template1D_m2_below_Jpsi->GetBinContent(j) );
+      }
+      else if(i<=m_bins_below_Jpsi && j>= m_bins-m_bins_above_Jpsi+1){ //i:1-63, j:77-220
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h1D_template1D_m1_below_Jpsi->GetBinContent(i)*h1D_template1D_m2_above_Jpsi->GetBinContent(j-m_bins+m_bins_above_Jpsi) );
+      }
+      else if(i>= m_bins-m_bins_above_Jpsi+1 && j<= m_bins_below_Jpsi){//i:77-220, j:1-63
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h1D_template1D_m1_above_Jpsi->GetBinContent(i-m_bins+m_bins_above_Jpsi)*h1D_template1D_m2_below_Jpsi->GetBinContent(j) );
+      }
+      else if(i>= m_bins-m_bins_above_Jpsi+1 && j>= m_bins-m_bins_above_Jpsi+1){//i:77-220, j:77-220
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h1D_template1D_m1_above_Jpsi->GetBinContent(i-m_bins+m_bins_above_Jpsi)*h1D_template1D_m2_above_Jpsi->GetBinContent(j-m_bins+m_bins_above_Jpsi) );
+      }
+      else{//excluded Jpsi region
+        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, 0);//try not fill anything
+      }
+    }//end j
+  }//end i
+
+  cout<<" h2D_template2D_exclude_Jpsi integral: "<< h2D_template2D_exclude_Jpsi->Integral() <<endl;
+  h2D_template2D_exclude_Jpsi->Scale(1./h2D_template2D_exclude_Jpsi->Integral());
+  cout<<" h2D_template2D_exclude_Jpsi integral (after scale, should be 1.0): "<< h2D_template2D_exclude_Jpsi->Integral() <<endl;
+  TH2D *h2D_template2D_exclude_Jpsi_diagonal = (TH2D*)h2D_template2D_exclude_Jpsi->Clone();
+  TH2D *h2D_template2D_exclude_Jpsi_offDiagonal = (TH2D*)h2D_template2D_exclude_Jpsi->Clone();
+
+  for(int i=1;i<=m_bins;i++) {
+    for(int j=1;j<=m_bins;j++) {
+      double m_1 = h2D_template2D_exclude_Jpsi_offDiagonal->GetXaxis()->GetBinCenter(i);
+      double m_2 = h2D_template2D_exclude_Jpsi_offDiagonal->GetYaxis()->GetBinCenter(j);
+      //*************************
+      //2017 mass consistency cut
+      //*************************
+      if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {
+        h2D_template2D_exclude_Jpsi_offDiagonal->SetBinContent(i, j, 0.);
+      }
+      else {
+        h2D_template2D_exclude_Jpsi_diagonal->SetBinContent(i, j, 0.);
+      }
+    }
+  }
+
+  double h2D_template2D_exclude_Jpsi_diagonal_integral     = h2D_template2D_exclude_Jpsi_diagonal->Integral();
+  double h2D_template2D_exclude_Jpsi_offDiagonal_integral  = h2D_template2D_exclude_Jpsi_offDiagonal->Integral();
+  cout<<" -> Template2D_diagonal (exclude J/psi) integral:    "<< h2D_template2D_exclude_Jpsi_diagonal_integral <<endl;
+  cout<<" -> Template2D_offDiagonal (exclude J/psi) integral: "<< h2D_template2D_exclude_Jpsi_offDiagonal_integral <<endl;
+
+  //count 2-dimu data events at CR
+  TH2D* h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi")->createHistogram("m1,m2", m_bins, m_bins);
+  double h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_integral  = h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->Integral();
+  cout<<"2 dimuon events in DATA at CR (exclude J/psi): " << h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_integral <<endl;
+  cout<<"Expected 2 dimuon events in DATA at SR (exclude J/psi): " << h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_integral*h2D_template2D_exclude_Jpsi_diagonal_integral/h2D_template2D_exclude_Jpsi_offDiagonal_integral << std::endl;
+
+  //Scale to actual DATA
+  h2D_template2D_exclude_Jpsi->Scale(h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_integral*(1+h2D_template2D_exclude_Jpsi_diagonal_integral/h2D_template2D_exclude_Jpsi_offDiagonal_integral));
+  cout<<" h2D_template2D_exclude_Jpsi integral (after scale to actual data): "<< h2D_template2D_exclude_Jpsi->Integral() <<endl;
+  TH2D * h2D_background_exclude_Jpsi = new TH2D( *h2D_template2D_exclude_Jpsi );
+  h2D_background_exclude_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2D_background_exclude_Jpsi->GetXaxis()->SetTitleOffset(0.93);
+  h2D_background_exclude_Jpsi->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2D_background_exclude_Jpsi->GetYaxis()->SetTitleOffset(0.85);
+  h2D_background_exclude_Jpsi->GetZaxis()->SetTitle("Events/(0.04 GeV x 0.04 GeV)");
+  h2D_background_exclude_Jpsi->GetZaxis()->CenterTitle(true);
+  h2D_background_exclude_Jpsi->GetZaxis()->SetLabelFont(42);
+  h2D_background_exclude_Jpsi->GetZaxis()->SetLabelSize(0.04);
+  h2D_background_exclude_Jpsi->GetZaxis()->SetTitleSize(0.04);
+  h2D_background_exclude_Jpsi->GetZaxis()->SetTitleOffset(1.42);
+  h2D_background_exclude_Jpsi->GetZaxis()->SetTitleFont(42);
+
+  TCanvas * c_template2D_m1_vs_m2_exclude_Jpsi = new TCanvas("c_template2D_m1_vs_m2_exclude_Jpsi", "c_template2D_m1_vs_m2_exclude_Jpsi", 0, 1320, 1044, 928);
+  c_template2D_m1_vs_m2_exclude_Jpsi->SetCanvasSize(1040, 900);
+  c_template2D_m1_vs_m2_exclude_Jpsi->SetLeftMargin(0.121);
+  c_template2D_m1_vs_m2_exclude_Jpsi->SetRightMargin(0.17);
+  c_template2D_m1_vs_m2_exclude_Jpsi->SetTopMargin(0.05);
+  c_template2D_m1_vs_m2_exclude_Jpsi->cd();
+  c_template2D_m1_vs_m2_exclude_Jpsi->SetLogz();
+  TColor::CreateGradientColorTable(2, Length, Red, Green, Blue, nb);
+  h2D_background_exclude_Jpsi->SetContour(nb);
+  h2D_background_exclude_Jpsi->Draw("Cont4 Colz");
+  c_template2D_m1_vs_m2_exclude_Jpsi->SaveAs("figures/Expected_2D_background_exclude_Jpsi.pdf");
+  c_template2D_m1_vs_m2_exclude_Jpsi->SaveAs("figures/Expected_2D_background_exclude_Jpsi.png");
+  c_template2D_m1_vs_m2_exclude_Jpsi->SaveAs("figures/Expected_2D_background_exclude_Jpsi.root");
+
+  //**************************************************************************************
+  //        Draw scatter plot at CR from data (SR blinded) Exclude Jpsi version
+  //**************************************************************************************
+  //Create pad to draw scatter plot without Logz
+  TPad* pad_exclude_Jpsi = new TPad("pad_exclude_Jpsi", "pad_exclude_Jpsi", 0, 0, 1, 1);
+  pad_exclude_Jpsi->Draw();
+  pad_exclude_Jpsi->cd();
+  pad_exclude_Jpsi->SetLeftMargin(0.121);
+  pad_exclude_Jpsi->SetRightMargin(0.17);//48);
+  pad_exclude_Jpsi->SetTopMargin(0.05);
+  pad_exclude_Jpsi->SetFillColor(0);
+  pad_exclude_Jpsi->SetFillStyle(4000);
+  pad_exclude_Jpsi->SetBorderMode(0);
+  pad_exclude_Jpsi->SetBorderSize(2);
+  pad_exclude_Jpsi->SetTickx(1);
+  pad_exclude_Jpsi->SetTicky(1);
+  pad_exclude_Jpsi->SetFrameFillStyle(0);
+  pad_exclude_Jpsi->SetFrameBorderMode(0);
+  pad_exclude_Jpsi->SetFrameFillStyle(0);
+  pad_exclude_Jpsi->SetFrameBorderMode(0);
+
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->SetMarkerColor(kBlack);
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->SetMarkerStyle(20);
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->SetXTitle("");
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->SetYTitle("");
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->Draw("same");
+
+  TH2D * h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_tmp = new TH2D( *h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi);
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_tmp->SetMarkerColor(kWhite);
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_tmp->SetMarkerStyle(20);
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_tmp->SetMarkerSize(1.0);
+  h2D_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi_tmp->Draw("same");
+
+  //**************************************************************************************
+  //    !!!BEGIN: Placeholder for unblinding signal (exclude Jpsi version), after green light from pre-approval
+  //**************************************************************************************
+  /*
+  TH2D* h2D_dimudimu_signal_2D_no_Jpsi = (TH2D*)w->data("ds_dimudimu_signal_2D_no_Jpsi")->createHistogram("m1,m2", m_bins, m_bins);
+  h2D_dimudimu_signal_2D_no_Jpsi->SetMarkerColor(kBlack);
+  h2D_dimudimu_signal_2D_no_Jpsi->SetMarkerStyle(22);
+  h2D_dimudimu_signal_2D_no_Jpsi->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_signal_2D_no_Jpsi->SetXTitle("");
+  h2D_dimudimu_signal_2D_no_Jpsi->SetYTitle("");
+  h2D_dimudimu_signal_2D_no_Jpsi->Draw("same");
+
+  TH2D * h2D_dimudimu_signal_2D_no_Jpsi_tmp = new TH2D( *h2D_dimudimu_signal_2D_no_Jpsi);
+  h2D_dimudimu_signal_2D_no_Jpsi_tmp->SetMarkerColor(kYellow);
+  h2D_dimudimu_signal_2D_no_Jpsi_tmp->SetMarkerStyle(22);
+  h2D_dimudimu_signal_2D_no_Jpsi_tmp->SetMarkerSize(1.0);
+  h2D_dimudimu_signal_2D_no_Jpsi_tmp->Draw("same");
+  */
+  //************************************************************************************
+  //    !!!END: Placeholder for unblinding signal, after green light from pre-approval
+  //************************************************************************************
+
+  corridorDn->Draw("C"); corridorUp->Draw("C"); txtHeader->Draw();
+  c_template2D_m1_vs_m2_exclude_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_exclude_Jpsi.pdf");
+  c_template2D_m1_vs_m2_exclude_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_exclude_Jpsi.png");
+  c_template2D_m1_vs_m2_exclude_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_exclude_Jpsi.root");
+
+  //************************************************************************************
+  //         Validate the exclude Jpsi version with 2 dimu events at CR (iso & no-iso)
+  //************************************************************************************
+  //Validate m1 with non-iso data at CR
+  TH1D *h1_control_offDiagonal_massC_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D_no_Jpsi")->createHistogram("m1", m_bins);
+  h1_control_offDiagonal_massC_data_no_Jpsi->SetStats(0);
+  h1_control_offDiagonal_massC_data_no_Jpsi->SetMarkerStyle(20);
+  h1_control_offDiagonal_massC_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h1_control_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,350.);
+
+  TH1D *h1_control_offDiagonal_massC_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionX() );
+  h1_control_offDiagonal_massC_template_no_Jpsi->Scale( h1_control_offDiagonal_massC_data_no_Jpsi->Integral() / h1_control_offDiagonal_massC_template_no_Jpsi->Integral() );
+  h1_control_offDiagonal_massC_template_no_Jpsi->SetLineColor(kRed);
+  h1_control_offDiagonal_massC_template_no_Jpsi->SetLineWidth(2);
+  h1_control_offDiagonal_massC_template_no_Jpsi->SetMarkerColor(kRed);
+
+  TCanvas * c_control_offDiagonal_massC_no_Jpsi = new TCanvas("c_control_offDiagonal_massC_no_Jpsi", "c_control_offDiagonal_massC_no_Jpsi");
+  c_control_offDiagonal_massC_no_Jpsi->cd();
+  h1_control_offDiagonal_massC_data_no_Jpsi->Draw("e1");
+  h1_control_offDiagonal_massC_template_no_Jpsi->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.pdf");
+  c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.png");
+  c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.root");
+
+  //Validate m1 with iso data at CR: very low stats, just FYI
+  TH1D *h1_control_Iso_offDiagonal_massC_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi")->createHistogram("m1", m_bins);
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->SetStats(0);
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->SetMarkerStyle(20);
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,35.);
+
+  TH1D *h1_control_Iso_offDiagonal_massC_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionX() );
+  h1_control_Iso_offDiagonal_massC_template_no_Jpsi->Scale( h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Integral() / h1_control_Iso_offDiagonal_massC_template_no_Jpsi->Integral() );
+  h1_control_Iso_offDiagonal_massC_template_no_Jpsi->SetLineColor(kRed);
+  h1_control_Iso_offDiagonal_massC_template_no_Jpsi->SetLineWidth(2);
+  h1_control_Iso_offDiagonal_massC_template_no_Jpsi->SetMarkerColor(kRed);
+
+  TCanvas * c_control_Iso_offDiagonal_massC_no_Jpsi = new TCanvas("c_control_Iso_offDiagonal_massC_no_Jpsi", "c_control_Iso_offDiagonal_massC_no_Jpsi");
+  c_control_Iso_offDiagonal_massC_no_Jpsi->cd();
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Draw("e1");
+  h1_control_Iso_offDiagonal_massC_template_no_Jpsi->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.pdf");
+  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.png");
+  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.root");
+
+  //Validate m2 with no-iso data at CR
+  TH1D *h1_control_offDiagonal_massF_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D_no_Jpsi")->createHistogram("m2", m_bins);
+  h1_control_offDiagonal_massF_data_no_Jpsi->SetStats(0);
+  h1_control_offDiagonal_massF_data_no_Jpsi->SetMarkerStyle(20);
+  h1_control_offDiagonal_massF_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h1_control_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,250.);
+
+  TH1D *h1_control_offDiagonal_massF_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionY() );
+  h1_control_offDiagonal_massF_template_no_Jpsi->Scale( h1_control_offDiagonal_massF_data_no_Jpsi->Integral() / h1_control_offDiagonal_massF_template_no_Jpsi->Integral() );
+  h1_control_offDiagonal_massF_template_no_Jpsi->SetLineColor(kRed);
+  h1_control_offDiagonal_massF_template_no_Jpsi->SetLineWidth(2);
+  h1_control_offDiagonal_massF_template_no_Jpsi->SetMarkerColor(kRed);
+
+  TCanvas * c_control_offDiagonal_massF_no_Jpsi = new TCanvas("c_control_offDiagonal_massF_no_Jpsi", "c_control_offDiagonal_massF_no_Jpsi");
+  c_control_offDiagonal_massF_no_Jpsi->cd();
+  h1_control_offDiagonal_massF_data_no_Jpsi->Draw("e1");
+  h1_control_offDiagonal_massF_template_no_Jpsi->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.pdf");
+  c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.png");
+  c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.root");
+
+  //Validate m2 with iso data at CR: limited stats, just FYI
+  TH1D *h1_control_Iso_offDiagonal_massF_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi")->createHistogram("m2", m_bins);
+  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->SetStats(0);
+  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->SetMarkerStyle(20);
+  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,10.);
+
+  TH1D *h1_control_Iso_offDiagonal_massF_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionY() );
+  h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Scale( h1_control_Iso_offDiagonal_massF_data_no_Jpsi->Integral() / h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Integral() );
+  h1_control_Iso_offDiagonal_massF_template_no_Jpsi->SetLineColor(kRed);
+  h1_control_Iso_offDiagonal_massF_template_no_Jpsi->SetLineWidth(2);
+  h1_control_Iso_offDiagonal_massF_template_no_Jpsi->SetMarkerColor(kRed);
+
+  TCanvas * c_control_Iso_offDiagonal_massF_no_Jpsi = new TCanvas("c_control_Iso_offDiagonal_massF_no_Jpsi", "c_control_Iso_offDiagonal_massF_no_Jpsi");
+  c_control_Iso_offDiagonal_massF_no_Jpsi->cd();
+  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->Draw("e1");
+  h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Draw("HIST same");
+  txtHeader->Draw();
+  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.pdf");
+  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.png");
+  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.root");
 }
