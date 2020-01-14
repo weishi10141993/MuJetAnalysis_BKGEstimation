@@ -528,7 +528,7 @@ void LowMassBKGPlot2D() {
   h1_control_offDiagonal_massC_data_no_Jpsi->SetMarkerStyle(20);
   h1_control_offDiagonal_massC_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h1_control_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,350.);
+  h1_control_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetRangeUser(0., 100.);
 
   TH1D *h1_control_offDiagonal_massC_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionX() );
   h1_control_offDiagonal_massC_template_no_Jpsi->Scale( h1_control_offDiagonal_massC_data_no_Jpsi->Integral() / h1_control_offDiagonal_massC_template_no_Jpsi->Integral() );
@@ -551,7 +551,7 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,35.);
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetRangeUser(0., 10.);
 
   TH1D *h1_control_Iso_offDiagonal_massC_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionX() );
   h1_control_Iso_offDiagonal_massC_template_no_Jpsi->Scale( h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Integral() / h1_control_Iso_offDiagonal_massC_template_no_Jpsi->Integral() );
@@ -574,7 +574,7 @@ void LowMassBKGPlot2D() {
   h1_control_offDiagonal_massF_data_no_Jpsi->SetMarkerStyle(20);
   h1_control_offDiagonal_massF_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h1_control_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,250.);
+  h1_control_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetRangeUser(0., 100.);
 
   TH1D *h1_control_offDiagonal_massF_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionY() );
   h1_control_offDiagonal_massF_template_no_Jpsi->Scale( h1_control_offDiagonal_massF_data_no_Jpsi->Integral() / h1_control_offDiagonal_massF_template_no_Jpsi->Integral() );
