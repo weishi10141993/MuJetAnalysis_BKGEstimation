@@ -104,8 +104,8 @@ void LowMassBKGFit1D() {
   }
 
   //Define RooRealVar in workspace
-  RooRealVar m1("m1", "m_{#mu#mu_{1}}", m_min,m_max,"GeV");
-  RooRealVar m2("m2", "m_{#mu#mu_{2}}", m_min,m_max,"GeV");
+  RooRealVar m1("m1", "m_{#mu#mu_{1}}", m_min, m_max, "GeV");
+  RooRealVar m2("m2", "m_{#mu#mu_{2}}", m_min, m_max, "GeV");
   m1.setBins(m_bins);
   m2.setBins(m_bins);
 
