@@ -18,50 +18,121 @@
 #include "TChain.h"
 #include "TBranch.h"
 
-//****************************
-//* USER modify section      *
-//****************************
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!  USER modify this section: start  !
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
-//Scale MC events to Data, not including analysis SF like trigger, muon id etc
-//The order of the processes is important here: DY 0J, 1J, 2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
-Float_t MC_ScaleFactors[7]={2.2491001E+00, 3.7980782E-01, 2.4748488E-01, 3.0278414E-03, 7.0425976E-02, 4.6355268E-04, 6.3245328E-05};
-Color_t MC_Colors[7]={20, 30, 40, 9, 8, 7, 6};
-TString store = "/fdata/hepx/store/user/wshi/SMBKGatHighMass"; //input dir
-const double       m_min  = 11.0;
-const double       m_max  = 59.0;
-const unsigned int m_bins = 12;//bin size 4GeV
-//Same order as ScaleFactors
-//The input files contain histograms from running the cut-flow script (with ModelBKGShape flag on) over each Ntuples
-TString MC_files[7] = {
-  "HighMassBKGShape_DYToLL_0J.root",
-  "HighMassBKGShape_DYToLL_1J.root",
-  "HighMassBKGShape_DYToLL_2J.root",
-  "HighMassBKGShape_ZZTo4L.root",
-  "HighMassBKGShape_TTJets_DiLept.root",
-  "HighMassBKGShape_ggHToZZTo4L.root",
-  "HighMassBKGShape_ggToZZTo4mu.root"
+//Configure which year ntuples to run, options: 2017, 2018
+int year = 2018;
+
+//Luminosity each year: unit: fb^-1
+Float_t lumi_2017 = 36.734;
+Float_t lumi_2018 = 59.97;
+
+//Directory of histograms
+TString store_2017 = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/2017";
+TString store_2018 = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/2018";
+
+//Scale MC events to Data (Xsec*Lumi/tot MC evt), not including SF like trigger, muon id etc
+//The order is important here: DY 0J, 1J, 2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
+Float_t MC_ScaleFactors_2017[7] = {2.2491001E+00, 3.7980782E-01, 2.4748488E-01, 3.0278414E-03, 7.0425976E-02, 4.6355268E-04, 6.3245328E-05};
+Float_t MC_ScaleFactors_2018[7] = {3.4145686E+00, 6.2974242E-01, 3.6185455E-01, 4.1624890E-03, 1.0998854E-01, 7.6245783E-04, 1.0461031E-04};
+
+//The input files below contain histograms from running the cut-flow script (with ModelBKGShape flag on) over each background ntuples
+//script: MuJetAnalysis/CutFlowAnalyzer/scripts/cutflow_macros/foo_modified.C
+//run command: echo 'gROOT->ProcessLine(".L foo_modified.C++"); analysis("SignalsList2017.txt" )' | root -l -b
+//Same order as MC_ScaleFactors above
+TString MC_files_2017[7] = {
+  "HighMassBKGShape_2017_DYToLL_0J.root",
+  "HighMassBKGShape_2017_DYToLL_1J.root",
+  "HighMassBKGShape_2017_DYToLL_2J.root",
+  "HighMassBKGShape_2017_ZZTo4L.root",
+  "HighMassBKGShape_2017_TTJets_DiLept.root",
+  "HighMassBKGShape_2017_ggHToZZTo4L.root",
+  "HighMassBKGShape_2017_ggToZZTo4mu.root"
 };
-TString DATA_files[4] = {
+TString DATA_files_2017[4] = {
   "HighMassBKGShape_2017C.root",
   "HighMassBKGShape_2017D.root",
   "HighMassBKGShape_2017E.root",
   "HighMassBKGShape_2017F.root"
 };
 
-//****************************
-//* USER modify above ONLY   *
-//****************************
+TString MC_files_2018[7] = {
+  "HighMassBKGShape_2018_DYToLL_0J.root",
+  "HighMassBKGShape_2018_DYToLL_1J.root",
+  "HighMassBKGShape_2018_DYToLL_2J.root",
+  "HighMassBKGShape_2018_ZZTo4L.root",
+  "HighMassBKGShape_2018_TTJets_DiLept.root",
+  "HighMassBKGShape_2018_ggHToZZTo4L.root",
+  "HighMassBKGShape_2018_ggToZZTo4mu.root"
+};
+TString DATA_files_2018[4] = {
+  "HighMassBKGShape_2018A.root",
+  "HighMassBKGShape_2018B.root",
+  "HighMassBKGShape_2018C.root",
+  "HighMassBKGShape_2018D.root"
+};
+
+//Color in final legend for each bkg process, same order as above
+Color_t MC_Colors[7] = {20, 30, 40, 9, 8, 7, 6};
+
+//Mass range and bin size of final plot
+const double       m_min  = 11.0;
+const double       m_max  = 59.0;
+const unsigned int m_bins = 12;//bin size 4GeV
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!  USER modify section: end  !
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 void HighMassBKGShape()
 {
-  TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
+  Float_t lumi;
+  TString store;
+  Float_t MC_ScaleFactors[7];
+  TString MC_files[7];
+  TString DATA_files[4];
+
+  std::cout << "*** User input year is " << year << " ***" << std::endl;
+
+  if(year == 2017){
+    lumi  = lumi_2017;
+    store = store_2017;
+    for (int i = 0; i < 7; i++) {
+      MC_ScaleFactors[i] = MC_ScaleFactors_2017[i];
+      MC_files[i] = MC_files_2017[i];
+    }
+    for (int j = 0; j < 4; j++) {
+      DATA_files[j] = DATA_files_2017[j];
+    }
+  }//end if 2017
+  else if(year == 2018){
+    lumi  = lumi_2018;
+    store = store_2018;
+    for (int i = 0; i < 7; i++) {
+      MC_ScaleFactors[i] = MC_ScaleFactors_2018[i];
+      MC_files[i] = MC_files_2018[i];
+    }
+    for (int j = 0; j < 4; j++) {
+      DATA_files[j] = DATA_files_2018[j];
+    }
+  }//end if 2018
+  else{
+    std::cout << "*** User input year is unknown!!! ***" << std::endl;
+  }
+
+  std::cout << "    Lumi: " << lumi << " fb^-1" << std::endl;
+  std::cout << "    Input directory: " << store << std::endl;
+
+  TLegend *txtHeader = new TLegend(.13, .935, 0.97, 1.);
   txtHeader->SetFillColor(kWhite);
   txtHeader->SetFillStyle(0);
   txtHeader->SetBorderSize(0);
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}                         36.734 fb^{-1} (2017 13 TeV)");
+  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}                         " + Form("%f", lumi) + "fb^{-1} (" + Form("%d", year) + " 13 TeV)");
 
   // Initialize empty file to access each file in the list
   TFile *file_tmp(0);
@@ -154,12 +225,12 @@ void HighMassBKGShape()
   }
 
   //write to output file
-  TFile myPlot("HighMassBKGShape_FINAL.root","RECREATE");
+  TFile myPlot("HighMassBKGShape_" + Form("%d", year) + "_FINAL.root", "RECREATE");
 
   //***************
   //* For m1 at CR*
   //***************
-  TCanvas *CR1=new TCanvas("CR1","CR m1",700,500); CR1->Clear();
+  TCanvas *CR1=new TCanvas("CR1", "CR m1",700,500); CR1->Clear();
   TPad *CR1pad1 = new TPad("CR1pad1", "CR1pad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
   CR1pad1->SetBottomMargin(0); CR1pad1->Draw();
   TPad *CR1pad2 = new TPad("CR1pad2", "CR1pad2", 0, 0.0, 1, 0.29);

@@ -17,7 +17,40 @@
 #include "TChain.h"
 #include "TBranch.h"
 
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!  USER modify section: start  !
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+//Configure which year ntuples to run, options: 2017, 2018
+int year = 2018;
+
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!  USER modify section: end  !
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
 void HighMassBKGABCD() {
+  //Input file
+  TString InputFile;
+  if(year == 2017){
+    InputFile = "Input_2017CDEF.txt";
+  }
+  else if(year == 2018){
+    InputFile = "Input_2018ABCD.txt";
+  }
+  else{
+    std::cout << "*** User input year is unknown!!! ***" << std::endl;
+  }
+
+  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream Myfile(InputFile);
+  std::string Line;
+  if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
+  while (std::getline(Myfile, Line)){
+    TString Line2(Line);
+    if( Line2.Contains("root") ){
+      chain_data_dimudimu.Add(Line2.Data());
+    }
+  }
 
   double VarX[29] = {1000, 60, 50, 40, 30, 20, 10, 5,  60, 50, 40, 30, 20, 10, 5,  60, 50, 40, 30, 20, 10, 5,  60, 50, 40, 30, 20, 10, 5};//Mass inequality
   double VarY[29] = {1000, 80, 80, 80, 80, 80, 80, 80, 60, 60, 60, 60, 60, 60, 60, 40, 40, 40, 40, 40, 40, 40, 20, 20, 20, 20, 20, 20, 20};//Max(Iso1, Iso2)
@@ -27,18 +60,6 @@ void HighMassBKGABCD() {
   double B[29] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//BKG in B
   double C[29] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//BKG in C
   double D[29] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//BKG in D
-
-  //Input file
-  TChain chain_data_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
-  std::ifstream Myfile( "Input_2017CDEF.txt" );//2017 Data Ntuples
-  std::string Line;
-  if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
-  while (std::getline(Myfile, Line)){
-    TString Line2(Line);
-    if( Line2.Contains("root") ){
-      chain_data_dimudimu.Add(Line2.Data());
-    }
-  }
 
   //Print Table
   cout<<"********************************************************************"<<endl;
@@ -74,8 +95,8 @@ void HighMassBKGABCD() {
   cout<<"********************************************************************"<<endl;
 
   //Draw <A> ErrA in one plot
-  TFile myPlot("ABCD_FINAL.root","RECREATE");
-  TCanvas *C1=new TCanvas("C1","C1",700,500);
+  TFile myPlot("ABCD_" + Form("%d", year) + "_FINAL.root", "RECREATE");
+  TCanvas *C1=new TCanvas("C1", "C1", 700, 500);
   C1->cd();
   TH1F *Yield = new TH1F();
   for(unsigned int iB=1; iB<=29; iB++){
