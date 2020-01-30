@@ -49,7 +49,10 @@
 #include "RooGenericPdf.h"
 #include "RooCBShape.h"
 #include "RooAddPdf.h"
+
 #include "macros/tdrStyle.C"
+#include "Constants.h"
+#include "Config.h"
 
 #ifndef __CINT__
 #include "RooCFunction1Binding.h"
@@ -58,23 +61,11 @@
 using namespace RooFit;
 
 void LowMassBKGFit1D() {
-  //Constants
-  TString pT_cut  = "17";
-  TString eta_cut = "0.9";
-  TString iso_cut = "1.5";//isolation cut for leading muon in dimu for Run2 analysis
 
-  const double       m_min  = 0.2113;
-  const double       m_max  = 9.;
-  const unsigned int m_bins = 220;
-
-  //Used for excluding the J/psi region when constructing 1D/2D template
-  const double       m_Jpsi_dn = 2.72;
-  const double       m_Jpsi_up = 3.24;
-  const unsigned int m_bins_below_Jpsi = 63;//bin size is ~0.04GeV, as above
-  const unsigned int m_bins_above_Jpsi = 144;
-
-  //Style
+  //Configure inputs for year
+  BKG_cfg::ConfigureInput(year);
   setTDRStyle();
+
   TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
   txtHeader->SetFillColor(kWhite);
   txtHeader->SetFillStyle(0);
@@ -82,7 +73,7 @@ void LowMassBKGFit1D() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}    36.734 fb^{-1} (2017 13 TeV)");
+  txtHeader->SetHeader(header);
 
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");
@@ -92,7 +83,7 @@ void LowMassBKGFit1D() {
   //Input file
   TChain chain_data_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
   TChain chain_data_dimuorphan("cutFlowAnalyzerPXBL4PXFL3/Events_orphan");
-  std::ifstream Myfile( "Input_2017CDEF.txt" );
+  std::ifstream Myfile(inputFile1);
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
   while (std::getline(Myfile, Line)){
@@ -267,16 +258,16 @@ void LowMassBKGFit1D() {
   //===========
   //2017 PDF m1
   //===========
-  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0.0, 0.3], MmumuC_p[0.05, 0.0, 1.5])");
-  w->factory("Bernstein::bgC(m1, {bC06[9.5766e+00, 0.1, 15.], bC16[ 1.0705e-01, 0., 3.], bC26[3.5184e-05, 0., 3.], bC36[1.259, 0., 5.], bC46[2.5370e-03, 0., 3.], bC56[5.7432e-01, 0., 3.], bC66[3.9353e-01, 0.1, 4.]})");
-  w->factory("Gaussian::adHocC(m1, adHocC_mass[0.2, 0., 0.6], adHocC_sigma[6.3097e-02, 0.0001, 0.1])");
+  w->factory("EXPR::MmumuC('m1*pow( (m1/m)*(m1/m) - 1.0, MmumuC_p )*exp( -MmumuC_c*( (m1/m)*(m1/m) - 1.0 ) )',m1, m[0.2113], MmumuC_c[0.01, 0., 0.3], MmumuC_p[0.05, 0., 2.5])");
+  w->factory("Bernstein::bgC(m1, {bC06[9.5766e+00, 0.1, 25.], bC16[ 1.0705e-01, -5., 3.], bC26[3.5184e-05, -5., 3.], bC36[1.259, -3., 5.], bC46[2.5370e-03, -3., 3.], bC56[5.7432e-01, -3., 3.], bC66[3.9353e-01, -3., 4.]})");
+  w->factory("Gaussian::adHocC(m1, adHocC_mass[0.2, 0., 0.6], adHocC_sigma[6.3097e-02, 0., 0.5])");
   w->factory("Gaussian::etaC(m1, 0.54786, 0.007)");
   w->factory("Gaussian::rhoC(m1, 0.78265, 0.009)");
   w->factory("Gaussian::phiC(m1, 1.01946, 0.01)");
-  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.0969, 3.0, 3.35], JpsiC_sigma[0.1, 0.001, 0.3], JpsiC_alpha[1.2, 0.4, 7.0], JpsiC_n[2.0])");
+  w->factory("CBShape::JpsiC(m1, JpsiC_mean[3.0969, 3.0, 3.35], JpsiC_sigma[0.1, 0., 0.3], JpsiC_alpha[1.2, 0.4, 7.0], JpsiC_n[2.0])");
   w->factory("Gaussian::psiC(m1, 3.68609, psiC_sigma[0.031, 0.01, 0.04])");
 
-  w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 10000.]*adHocC, norm_MmumuC[200., 0., 25000.]*MmumuC, norm_bgC[4400., 1000., 20000.]*bgC, norm_etaC[1.3151e+01, 0., 1000.]*etaC, norm_rhoC[1.0107e+02, 0., 1000.]*rhoC, norm_phiC[9.8640e+01, 0., 1000.]*phiC, norm_JpsiC[8000., 10., 10000.]*JpsiC, norm_psiC[50., 0., 1000.]*psiC)");
+  w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 10000.]*adHocC, norm_MmumuC[200., 0., 35000.]*MmumuC, norm_bgC[4400., 1000., 30000.]*bgC, norm_etaC[1.3151e+01, 0., 1000.]*etaC, norm_rhoC[1.0107e+02, 0., 1000.]*rhoC, norm_phiC[9.8640e+01, 0., 1000.]*phiC, norm_JpsiC[8000., 10., 20000.]*JpsiC, norm_psiC[50., 0., 1000.]*psiC)");
   RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));
   cout<<"------------------RooFitResult for m1---------------------"<<endl;
   rC->Print();
@@ -315,18 +306,19 @@ void LowMassBKGFit1D() {
   c_template1D_m1->SaveAs("figures/template1D_m1.png");
   c_template1D_m1->SaveAs("figures/template1D_m1.root");
   float chi2_C = plotC->chiSquare(23); //d.o.f = 23
+  cout<<"------------------ End m1 ---------------------"<<endl;
 
   //=========================
   //2017 PDF m1 (below J/psi)
   //=========================
   w->factory("EXPR::MmumuC_below_Jpsi('m1_below_Jpsi*pow( (m1_below_Jpsi/m_below_Jpsi)*(m1_below_Jpsi/m_below_Jpsi) - 1.0, MmumuC_p_below_Jpsi )*exp( -MmumuC_c_below_Jpsi*( (m1_below_Jpsi/m_below_Jpsi)*(m1_below_Jpsi/m_below_Jpsi) - 1.0 ) )', m1_below_Jpsi, m_below_Jpsi[0.2113], MmumuC_c_below_Jpsi[0.1, -0.3, 0.3], MmumuC_p_below_Jpsi[0.1, 0.0, 1.5])");
-  w->factory("Bernstein::bgC_below_Jpsi(m1_below_Jpsi, {bC06_below_Jpsi[1., 0.1, 15.], bC16_below_Jpsi[1.3, 0., 3.], bC26_below_Jpsi[0.1, -3., 3.], bC36_below_Jpsi[0.1, -3., 3.], bC46_below_Jpsi[1.5, 0., 3.], bC56_below_Jpsi[0.5, 0., 3.], bC66_below_Jpsi[0.1, 0., 4.]})");
-  w->factory("Gaussian::adHocC_below_Jpsi(m1_below_Jpsi, adHocC_mass_below_Jpsi[0.3, 0., 0.6], adHocC_sigma_below_Jpsi[0.07, 0.0, 0.1])");
+  w->factory("Bernstein::bgC_below_Jpsi(m1_below_Jpsi, {bC06_below_Jpsi[1., 0.1, 15.], bC16_below_Jpsi[1.3, 0., 5.], bC26_below_Jpsi[0.1, -10., 3.], bC36_below_Jpsi[0.1, -3., 5.], bC46_below_Jpsi[1.5, -3., 3.], bC56_below_Jpsi[0.5, 0., 3.], bC66_below_Jpsi[0.1, -1., 4.]})");
+  w->factory("Gaussian::adHocC_below_Jpsi(m1_below_Jpsi, adHocC_mass_below_Jpsi[0.3, 0., 0.6], adHocC_sigma_below_Jpsi[0.07, 0., 0.1])");
   w->factory("Gaussian::etaC_below_Jpsi(m1_below_Jpsi, 0.54786, 0.007)");
   w->factory("Gaussian::rhoC_below_Jpsi(m1_below_Jpsi, 0.78265, 0.009)");
   w->factory("Gaussian::phiC_below_Jpsi(m1_below_Jpsi, 1.01946, 0.01)");
 
-  w->factory("SUM::template1D_m1_below_Jpsi(norm_adHocC_below_Jpsi[1000., 0., 10000.]*adHocC_below_Jpsi, norm_MmumuC_below_Jpsi[14000., 0., 25000.]*MmumuC_below_Jpsi, norm_bgC_below_Jpsi[6000., 1000., 20000.]*bgC_below_Jpsi, norm_etaC_below_Jpsi[0.08, 0., 1000.]*etaC_below_Jpsi, norm_rhoC_below_Jpsi[40., 0., 1000.]*rhoC_below_Jpsi, norm_phiC_below_Jpsi[58., 0., 1000.]*phiC_below_Jpsi)");
+  w->factory("SUM::template1D_m1_below_Jpsi(norm_adHocC_below_Jpsi[1000., 0., 10000.]*adHocC_below_Jpsi, norm_MmumuC_below_Jpsi[14000., 0., 35000.]*MmumuC_below_Jpsi, norm_bgC_below_Jpsi[6000., 1000., 25000.]*bgC_below_Jpsi, norm_etaC_below_Jpsi[0.08, 0., 1000.]*etaC_below_Jpsi, norm_rhoC_below_Jpsi[40., 0., 1000.]*rhoC_below_Jpsi, norm_phiC_below_Jpsi[58., 0., 1000.]*phiC_below_Jpsi)");
   RooFitResult *rC_below_Jpsi = w->pdf("template1D_m1_below_Jpsi")->fitTo(*(w->data("ds_dimuorphan_bg_m1_below_Jpsi")), Extended(1), Save(), SumW2Error(kTRUE));
   cout<<"------------------RooFitResult for m1 (below J/psi)---------------------"<<endl;
   rC_below_Jpsi->Print();
@@ -365,6 +357,7 @@ void LowMassBKGFit1D() {
   c_template1D_m1_below_Jpsi->SaveAs("figures/template1D_m1_below_Jpsi.png");
   c_template1D_m1_below_Jpsi->SaveAs("figures/template1D_m1_below_Jpsi.root");
   float chi2_C_below_Jpsi = plotC_below_Jpsi->chiSquare(17);
+  cout<<"------------------ End m1 (below Jpsi) ---------------------"<<endl;
 
   //=========================
   //2017 PDF m1 (above J/psi)
@@ -411,6 +404,7 @@ void LowMassBKGFit1D() {
   c_template1D_m1_above_Jpsi->SaveAs("figures/template1D_m1_above_Jpsi.png");
   c_template1D_m1_above_Jpsi->SaveAs("figures/template1D_m1_above_Jpsi.root");
   float chi2_C_above_Jpsi = plotC_above_Jpsi->chiSquare(10);
+  cout<<"------------------ End m1 (above Jpsi) ---------------------"<<endl;
 
   //****************************************************************************
   //                         Create template for m2
@@ -419,16 +413,16 @@ void LowMassBKGFit1D() {
   //===========
   //2017 PDF m2
   //===========
-  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0.0, 0.3], MmumuF_p[0.05, 0.0, 2.])");
-  w->factory("Bernstein::bgF(m2,{bF06[9.9751, 0, 15.], bF16[3.2971e-05, 0., 3.], bF26[1.2361e-07, 0., 3.], bF36[5.1545e-08, 0., 2.], bF46[9.9017e-01, 0., 3.], bF56[3.0607e-01, 0., 3.], bF66[0.5, 0.1, 4.]})");
-  w->factory("Gaussian::adHocF(m2,adHocF_mass[0.4, 0.2, 0.6],adHocF_sigma[0.01, 0.001, 0.1])");
+  w->factory("EXPR::MmumuF('m2*pow( (m2/m)*(m2/m) - 1.0, MmumuF_p )*exp( -MmumuF_c*( (m2/m)*(m2/m) - 1.0 ) )',m2, m[0.2113], MmumuF_c[0.01, 0., 0.3], MmumuF_p[0.05, 0., 4.])");
+  w->factory("Bernstein::bgF(m2, {bF06[9.9751, 0, 30.], bF16[3.2971e-05, -6., 5.], bF26[1.2361e-07, -5., 5.], bF36[5.1545e-08, -3., 10.], bF46[9.9017e-01, -3., 5.], bF56[3.0607e-01, -3., 3.], bF66[0.5, 0.1, 4.]})");
+  w->factory("Gaussian::adHocF(m2, adHocF_mass[0.4, 0.1, 0.6], adHocF_sigma[0.01, 0.001, 0.1])");
   w->factory("Gaussian::etaF(m2, 0.54786, 0.007)");
   w->factory("Gaussian::rhoF(m2, 0.78265, 0.009)");
   w->factory("Gaussian::phiF(m2, 1.01946, 0.01)");
-  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.0969, 3.0, 3.35], JpsiF_sigma[0.1, 0.01, 0.3], JpsiF_alpha[1.2, 0.4, 10.0], JpsiF_n[2.0])");
-  w->factory("Gaussian::psiF(m2, 3.68609, psiF_sigma[0.031, 0.01, 0.04])");
+  w->factory("CBShape::JpsiF(m2, JpsiF_mean[3.0969, 3.0, 3.35], JpsiF_sigma[0.1, 0., 0.3], JpsiF_alpha[1.2, 0.4, 10.0], JpsiF_n[2.0])");
+  w->factory("Gaussian::psiF(m2, 3.68609, psiF_sigma[0.031, 0.01, 0.05])");
 
-  w->factory("SUM::template1D_m2(norm_adHocF[150., 0., 500.]*adHocF, norm_MmumuF[10000., 0., 15000.]*MmumuF, norm_bgF[4400., 1000., 20000.]*bgF, norm_etaF[1., 0., 2.]*etaF, norm_rhoF[65., 1., 100.]*rhoF, norm_phiF[110., 1., 1000.]*phiF, norm_JpsiF[6400., 0., 10000.]*JpsiF, norm_psiF[250., 0., 1000.]*psiF)");
+  w->factory("SUM::template1D_m2(norm_adHocF[150., 0., 500.]*adHocF, norm_MmumuF[10000., 0., 35000.]*MmumuF, norm_bgF[4400., 1000., 25000.]*bgF, norm_etaF[1., 0., 2.]*etaF, norm_rhoF[65., 1., 100.]*rhoF, norm_phiF[110., 1., 1000.]*phiF, norm_JpsiF[6400., 0., 20000.]*JpsiF, norm_psiF[250., 0., 1000.]*psiF)");
   RooFitResult *rF = w->pdf("template1D_m2")->fitTo(*(w->data("ds_dimuorphan_bg_m2")), Extended(1), Save(), SumW2Error(kTRUE));
   cout<<"------------------RooFitResult for m2---------------------"<<endl;
   rF->Print();
@@ -466,6 +460,7 @@ void LowMassBKGFit1D() {
   c_template1D_m2->SaveAs("figures/template1D_m2.png");
   c_template1D_m2->SaveAs("figures/template1D_m2.root");
   float chi2_F = plotF->chiSquare(23);
+  cout<<"------------------ End m2 ---------------------"<<endl;
 
   //=========================
   //2017 PDF m2 (below J/psi)
@@ -516,12 +511,13 @@ void LowMassBKGFit1D() {
   c_template1D_m2_below_Jpsi->SaveAs("figures/template1D_m2_below_Jpsi.png");
   c_template1D_m2_below_Jpsi->SaveAs("figures/template1D_m2_below_Jpsi.root");
   float chi2_F_below_Jpsi = plotF_below_Jpsi->chiSquare(17);
+  cout<<"------------------ End m2 (below Jpsi) ---------------------"<<endl;
 
   //=========================
   //2017 PDF m2 (above J/psi)
   //=========================
-  w->factory("Bernstein::bgF_above_Jpsi(m2_above_Jpsi, {bF06_above_Jpsi[3.5, 0, 15.], bF16_above_Jpsi[-3., -4., 3.], bF26_above_Jpsi[2.4, -3., 3.], bF36_above_Jpsi[0.1, -3., 3.], bF46_above_Jpsi[0.1, -3., 3.], bF56_above_Jpsi[0.5, 0., 3.], bF66_above_Jpsi[0.4, -1, 4.]})");
-  w->factory("Gaussian::psiF_above_Jpsi(m2_above_Jpsi, 3.68609, psiF_sigma_above_Jpsi[0.031, 0.01, 0.04])");
+  w->factory("Bernstein::bgF_above_Jpsi(m2_above_Jpsi, {bF06_above_Jpsi[3.5, 0, 15.], bF16_above_Jpsi[-3., -4., 3.], bF26_above_Jpsi[2.4, -5., 5.], bF36_above_Jpsi[0.1, -5., 5.], bF46_above_Jpsi[0.1, -3., 3.], bF56_above_Jpsi[0.5, -3., 3.], bF66_above_Jpsi[0.4, -3, 4.]})");
+  w->factory("Gaussian::psiF_above_Jpsi(m2_above_Jpsi, 3.68609, psiF_sigma_above_Jpsi[0.031, 0.01, 0.1])");
 
   w->factory("SUM::template1D_m2_above_Jpsi(norm_bgF_above_Jpsi[1950., 500., 20000.]*bgF_above_Jpsi, norm_psiF_above_Jpsi[220., 0., 1000.]*psiF_above_Jpsi)");
   RooFitResult *rF_above_Jpsi = w->pdf("template1D_m2_above_Jpsi")->fitTo(*(w->data("ds_dimuorphan_bg_m2_above_Jpsi")), Extended(1), Save(), SumW2Error(kTRUE));
@@ -562,6 +558,7 @@ void LowMassBKGFit1D() {
   c_template1D_m2_above_Jpsi->SaveAs("figures/template1D_m2_above_Jpsi.png");
   c_template1D_m2_above_Jpsi->SaveAs("figures/template1D_m2_above_Jpsi.root");
   float chi2_F_above_Jpsi = plotF_above_Jpsi->chiSquare(10);
+  cout<<"------------------ End m2 (above Jpsi) ---------------------"<<endl;
 
   //****************************************************************************
   //                     Create 2D template = m1 x m2
@@ -747,5 +744,5 @@ void LowMassBKGFit1D() {
   //                           Save to Workspace
   //****************************************************************************
   cout<<"Save to workspace"<<endl;
-  w->writeToFile("ws_FINAL.root");
+  w->writeToFile(outFileLM);
 }

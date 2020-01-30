@@ -17,32 +17,16 @@
 #include "TChain.h"
 #include "TBranch.h"
 
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!  USER modify section: start  !
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-//Configure which year ntuples to run, options: 2017, 2018
-int year = 2018;
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!  USER modify section: end  !
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "Constants.h"//local const file
+#include "Config.h"
 
 void HighMassBKGABCD() {
-  //Input file
-  TString InputFile;
-  if(year == 2017){
-    InputFile = "Input_2017CDEF.txt";
-  }
-  else if(year == 2018){
-    InputFile = "Input_2018ABCD.txt";
-  }
-  else{
-    std::cout << "*** User input year is unknown!!! ***" << std::endl;
-  }
+
+  //Configure inputs for year
+  BKG_cfg::ConfigureInput(year);
 
   TChain chain_data_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
-  std::ifstream Myfile(InputFile);
+  std::ifstream Myfile(inputFile1);
   std::string Line;
   if( !Myfile ) std::cout<<"ERROR opening Myfile."<<std::endl;
   while (std::getline(Myfile, Line)){
@@ -95,7 +79,8 @@ void HighMassBKGABCD() {
   cout<<"********************************************************************"<<endl;
 
   //Draw <A> ErrA in one plot
-  TFile myPlot("ABCD_" + Form("%d", year) + "_FINAL.root", "RECREATE");
+  TFile myPlot(outFileHMABCD, "RECREATE");
+
   TCanvas *C1=new TCanvas("C1", "C1", 700, 500);
   C1->cd();
   TH1F *Yield = new TH1F();

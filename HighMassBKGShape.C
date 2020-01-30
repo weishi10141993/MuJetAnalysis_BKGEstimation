@@ -18,112 +18,13 @@
 #include "TChain.h"
 #include "TBranch.h"
 
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!  USER modify this section: start  !
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-
-//Configure which year ntuples to run, options: 2017, 2018
-int year = 2018;
-
-//Luminosity each year: unit: fb^-1
-Float_t lumi_2017 = 36.734;
-Float_t lumi_2018 = 59.97;
-
-//Directory of histograms
-TString store_2017 = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/2017";
-TString store_2018 = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/2018";
-
-//Scale MC events to Data (Xsec*Lumi/tot MC evt), not including SF like trigger, muon id etc
-//The order is important here: DY 0J, 1J, 2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
-Float_t MC_ScaleFactors_2017[7] = {2.2491001E+00, 3.7980782E-01, 2.4748488E-01, 3.0278414E-03, 7.0425976E-02, 4.6355268E-04, 6.3245328E-05};
-Float_t MC_ScaleFactors_2018[7] = {3.4145686E+00, 6.2974242E-01, 3.6185455E-01, 4.1624890E-03, 1.0998854E-01, 7.6245783E-04, 1.0461031E-04};
-
-//The input files below contain histograms from running the cut-flow script (with ModelBKGShape flag on) over each background ntuples
-//script: MuJetAnalysis/CutFlowAnalyzer/scripts/cutflow_macros/foo_modified.C
-//run command: echo 'gROOT->ProcessLine(".L foo_modified.C++"); analysis("SignalsList2017.txt" )' | root -l -b
-//Same order as MC_ScaleFactors above
-TString MC_files_2017[7] = {
-  "HighMassBKGShape_2017_DYToLL_0J.root",
-  "HighMassBKGShape_2017_DYToLL_1J.root",
-  "HighMassBKGShape_2017_DYToLL_2J.root",
-  "HighMassBKGShape_2017_ZZTo4L.root",
-  "HighMassBKGShape_2017_TTJets_DiLept.root",
-  "HighMassBKGShape_2017_ggHToZZTo4L.root",
-  "HighMassBKGShape_2017_ggToZZTo4mu.root"
-};
-TString DATA_files_2017[4] = {
-  "HighMassBKGShape_2017C.root",
-  "HighMassBKGShape_2017D.root",
-  "HighMassBKGShape_2017E.root",
-  "HighMassBKGShape_2017F.root"
-};
-
-TString MC_files_2018[7] = {
-  "HighMassBKGShape_2018_DYToLL_0J.root",
-  "HighMassBKGShape_2018_DYToLL_1J.root",
-  "HighMassBKGShape_2018_DYToLL_2J.root",
-  "HighMassBKGShape_2018_ZZTo4L.root",
-  "HighMassBKGShape_2018_TTJets_DiLept.root",
-  "HighMassBKGShape_2018_ggHToZZTo4L.root",
-  "HighMassBKGShape_2018_ggToZZTo4mu.root"
-};
-TString DATA_files_2018[4] = {
-  "HighMassBKGShape_2018A.root",
-  "HighMassBKGShape_2018B.root",
-  "HighMassBKGShape_2018C.root",
-  "HighMassBKGShape_2018D.root"
-};
-
-//Color in final legend for each bkg process, same order as above
-Color_t MC_Colors[7] = {20, 30, 40, 9, 8, 7, 6};
-
-//Mass range and bin size of final plot
-const double       m_min  = 11.0;
-const double       m_max  = 59.0;
-const unsigned int m_bins = 12;//bin size 4GeV
-
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!  USER modify section: end  !
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+#include "Constants.h"//local const file
+#include "Config.h"
 
 void HighMassBKGShape()
 {
-  Float_t lumi;
-  TString store;
-  Float_t MC_ScaleFactors[7];
-  TString MC_files[7];
-  TString DATA_files[4];
-
-  std::cout << "*** User input year is " << year << " ***" << std::endl;
-
-  if(year == 2017){
-    lumi  = lumi_2017;
-    store = store_2017;
-    for (int i = 0; i < 7; i++) {
-      MC_ScaleFactors[i] = MC_ScaleFactors_2017[i];
-      MC_files[i] = MC_files_2017[i];
-    }
-    for (int j = 0; j < 4; j++) {
-      DATA_files[j] = DATA_files_2017[j];
-    }
-  }//end if 2017
-  else if(year == 2018){
-    lumi  = lumi_2018;
-    store = store_2018;
-    for (int i = 0; i < 7; i++) {
-      MC_ScaleFactors[i] = MC_ScaleFactors_2018[i];
-      MC_files[i] = MC_files_2018[i];
-    }
-    for (int j = 0; j < 4; j++) {
-      DATA_files[j] = DATA_files_2018[j];
-    }
-  }//end if 2018
-  else{
-    std::cout << "*** User input year is unknown!!! ***" << std::endl;
-  }
-
-  std::cout << "    Lumi: " << lumi << " fb^-1" << std::endl;
-  std::cout << "    Input directory: " << store << std::endl;
+  //Configure inputs for year
+  BKG_cfg::ConfigureInput(year);
 
   TLegend *txtHeader = new TLegend(.13, .935, 0.97, 1.);
   txtHeader->SetFillColor(kWhite);
@@ -132,7 +33,7 @@ void HighMassBKGShape()
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}                         " + Form("%f", lumi) + "fb^{-1} (" + Form("%d", year) + " 13 TeV)");
+  txtHeader->SetHeader(header);
 
   // Initialize empty file to access each file in the list
   TFile *file_tmp(0);
@@ -142,11 +43,11 @@ void HighMassBKGShape()
   THStack *MC_hs_SR_m1 = new THStack("MC_hs_SR_m1", "");
   THStack *MC_hs_SR_m2 = new THStack("MC_hs_SR_m2", "");
   //For plotting summed error for above stacked plots
-  TH1F *MC_CR_m1 = new TH1F("MC_CR_m1", "", m_bins, m_min, m_max);
-  TH1F *MC_CR_m2 = new TH1F("MC_CR_m2", "", m_bins, m_min, m_max);
-  TH1F *MC_CR_orphdimumass = new TH1F("MC_CR_orphdimumass", "", m_bins, m_min, m_max);
-  TH1F *MC_SR_m1 = new TH1F("MC_SR_m1", "", m_bins, m_min, m_max);
-  TH1F *MC_SR_m2 = new TH1F("MC_SR_m2", "", m_bins, m_min, m_max);
+  TH1F *MC_CR_m1 = new TH1F("MC_CR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *MC_CR_m2 = new TH1F("MC_CR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *MC_CR_orphdimumass = new TH1F("MC_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *MC_SR_m1 = new TH1F("MC_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *MC_SR_m2 = new TH1F("MC_SR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
 
   //SM BKG MC
   TString MC_file_name;
@@ -202,11 +103,11 @@ void HighMassBKGShape()
 
   //DATA
   TString DATA_file_name;
-  TH1F *DATA_CR_m1 = new TH1F("DATA_CR_m1", "", m_bins, m_min, m_max);
-  TH1F *DATA_CR_m2 = new TH1F("DATA_CR_m2", "", m_bins, m_min, m_max);
-  TH1F *DATA_CR_orphdimumass = new TH1F("DATA_CR_orphdimumass", "", m_bins, m_min, m_max);
-  TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1", "", m_bins, m_min, m_max);
-  TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2", "", m_bins, m_min, m_max);
+  TH1F *DATA_CR_m1 = new TH1F("DATA_CR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *DATA_CR_m2 = new TH1F("DATA_CR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *DATA_CR_orphdimumass = new TH1F("DATA_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
 
   for (int j = 0; j < 4; j++) {
     DATA_file_name.Form( "%s/%s", store.Data(), DATA_files[j].Data() );
@@ -225,7 +126,7 @@ void HighMassBKGShape()
   }
 
   //write to output file
-  TFile myPlot("HighMassBKGShape_" + Form("%d", year) + "_FINAL.root", "RECREATE");
+  TFile myPlot(outFileHMShape, "RECREATE");
 
   //***************
   //* For m1 at CR*
@@ -242,12 +143,12 @@ void HighMassBKGShape()
   //Plot MC error
   MC_CR_m1->SetLineColor(2); MC_CR_m1->SetFillColor(2); MC_CR_m1->SetFillStyle(3004); MC_CR_m1->Draw("E2 SAME");
   Double_t MC_CR_m1_error;
-  Double_t MC_CR_m1_integral = MC_CR_m1->IntegralAndError(1, m_bins, MC_CR_m1_error, "");
+  Double_t MC_CR_m1_integral = MC_CR_m1->IntegralAndError(1, HM_m_bins, MC_CR_m1_error, "");
   std::cout << "MC CR m1 integral = " << MC_CR_m1_integral << " +/- " << MC_CR_m1_error << std::endl;
   //Overlay data
   DATA_CR_m1->SetFillColor(1); DATA_CR_m1->SetLineColor(1); DATA_CR_m1->SetMarkerStyle(20); DATA_CR_m1->SetMarkerSize(0.6); DATA_CR_m1->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");//Draw Error bars
   Double_t DATA_CR_m1_error;
-  Double_t DATA_CR_m1_integral = DATA_CR_m1->IntegralAndError(1, m_bins, DATA_CR_m1_error, ""); // "": width
+  Double_t DATA_CR_m1_integral = DATA_CR_m1->IntegralAndError(1, HM_m_bins, DATA_CR_m1_error, ""); // "": width
   std::cout << "DATA CR m1 integral = " << DATA_CR_m1_integral << " +/- " << DATA_CR_m1_error << std::endl;
   //Build Legend
   TLegend* CR1pad1L = CR1pad1->BuildLegend();
@@ -276,8 +177,8 @@ void HighMassBKGShape()
   //Plot pull distribution
   CR1pad2->cd();
   //fill pull histogram
-  TH1F *pull_CR_m1 = new TH1F("pull_CR_m1","", m_bins, m_min, m_max);
-  for(unsigned int iB=1; iB<=m_bins; iB++){
+  TH1F *pull_CR_m1 = new TH1F("pull_CR_m1","", HM_m_bins, HM_m_min, HM_m_max);
+  for(unsigned int iB=1; iB<=HM_m_bins; iB++){
     //pull definition: considering data and MC error
     float pull_CR_m1_iB = ( DATA_CR_m1->GetBinContent(iB) - MC_CR_m1->GetBinContent(iB) ) / sqrt( pow(DATA_CR_m1->GetBinError(iB), 2) + pow(MC_CR_m1->GetBinError(iB), 2) );
     pull_CR_m1->SetBinContent(iB, pull_CR_m1_iB );//iB starts from #1
@@ -318,12 +219,12 @@ void HighMassBKGShape()
   //Plot MC error
   MC_CR_m2->SetLineColor(2); MC_CR_m2->SetFillColor(2); MC_CR_m2->SetFillStyle(3004); MC_CR_m2->Draw("E2 SAME");
   Double_t MC_CR_m2_error;
-  Double_t MC_CR_m2_integral = MC_CR_m2->IntegralAndError(1, m_bins, MC_CR_m2_error, "");
+  Double_t MC_CR_m2_integral = MC_CR_m2->IntegralAndError(1, HM_m_bins, MC_CR_m2_error, "");
   std::cout << "MC CR m2 integral = " << MC_CR_m2_integral << " +/- " << MC_CR_m2_error << std::endl;
   //Overlay data
   DATA_CR_m2->SetFillColor(1); DATA_CR_m2->SetLineColor(1); DATA_CR_m2->SetMarkerStyle(20); DATA_CR_m2->SetMarkerSize(0.6); DATA_CR_m2->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
   Double_t DATA_CR_m2_error;
-  Double_t DATA_CR_m2_integral = DATA_CR_m2->IntegralAndError(1, m_bins, DATA_CR_m2_error, "");
+  Double_t DATA_CR_m2_integral = DATA_CR_m2->IntegralAndError(1, HM_m_bins, DATA_CR_m2_error, "");
   std::cout << "DATA CR m2 integral = " << DATA_CR_m2_integral << " +/- " << DATA_CR_m2_error << std::endl;
   //Build Legend
   TLegend* CR2pad1L = CR2pad1->BuildLegend();
@@ -352,8 +253,8 @@ void HighMassBKGShape()
   //Plot pull distribution
   CR2pad2->cd();
   //fill pull histogram
-  TH1F *pull_CR_m2 = new TH1F("pull_CR_m2","", m_bins, m_min, m_max);
-  for(unsigned int iB=1; iB<=m_bins; iB++){
+  TH1F *pull_CR_m2 = new TH1F("pull_CR_m2","", HM_m_bins, HM_m_min, HM_m_max);
+  for(unsigned int iB=1; iB<=HM_m_bins; iB++){
     float pull_CR_m2_iB = ( DATA_CR_m2->GetBinContent(iB) - MC_CR_m2->GetBinContent(iB) ) / sqrt( pow(DATA_CR_m2->GetBinError(iB), 2) + pow(MC_CR_m2->GetBinError(iB), 2) );
     pull_CR_m2->SetBinContent(iB, pull_CR_m2_iB );
   }
@@ -393,12 +294,12 @@ void HighMassBKGShape()
   //Plot MC error
   MC_CR_orphdimumass->SetLineColor(2); MC_CR_orphdimumass->SetFillColor(2); MC_CR_orphdimumass->SetFillStyle(3004); MC_CR_orphdimumass->Draw("E2 SAME");
   Double_t MC_CR_orphdimumass_error;
-  Double_t MC_CR_orphdimumass_integral = MC_CR_orphdimumass->IntegralAndError(1, m_bins, MC_CR_orphdimumass_error, "");
+  Double_t MC_CR_orphdimumass_integral = MC_CR_orphdimumass->IntegralAndError(1, HM_m_bins, MC_CR_orphdimumass_error, "");
   std::cout << "MC CR orphan dimu mass integral = " << MC_CR_orphdimumass_integral << " +/- " << MC_CR_orphdimumass_error << std::endl;
   //Overlay data
   DATA_CR_orphdimumass->SetFillColor(1); DATA_CR_orphdimumass->SetLineColor(1); DATA_CR_orphdimumass->SetMarkerStyle(20); DATA_CR_orphdimumass->SetMarkerSize(0.6); DATA_CR_orphdimumass->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
   Double_t DATA_CR_orphdimumass_error;
-  Double_t DATA_CR_orphdimumass_integral = DATA_CR_orphdimumass->IntegralAndError(1, m_bins, DATA_CR_orphdimumass_error, "");
+  Double_t DATA_CR_orphdimumass_integral = DATA_CR_orphdimumass->IntegralAndError(1, HM_m_bins, DATA_CR_orphdimumass_error, "");
   std::cout << "DATA CR orphan dimu mass integral = " << DATA_CR_orphdimumass_integral << " +/- " << DATA_CR_orphdimumass_error << std::endl;
   //Build Legend
   TLegend* CROrphDimuMpad1L = CROrphDimuMpad1->BuildLegend();
@@ -427,8 +328,8 @@ void HighMassBKGShape()
   //Plot pull distribution
   CROrphDimuMpad2->cd();
   //fill pull histogram
-  TH1F *pull_CR_orphdimumass = new TH1F("pull_CR_orphdimumass","", m_bins, m_min, m_max);
-  for(unsigned int iB=1; iB<=m_bins; iB++){
+  TH1F *pull_CR_orphdimumass = new TH1F("pull_CR_orphdimumass","", HM_m_bins, HM_m_min, HM_m_max);
+  for(unsigned int iB=1; iB<=HM_m_bins; iB++){
     float pull_CR_orphdimumass_iB = ( DATA_CR_orphdimumass->GetBinContent(iB) - MC_CR_orphdimumass->GetBinContent(iB) ) / sqrt( pow(DATA_CR_orphdimumass->GetBinError(iB), 2) + pow(MC_CR_orphdimumass->GetBinError(iB), 2) );
     pull_CR_orphdimumass->SetBinContent(iB, pull_CR_orphdimumass_iB );
   }
@@ -469,7 +370,7 @@ void HighMassBKGShape()
   MC_SR_m1->SetFillStyle(3004);
   MC_SR_m1->Draw("E2 SAME");
   Double_t MC_SR_m1_error;
-  Double_t MC_SR_m1_integral = MC_SR_m1->IntegralAndError(1, m_bins, MC_SR_m1_error, "");
+  Double_t MC_SR_m1_integral = MC_SR_m1->IntegralAndError(1, HM_m_bins, MC_SR_m1_error, "");
   std::cout << "MC SR m1 integral = " << MC_SR_m1_integral << " +/- " << MC_SR_m1_error << std::endl;
   //Build Legend
   TLegend* SR1L = SR1->BuildLegend();
@@ -509,7 +410,7 @@ void HighMassBKGShape()
   MC_SR_m2->SetFillStyle(3004);
   MC_SR_m2->Draw("E2 SAME");
   Double_t MC_SR_m2_error;
-  Double_t MC_SR_m2_integral = MC_SR_m2->IntegralAndError(1, m_bins, MC_SR_m2_error, "");
+  Double_t MC_SR_m2_integral = MC_SR_m2->IntegralAndError(1, HM_m_bins, MC_SR_m2_error, "");
   std::cout << "MC SR m2 integral = " << MC_SR_m2_integral << " +/- " << MC_SR_m2_error << std::endl;
   //Build Legend
   TLegend* SR2L = SR2->BuildLegend();

@@ -47,7 +47,10 @@
 #include "RooChebychev.h"
 #include "RooGenericPdf.h"
 #include "RooAddPdf.h"
+
 #include "macros/tdrStyle.C"
+#include "Constants.h"
+#include "Config.h"
 
 #ifndef __CINT__
 #include "RooCFunction1Binding.h"
@@ -57,16 +60,8 @@ using namespace RooFit;
 
 void LowMassBKGPlot2D() {
 
-  const double       m_min  = 0.2113;
-  const double       m_max  = 9.;
-  const unsigned int m_bins = 220;
-
-  //Used for excluding the J/psi region when constructing 1D/2D template
-  const double       m_Jpsi_dn = 2.72;
-  const double       m_Jpsi_up = 3.24;
-  const unsigned int m_bins_below_Jpsi = 63;//bin size is ~0.04GeV, as above
-  const unsigned int m_bins_above_Jpsi = 144;
-
+  //Configure inputs for year
+  BKG_cfg::ConfigureInput(year);
   setTDRStyle();
 
   TCanvas * c_template2D_m1_vs_m2 = new TCanvas("c_template2D_m1_vs_m2", "c_template2D_m1_vs_m2",0,1320,1044,928);
@@ -84,9 +79,9 @@ void LowMassBKGPlot2D() {
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader("#bf{CMS} #it{Preliminary}    36.734 fb^{-1} (2017 13 TeV)");
+  txtHeader->SetHeader(header);
 
-  TFile* file = new TFile("ws_FINAL.root");
+  TFile* file = new TFile(inputFile2);
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   //**************************************************************************************
@@ -239,7 +234,7 @@ void LowMassBKGPlot2D() {
   h1_control_offDiagonal_massC_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h1_control_offDiagonal_massC_data->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,350.);
+  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0., validate_m1_no_iso_Ymax);
 
   TH1D *h1_control_offDiagonal_massC_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionX() );
   h1_control_offDiagonal_massC_template->Scale( h1_control_offDiagonal_massC_data->Integral() / h1_control_offDiagonal_massC_template->Integral() );
@@ -262,7 +257,7 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massC_data->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h1_control_Iso_offDiagonal_massC_data->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_Iso_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0.,35.);
+  h1_control_Iso_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0., validate_m1_iso_Ymax);
 
   TH1D *h1_control_Iso_offDiagonal_massC_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionX() );
   h1_control_Iso_offDiagonal_massC_template->Scale( h1_control_Iso_offDiagonal_massC_data->Integral() / h1_control_Iso_offDiagonal_massC_template->Integral() );
@@ -285,7 +280,7 @@ void LowMassBKGPlot2D() {
   h1_control_offDiagonal_massF_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h1_control_offDiagonal_massF_data->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,250.);
+  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0., validate_m2_no_iso_Ymax);//value from the constant.h
 
   TH1D *h1_control_offDiagonal_massF_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionY() );
   h1_control_offDiagonal_massF_template->Scale( h1_control_offDiagonal_massF_data->Integral() / h1_control_offDiagonal_massF_template->Integral() );
@@ -308,7 +303,7 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massF_data->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h1_control_Iso_offDiagonal_massF_data->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_Iso_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0.,10.);
+  h1_control_Iso_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0., validate_m2_iso_Ymax);
 
   TH1D *h1_control_Iso_offDiagonal_massF_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionY() );
   h1_control_Iso_offDiagonal_massF_template->Scale( h1_control_Iso_offDiagonal_massF_data->Integral() / h1_control_Iso_offDiagonal_massF_template->Integral() );
