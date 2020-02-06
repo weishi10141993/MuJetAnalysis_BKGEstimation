@@ -305,7 +305,7 @@ void LowMassBKGFit1D() {
   c_template1D_m1->SaveAs("figures/template1D_m1.pdf");
   c_template1D_m1->SaveAs("figures/template1D_m1.png");
   c_template1D_m1->SaveAs("figures/template1D_m1.root");
-  float chi2_C = plotC->chiSquare(23); //d.o.f = 23
+  float chi2_C = plotC->chiSquare(23); //d.o.f = 23, Refer to: https://root.cern.ch/doc/master/RooPlot_8h_source.html
   cout<<"------------------ End m1 ---------------------"<<endl;
 
   //=========================
@@ -568,23 +568,14 @@ void LowMassBKGFit1D() {
   cout << "1D template m2 fit chi^2/dof: " << chi2_F << endl;
   w->factory("PROD::template2D(template1D_m1, template1D_m2)");//Assume: two 1D p.d.f.s are not correlated
 
-  cout << "-----Creating 2D template m1 * m2 (exclude J/psi: below + above):-----" << endl;
+  cout << "-----Creating 2D templates m1 * m2 (exclude J/psi: below + above):-----" << endl;
   cout << "1D template m1 (below J/psi) fit chi^2/dof: " << chi2_C_below_Jpsi << endl;
   cout << "1D template m1 (above J/psi) fit chi^2/dof: " << chi2_C_above_Jpsi << endl;
   cout << "1D template m2 (below J/psi) fit chi^2/dof: " << chi2_F_below_Jpsi << endl;
   cout << "1D template m2 (above J/psi) fit chi^2/dof: " << chi2_F_above_Jpsi << endl;
-  //****************************************************************************
-  //Note: The following p.d.f. product is not working (Don't know how to do pdf weight in RooProdPdf).
-  //The numbers before the p.d.f.s are weights, which are actual data entries (2017) in their respective ranges.
-  //Here the p.d.f.s are simply normalized to 1. So you need to weight them in order to combine them on the whole range.
-  //This is not necessary in the non-exclude-Jpsi case as there is only one pdf over the entire range
-  //Atm, the whole pdf exluding Jpsi will be saved to workspace in LowMassBKGPlot2D.C script.
-  //****************************************************************************
-  /*
-  //w->factory("PROD::template2D_m1_belowJpsi_m2_belowJpsi(22022*template1D_m1_below_Jpsi, 16535*template1D_m2_below_Jpsi)");
-  //w->factory("PROD::template2D_m1_belowJpsi_m2_aboveJpsi(22022*template1D_m1_below_Jpsi, 2084*template1D_m2_above_Jpsi)");
-  //w->factory("PROD::template2D_m1_aboveJpsi_m2_belowJpsi(3965*template1D_m1_above_Jpsi, 16535*template1D_m2_below_Jpsi)");
-  //w->factory("PROD::template2D_m1_aboveJpsi_m2_aboveJpsi(3965*template1D_m1_above_Jpsi, 2084*template1D_m2_above_Jpsi)");*/
+  //These 2D pdf will be used to evaluate the contributions only below and only above Jpsi
+  w->factory("PROD::template2D_below_Jpsi(template1D_m1_below_Jpsi, template1D_m2_below_Jpsi)");
+  w->factory("PROD::template2D_above_Jpsi(template1D_m1_above_Jpsi, template1D_m2_above_Jpsi)");
 
   //****************************************************************************
   //                     Extract 1D J/psi template from template m1
@@ -663,7 +654,7 @@ void LowMassBKGFit1D() {
   stream_cut_control_Iso_offDiagonal << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_max << " && massF > " << m_min << " && massF < " << m_max;
   TString cut_control_Iso_offDiagonal = stream_cut_control_Iso_offDiagonal.str();
   std::cout << "2-dimu CR selctions (low mass): " << cut_control_Iso_offDiagonal.Data() << std::endl;
-  TTree* tree_dimudimu_control_Iso_offDiagonal_2D       = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
+  TTree* tree_dimudimu_control_Iso_offDiagonal_2D = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
 
   //Same as above but without J/psi
   ostringstream stream_cut_control_Iso_offDiagonal_no_Jpsi;
@@ -700,6 +691,20 @@ void LowMassBKGFit1D() {
   std::cout << "2-dimu SR selctions (low mass no J/psi): " << cut_signal_no_Jpsi.Data() << std::endl;
   TTree* tree_dimudimu_signal_2D_no_Jpsi = chain_data_dimudimu.CopyTree(cut_signal_no_Jpsi);
 
+  //Below Jpsi only
+  ostringstream stream_cut_control_Iso_offDiagonal_below_Jpsi;
+  stream_cut_control_Iso_offDiagonal_below_Jpsi << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_min << " && massC < " << m_Jpsi_dn << " && massF > " << m_min << " && massF < " << m_Jpsi_dn;
+  TString cut_control_Iso_offDiagonal_below_Jpsi = stream_cut_control_Iso_offDiagonal_below_Jpsi.str();
+  std::cout << "2-dimu CR selctions (low mass below J/psi only): " << cut_control_Iso_offDiagonal_below_Jpsi.Data() << std::endl;
+  TTree* tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal_below_Jpsi);
+
+  //Above Jpsi only
+  ostringstream stream_cut_control_Iso_offDiagonal_above_Jpsi;
+  stream_cut_control_Iso_offDiagonal_above_Jpsi << "is1SelMu17 && is2SelMu8 && is3SelMu8 && is4SelMu8 && isVertexOK && is2DiMuons && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && fabs(diMuons_dz_FittedVtx) < 0.1 && isSignalHLTFired && diMuonCMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonCMu0_IsoTk0p3_FittedVtx >= 0 && diMuonFMu0_IsoTk0p3_FittedVtx < " << iso_cut << " && diMuonFMu0_IsoTk0p3_FittedVtx >= 0 && TMath::Abs(massC-massF) >= 3*(0.003044 + 0.007025*(massC+massF)/2.0 + 0.000053*(massC+massF)*(massC+massF)/4.0) && massC > " << m_Jpsi_up << " && massC < " << m_max << " && massF > " << m_Jpsi_up << " && massF < " << m_max;
+  TString cut_control_Iso_offDiagonal_above_Jpsi = stream_cut_control_Iso_offDiagonal_above_Jpsi.str();
+  std::cout << "2-dimu CR selctions (low mass below J/psi only): " << cut_control_Iso_offDiagonal_above_Jpsi.Data() << std::endl;
+  TTree* tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal_above_Jpsi);
+
   //Setting Names
   tree_dimudimu_control_Iso_offDiagonal_2D->GetBranch("massC")->SetName("m1");
   tree_dimudimu_control_Iso_offDiagonal_2D->GetBranch("massF")->SetName("m2");
@@ -714,6 +719,12 @@ void LowMassBKGFit1D() {
   tree_dimudimu_control_offDiagonal_2D_no_Jpsi->GetBranch("massF")->SetName("m2");
   tree_dimudimu_signal_2D_no_Jpsi->GetBranch("massC")->SetName("m1");
   tree_dimudimu_signal_2D_no_Jpsi->GetBranch("massF")->SetName("m2");
+  //Below Jpsi only
+  tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->GetBranch("massC")->SetName("m1_below_Jpsi");
+  tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->GetBranch("massF")->SetName("m2_below_Jpsi");
+  //Above Jpsi only
+  tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->GetBranch("massC")->SetName("m1_above_Jpsi");
+  tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->GetBranch("massF")->SetName("m2_above_Jpsi");
 
   //Creating 2 dimu dataset
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D","ds_dimudimu_control_Iso_offDiagonal_2D", tree_dimudimu_control_Iso_offDiagonal_2D, RooArgSet(m1,m2));
@@ -723,6 +734,10 @@ void LowMassBKGFit1D() {
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_control_offDiagonal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_control_offDiagonal_2D_no_Jpsi","ds_dimudimu_control_offDiagonal_2D_no_Jpsi", tree_dimudimu_control_offDiagonal_2D_no_Jpsi, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_signal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_signal_2D_no_Jpsi", "ds_dimudimu_signal_2D_no_Jpsi", tree_dimudimu_signal_2D_no_Jpsi, RooArgSet(m1,m2));
+  //Below Jpsi only
+  RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi, RooArgSet(m1_below_Jpsi,m2_below_Jpsi));
+  //Above Jpsi only
+  RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi, RooArgSet(m1_above_Jpsi,m2_above_Jpsi));
 
   ds_dimudimu_control_Iso_offDiagonal_2D->Print("s");
   ds_dimudimu_control_offDiagonal_2D->Print("s");
@@ -731,6 +746,10 @@ void LowMassBKGFit1D() {
   ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->Print("s");
   ds_dimudimu_control_offDiagonal_2D_no_Jpsi->Print("s");
   ds_dimudimu_signal_2D_no_Jpsi->Print("s");
+  //Below Jpsi only
+  ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->Print("s");
+  //Above Jpsi only
+  ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->Print("s");
 
   w->import(*ds_dimudimu_control_Iso_offDiagonal_2D);
   w->import(*ds_dimudimu_control_offDiagonal_2D);
@@ -739,6 +758,9 @@ void LowMassBKGFit1D() {
   w->import(*ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi);
   w->import(*ds_dimudimu_control_offDiagonal_2D_no_Jpsi);
   w->import(*ds_dimudimu_signal_2D_no_Jpsi);
+  //Below Jpsi only
+  w->import(*ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi);
+  w->import(*ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi);
 
   //****************************************************************************
   //                           Save to Workspace

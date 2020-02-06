@@ -85,7 +85,9 @@ void LowMassBKGPlot2D() {
   RooWorkspace *w = (RooWorkspace*) file->Get("w");
 
   //**************************************************************************************
-  //                   Draw 2D background (scale 2D template/pdf to data yield)
+  //                                      Part 1/3
+  //                      Use pdf from workspace: template2D pdf
+  //                      Draw 2D background (scale 2D template/pdf to data yield)
   //**************************************************************************************
   //Create and fill ROOT 2D histogram with sampling of 2D pdf, normalized to 1
   TH2D* h2D_template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", m_bins, m_bins);
@@ -228,7 +230,8 @@ void LowMassBKGPlot2D() {
   //************************************************************************************
   //           Validate the method with 2 dimu events at CR (iso & no-iso)
   //************************************************************************************
-  //Validate m1 with non-iso data at CR
+  cout<<"------ Start: validate for m1 (no iso) ------" <<endl;
+  // Validate m1 with non-iso data at CR
   TH1D *h1_control_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m1",m_bins);
   h1_control_offDiagonal_massC_data->SetStats(0);
   h1_control_offDiagonal_massC_data->SetMarkerStyle(20);
@@ -250,9 +253,14 @@ void LowMassBKGPlot2D() {
   c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.pdf");
   c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.png");
   c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.root");
+  //Chi2Test of two histograms: Refer to https://root.cern.ch/doc/master/TH1_8cxx_source.html
+  cout<<"Chi^2 test: m1 (no iso) "<<endl;
+  h1_control_offDiagonal_massC_data->Chi2Test(h1_control_offDiagonal_massC_template, "WW P");
+  cout<<"------ End: validate for m1 (no iso) ------" <<endl;
 
-  //Validate m1 with iso data at CR: very low stats, just FYI
-  TH1D *h1_control_Iso_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1",m_bins);
+  cout<<"------ Start: validate for m1 (iso) ------" <<endl;
+  // Validate m1 with iso data at CR: very low stats, just FYI
+  TH1D *h1_control_Iso_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1", m_bins);
   h1_control_Iso_offDiagonal_massC_data->SetStats(0);
   h1_control_Iso_offDiagonal_massC_data->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
@@ -273,9 +281,13 @@ void LowMassBKGPlot2D() {
   c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.pdf");
   c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.png");
   c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.root");
+  cout<<"Chi^2 test: m1 (iso) "<<endl;
+  h1_control_Iso_offDiagonal_massC_data->Chi2Test(h1_control_Iso_offDiagonal_massC_template, "WW P");
+  cout<<"------ End: validate for m1 (iso) ------" <<endl;
 
-  //Validate m2 with no-iso data at CR
-  TH1D *h1_control_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m2",m_bins);
+  cout<<"------ Start: validate for m2 (no iso) ------" <<endl;
+  // Validate m2 with no-iso data at CR
+  TH1D *h1_control_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m2", m_bins);
   h1_control_offDiagonal_massF_data->SetStats(0);
   h1_control_offDiagonal_massF_data->SetMarkerStyle(20);
   h1_control_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
@@ -296,9 +308,13 @@ void LowMassBKGPlot2D() {
   c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.pdf");
   c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.png");
   c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.root");
+  cout<<"Chi^2 test: m2 (no iso) "<<endl;
+  h1_control_offDiagonal_massF_data->Chi2Test(h1_control_offDiagonal_massF_template, "WW P");
+  cout<<"------ End: validate for m2 (no iso) ------" <<endl;
 
-  //Validate m2 with iso data at CR: limited stats, just FYI
-  TH1D *h1_control_Iso_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m2",m_bins);
+  cout<<"------ Start: validate for m2 (iso) ------" <<endl;
+  // Validate m2 with iso data at CR: limited stats, just FYI
+  TH1D *h1_control_Iso_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m2", m_bins);
   h1_control_Iso_offDiagonal_massF_data->SetStats(0);
   h1_control_Iso_offDiagonal_massF_data->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
@@ -319,39 +335,16 @@ void LowMassBKGPlot2D() {
   c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.pdf");
   c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.png");
   c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.root");
+  cout<<"Chi^2 test: m2 (iso) "<<endl;
+  h1_control_Iso_offDiagonal_massF_data->Chi2Test(h1_control_Iso_offDiagonal_massF_template, "WW P");
+  cout<<"------ End: validate for m2 (iso) ------" <<endl;
 
   //**************************************************************************************
-  //         Similar version to above except Exclude J/psi when construct 2D template
+  //                                      Part 2/3
+  //       Use pdf from workspace: template1D_m1_below_Jpsi, template1D_m1_above_Jpsi,
+  //                               template1D_m2_below_Jpsi, template1D_m2_above_Jpsi
+  //       Similar to Part 1/3 except excluding J/psi
   //**************************************************************************************
-  /*
-  //TH2D* h2D_template2D_m1_belowJpsi_m2_belowJpsi = (TH2D*)w->pdf("template2D_m1_belowJpsi_m2_belowJpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);
-  //TH2D* h2D_template2D_m1_belowJpsi_m2_aboveJpsi = (TH2D*)w->pdf("template2D_m1_belowJpsi_m2_aboveJpsi")->createHistogram("m1_below_Jpsi,m2_above_Jpsi", m_bins_below_Jpsi, m_bins_above_Jpsi);
-  //TH2D* h2D_template2D_m1_aboveJpsi_m2_belowJpsi = (TH2D*)w->pdf("template2D_m1_aboveJpsi_m2_belowJpsi")->createHistogram("m1_above_Jpsi,m2_below_Jpsi", m_bins_above_Jpsi, m_bins_below_Jpsi);
-  //TH2D* h2D_template2D_m1_aboveJpsi_m2_aboveJpsi = (TH2D*)w->pdf("template2D_m1_aboveJpsi_m2_aboveJpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);
-
-  //Add entries from above hist into one hist over all range
-  TH2D* h2D_template2D_exclude_Jpsi = new TH2D("h2D_template2D_exclude_Jpsi", "", m_bins, m_min, m_max, m_bins, m_min, m_max);
-  for(int i=1;i<=m_bins;i++) {
-    for(int j=1;j<=m_bins;j++) {
-      if(i<=m_bins_below_Jpsi && j<=m_bins_below_Jpsi){ //i:1-63, j:1-63
-        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_belowJpsi_m2_belowJpsi->GetBinContent(i, j) );
-      }
-      else if(i<=m_bins_below_Jpsi && j>= m_bins-m_bins_above_Jpsi+1){ //i:1-63, j:77-220
-        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_belowJpsi_m2_aboveJpsi->GetBinContent(i, j-m_bins+m_bins_above_Jpsi ) );
-      }
-      else if(i>= m_bins-m_bins_above_Jpsi+1 && j<= m_bins_below_Jpsi){//i:77-220, j:1-63
-        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_aboveJpsi_m2_belowJpsi->GetBinContent(i-m_bins+m_bins_above_Jpsi, j ) );
-      }
-      else if(i>= m_bins-m_bins_above_Jpsi+1 && j>= m_bins-m_bins_above_Jpsi+1){//i:77-220, j:77-220
-        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, h2D_template2D_m1_aboveJpsi_m2_aboveJpsi->GetBinContent(i-m_bins+m_bins_above_Jpsi, j-m_bins+m_bins_above_Jpsi ) );
-      }
-      else{//excluded Jpsi region
-        h2D_template2D_exclude_Jpsi->SetBinContent(i, j, 0);
-      }
-    }//end j
-  }//end i
-  */
-
   TH1D* h1D_template1D_m1_below_Jpsi = (TH1D*)w->pdf("template1D_m1_below_Jpsi")->createHistogram("m1_below_Jpsi", m_bins_below_Jpsi);//normalized to 1
   TH1D* h1D_template1D_m1_above_Jpsi = (TH1D*)w->pdf("template1D_m1_above_Jpsi")->createHistogram("m1_above_Jpsi", m_bins_above_Jpsi);
   TH1D* h1D_template1D_m2_below_Jpsi = (TH1D*)w->pdf("template1D_m2_below_Jpsi")->createHistogram("m2_below_Jpsi", m_bins_below_Jpsi);
@@ -517,6 +510,7 @@ void LowMassBKGPlot2D() {
   //************************************************************************************
   //         Validate the exclude Jpsi version with 2 dimu events at CR (iso & no-iso)
   //************************************************************************************
+  cout<<"------ Start: validate for m1 (no J/Psi, no iso) ------" <<endl;
   //Validate m1 with non-iso data at CR
   TH1D *h1_control_offDiagonal_massC_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D_no_Jpsi")->createHistogram("m1", m_bins);
   h1_control_offDiagonal_massC_data_no_Jpsi->SetStats(0);
@@ -539,8 +533,12 @@ void LowMassBKGPlot2D() {
   c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.pdf");
   c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.png");
   c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.root");
+  cout<<"Chi^2 test: m1 (no J/psi, no iso) "<<endl;
+  h1_control_offDiagonal_massC_data_no_Jpsi->Chi2Test(h1_control_offDiagonal_massC_template_no_Jpsi, "WW P");
+  cout<<"------ End: validate for m1 (no J/Psi, no iso) ------" <<endl;
 
-  //Validate m1 with iso data at CR: very low stats, just FYI
+  cout<<"------ Start: validate for m1 (no J/Psi, iso) ------" <<endl;
+  //Validate m1 with iso data at CR: very low stats, more important
   TH1D *h1_control_Iso_offDiagonal_massC_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi")->createHistogram("m1", m_bins);
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->SetStats(0);
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->SetMarkerStyle(20);
@@ -562,7 +560,11 @@ void LowMassBKGPlot2D() {
   c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.pdf");
   c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.png");
   c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.root");
+  cout<<"Chi^2 test: m1 (no J/psi, iso) "<<endl;
+  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Chi2Test(h1_control_Iso_offDiagonal_massC_template_no_Jpsi, "WW P");
+  cout<<"------ End: validate for m1 (no J/Psi, iso) ------" <<endl;
 
+  cout<<"------ Start: validate for m2 (no J/Psi, no iso) ------" <<endl;
   //Validate m2 with no-iso data at CR
   TH1D *h1_control_offDiagonal_massF_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D_no_Jpsi")->createHistogram("m2", m_bins);
   h1_control_offDiagonal_massF_data_no_Jpsi->SetStats(0);
@@ -585,7 +587,11 @@ void LowMassBKGPlot2D() {
   c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.pdf");
   c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.png");
   c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.root");
+  cout<<"Chi^2 test: m2 (no J/psi, no iso) "<<endl;
+  h1_control_offDiagonal_massF_data_no_Jpsi->Chi2Test(h1_control_offDiagonal_massF_template_no_Jpsi, "WW P");
+  cout<<"------ End: validate for m2 (no J/Psi, no iso) ------" <<endl;
 
+  cout<<"------ Start: validate for m2 (no J/Psi, iso) ------" <<endl;
   //Validate m2 with iso data at CR: limited stats, just FYI
   TH1D *h1_control_Iso_offDiagonal_massF_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi")->createHistogram("m2", m_bins);
   h1_control_Iso_offDiagonal_massF_data_no_Jpsi->SetStats(0);
@@ -608,4 +614,83 @@ void LowMassBKGPlot2D() {
   c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.pdf");
   c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.png");
   c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.root");
+  cout<<"Chi^2 test: m2 (no J/psi, iso) "<<endl;
+  h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Chi2Test(h1_control_Iso_offDiagonal_massF_data_no_Jpsi, "WW P");
+  cout<<"------ Start: validate for m2 (no J/Psi, iso) ------" <<endl;
+
+  //**************************************************************************************
+  //                                      Part 3/3
+  //       Use pdf from workspace: template2D_below_Jpsi, template2D_above_Jpsi
+  //       Similar to Part 1/3 except it's done for below Jpsi only and above Jpsi only,
+  //       This is for the purpose of yield sanity check, so no plots A.T.M.
+  //**************************************************************************************
+  //=================
+  //Below Jpsi ONLY
+  //=================
+  TH2D* h2D_template2D_below_Jpsi = (TH2D*)w->pdf("template2D_below_Jpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);
+  TH2D *h2D_template2D_below_Jpsi_diagonal = (TH2D*)h2D_template2D_below_Jpsi->Clone();
+  TH2D *h2D_template2D_below_Jpsi_offDiagonal = (TH2D*)h2D_template2D_below_Jpsi->Clone();
+
+  for(int i=1;i<=m_bins_below_Jpsi;i++) {
+    for(int j=1;j<=m_bins_below_Jpsi;j++) {
+      double m_1 = h2D_template2D_below_Jpsi_offDiagonal->GetXaxis()->GetBinCenter(i);
+      double m_2 = h2D_template2D_below_Jpsi_offDiagonal->GetYaxis()->GetBinCenter(j);
+      //*************************
+      //2017 mass consistency cut
+      //*************************
+      if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {
+        h2D_template2D_below_Jpsi_offDiagonal->SetBinContent(i, j, 0.);
+      }
+      else {
+        h2D_template2D_below_Jpsi_diagonal->SetBinContent(i, j, 0.);
+      }
+    }
+  }
+
+  //Fractions of area for diagonal and offdiagonal in 2D template (below Jpsi)
+  double Template2D_below_Jpsi_diagonal_integral  = h2D_template2D_below_Jpsi_diagonal->Integral();
+  double Template2D_below_Jpsi_offDiagonal_integral  = h2D_template2D_below_Jpsi_offDiagonal->Integral();
+  cout<<" -> Template2D_below_Jpsi_diagonal integral:    "<< Template2D_below_Jpsi_diagonal_integral <<endl;
+  cout<<" -> Template2D_below_Jpsi_offDiagonal integral: "<< Template2D_below_Jpsi_offDiagonal_integral <<endl;
+
+  //count 2-dimu data events at CR
+  TH2D* h2_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);
+  double Signal_CR_Data_below_Jpsi_integral  = h2_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->Integral();
+  cout<<"2 dimuon events in DATA at CR (below Jpsi ONLY): " << Signal_CR_Data_below_Jpsi_integral <<endl;
+  cout<<"Expected 2 dimuon events in DATA at SR (below Jpsi ONLY): " << Signal_CR_Data_below_Jpsi_integral*Template2D_below_Jpsi_diagonal_integral/Template2D_below_Jpsi_offDiagonal_integral << std::endl;
+
+  //=================
+  //Above Jpsi ONLY
+  //=================
+  TH2D* h2D_template2D_above_Jpsi = (TH2D*)w->pdf("template2D_above_Jpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);
+  TH2D *h2D_template2D_above_Jpsi_diagonal = (TH2D*)h2D_template2D_above_Jpsi->Clone();
+  TH2D *h2D_template2D_above_Jpsi_offDiagonal = (TH2D*)h2D_template2D_above_Jpsi->Clone();
+
+  for(int i=1;i<=m_bins_above_Jpsi;i++) {
+    for(int j=1;j<=m_bins_above_Jpsi;j++) {
+      double m_1 = h2D_template2D_above_Jpsi_offDiagonal->GetXaxis()->GetBinCenter(i);
+      double m_2 = h2D_template2D_above_Jpsi_offDiagonal->GetYaxis()->GetBinCenter(j);
+      //*************************
+      //2017 mass consistency cut
+      //*************************
+      if ( fabs(m_1 - m_2) < 3*(0.003044 + 0.007025*(m_1+m_2)/2.0 + 0.000053*(m_1+m_2)*(m_1+m_2)/4.0) ) {
+        h2D_template2D_above_Jpsi_offDiagonal->SetBinContent(i, j, 0.);
+      }
+      else {
+        h2D_template2D_above_Jpsi_diagonal->SetBinContent(i, j, 0.);
+      }
+    }
+  }
+
+  //Fractions of area for diagonal and offdiagonal in 2D template (above Jpsi)
+  double Template2D_above_Jpsi_diagonal_integral  = h2D_template2D_above_Jpsi_diagonal->Integral();
+  double Template2D_above_Jpsi_offDiagonal_integral  = h2D_template2D_above_Jpsi_offDiagonal->Integral();
+  cout<<" -> Template2D_above_Jpsi_diagonal integral:    "<< Template2D_above_Jpsi_diagonal_integral <<endl;
+  cout<<" -> Template2D_above_Jpsi_offDiagonal integral: "<< Template2D_above_Jpsi_offDiagonal_integral <<endl;
+
+  //count 2-dimu data events at CR
+  TH2D* h2_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);
+  double Signal_CR_Data_above_Jpsi_integral  = h2_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->Integral();
+  cout<<"2 dimuon events in DATA at CR (above Jpsi ONLY): " << Signal_CR_Data_above_Jpsi_integral <<endl;
+  cout<<"Expected 2 dimuon events in DATA at SR (above Jpsi ONLY): " << Signal_CR_Data_above_Jpsi_integral*Template2D_above_Jpsi_diagonal_integral/Template2D_above_Jpsi_offDiagonal_integral << std::endl;
 }

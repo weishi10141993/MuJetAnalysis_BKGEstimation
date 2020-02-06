@@ -9,7 +9,7 @@ cmsenv
 git clone -b test git@github.com:weishi10141993/MuJetAnalysis_bbBarEstimation
 ```
 ## User Config
-Edit Config.h to change the year(2017 or 2018) you want to do the estimation. This configuration be picked up in later macros. Many constants used in later macros are also defined in Constants.h in the main directory.
+Edit Config.h to change the year (default is 2018 ) you want to do the estimation. This configuration be picked up in later macros. Many constants used in later macros are also defined in Constants.h in the main directory.
 
 ## Low mass
 A data driven method is used to estimate the SM yield.
