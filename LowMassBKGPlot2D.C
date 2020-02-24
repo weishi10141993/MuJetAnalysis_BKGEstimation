@@ -90,7 +90,8 @@ void LowMassBKGPlot2D() {
   //                      Draw 2D background (scale 2D template/pdf to data yield)
   //**************************************************************************************
   //Create and fill ROOT 2D histogram with sampling of 2D pdf, normalized to 1
-  TH2D* h2D_template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", m_bins, m_bins);
+  TH2D* h2D_template2D = (TH2D*)w->pdf("template2D")->createHistogram("m1,m2", m_bins, m_bins);//product of pdf: the histogram is normalized to 1
+  cout<<" h2D_template2D entries (should be ~1.0): "<< h2D_template2D->Integral() <<endl;
   TH2D *h2D_template2D_diagonal = (TH2D*)h2D_template2D->Clone();
   TH2D *h2D_template2D_offDiagonal = (TH2D*)h2D_template2D->Clone();
 
@@ -227,39 +228,13 @@ void LowMassBKGPlot2D() {
   c_template2D_m1_vs_m2->SaveAs("figures/DATA_and_Expected_2D_background.png");
   c_template2D_m1_vs_m2->SaveAs("figures/DATA_and_Expected_2D_background.root");
 
-  //************************************************************************************
-  //           Validate the method with 2 dimu events at CR (iso & no-iso)
-  //************************************************************************************
-  cout<<"------ Start: validate for m1 (no iso) ------" <<endl;
-  // Validate m1 with non-iso data at CR
-  TH1D *h1_control_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m1",m_bins);
-  h1_control_offDiagonal_massC_data->SetStats(0);
-  h1_control_offDiagonal_massC_data->SetMarkerStyle(20);
-  h1_control_offDiagonal_massC_data->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
-  h1_control_offDiagonal_massC_data->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massC_data->GetYaxis()->SetRangeUser(0., validate_m1_no_iso_Ymax);
-
-  TH1D *h1_control_offDiagonal_massC_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionX() );
-  h1_control_offDiagonal_massC_template->Scale( h1_control_offDiagonal_massC_data->Integral() / h1_control_offDiagonal_massC_template->Integral() );
-  h1_control_offDiagonal_massC_template->SetLineColor(kRed);
-  h1_control_offDiagonal_massC_template->SetLineWidth(2);
-  h1_control_offDiagonal_massC_template->SetMarkerColor(kRed);
-
-  TCanvas * c_control_offDiagonal_massC = new TCanvas("c_control_offDiagonal_massC", "c_control_offDiagonal_massC");
-  c_control_offDiagonal_massC->cd();
-  h1_control_offDiagonal_massC_data->Draw("e1");
-  h1_control_offDiagonal_massC_template->Draw("HIST same");
-  txtHeader->Draw();
-  c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.pdf");
-  c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.png");
-  c_control_offDiagonal_massC->SaveAs("figures/Validation_m1_no_iso_CR.root");
-  //Chi2Test of two histograms: Refer to https://root.cern.ch/doc/master/TH1_8cxx_source.html
-  cout<<"Chi^2 test: m1 (no iso) "<<endl;
-  h1_control_offDiagonal_massC_data->Chi2Test(h1_control_offDiagonal_massC_template, "WW P");
-  cout<<"------ End: validate for m1 (no iso) ------" <<endl;
-
-  cout<<"------ Start: validate for m1 (iso) ------" <<endl;
-  // Validate m1 with iso data at CR: very low stats, just FYI
+  //********************************************************************
+  //           Validate the method with 2 dimu events at CR
+  //********************************************************************
+  //----------------------------------------------------
+  cout<<"                                    " <<endl;
+  cout<<"------ Start: validate for m1 ------" <<endl;
+  //----------------------------------------------------
   TH1D *h1_control_Iso_offDiagonal_massC_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m1", m_bins);
   h1_control_Iso_offDiagonal_massC_data->SetStats(0);
   h1_control_Iso_offDiagonal_massC_data->SetMarkerStyle(20);
@@ -272,48 +247,58 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massC_template->SetLineColor(kRed);
   h1_control_Iso_offDiagonal_massC_template->SetLineWidth(2);
   h1_control_Iso_offDiagonal_massC_template->SetMarkerColor(kRed);
+  for (Int_t i = 0; i < m_bins; ++i) h1_control_Iso_offDiagonal_massC_template->SetBinError(i, 0);//set pdf error to zero for compatibility test
 
   TCanvas * c_control_Iso_offDiagonal_massC = new TCanvas("c_control_Iso_offDiagonal_massC", "c_control_Iso_offDiagonal_massC");
   c_control_Iso_offDiagonal_massC->cd();
   h1_control_Iso_offDiagonal_massC_data->Draw("e1");
   h1_control_Iso_offDiagonal_massC_template->Draw("HIST same");
   txtHeader->Draw();
-  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.pdf");
-  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.png");
-  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_iso_CR.root");
-  cout<<"Chi^2 test: m1 (iso) "<<endl;
-  h1_control_Iso_offDiagonal_massC_data->Chi2Test(h1_control_Iso_offDiagonal_massC_template, "WW P");
-  cout<<"------ End: validate for m1 (iso) ------" <<endl;
+  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_CR.pdf");
+  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_CR.png");
+  c_control_Iso_offDiagonal_massC->SaveAs("figures/Validation_m1_CR.root");
+  //--------------------------
+  //     Compatibility test
+  //--------------------------
+  //K-S test
+  double KSprob_1 = h1_control_Iso_offDiagonal_massC_data->KolmogorovTest(h1_control_Iso_offDiagonal_massC_template);
+  double KSdist_1 = h1_control_Iso_offDiagonal_massC_data->KolmogorovTest(h1_control_Iso_offDiagonal_massC_template, "M");
+  cout<<"K-S test prob.: "<< KSprob_1 << "; dist.: "<< KSdist_1 <<endl;
+  //Chisquare test
+  auto func1 = [&](double *x, double*) { int ibin = h1_control_Iso_offDiagonal_massC_template->FindBin(x[0]); return h1_control_Iso_offDiagonal_massC_template->GetBinContent(ibin);};
+  auto f1 = new TF1("f1", func1, h1_control_Iso_offDiagonal_massC_template->GetXaxis()->GetXmin(), h1_control_Iso_offDiagonal_massC_template->GetXaxis()->GetXmax(), 0);
+  double BCchi2_1 = h1_control_Iso_offDiagonal_massC_data->Chisquare(f1, "L");
+  double BCprob_1 = TMath::Prob(BCchi2_1, h1_control_Iso_offDiagonal_massC_data->GetNbinsX());
+  cout<<"Chisquare test prob.: "<< BCprob_1 << "; chi2: "<< BCchi2_1 << "; ndof: " << h1_control_Iso_offDiagonal_massC_data->GetNbinsX() <<endl;
+  //Toy experiments for calibration
+  auto h_t1 = (TH1*) h1_control_Iso_offDiagonal_massC_data->Clone();//placeholder to fill pseudo data from f1/template, ensure have same bins as data
+  auto hKS_t1 = new TH1D("hKS_t1", "K-S distance", 100, 0, 1);//K-S distance distibution from pseudo exp.
+  auto hBC_t1 = new TH1D("hBC_t1", "Baker-Cousins chi2", 100, 0, 300);//chi2 distibution from pseudo exp.
+  int nKS_t1 = 0;
+  int nBC_t1 = 0;
+  int nentries_t1 = h1_control_Iso_offDiagonal_massC_data->Integral(1, h1_control_Iso_offDiagonal_massC_data->GetNbinsX());
+  for (int i = 0; i < ntoys; ++i) {
+    h_t1->Reset();
+    h_t1->FillRandom("f1", nentries_t1);
+    double KSdist_t1  = h_t1->KolmogorovTest(h1_control_Iso_offDiagonal_massC_template, "M");
+    double BCchi2_t1 =  h_t1->Chisquare(f1, "L");
+    hKS_t1->Fill(KSdist_t1);
+    hBC_t1->Fill(BCchi2_t1);
+    if (KSdist_t1 > KSdist_1) nKS_t1++;
+    if (BCchi2_t1 > BCchi2_1) nBC_t1++;
+  }
+  std::cout << "Corrected prob. for K-S  test: " << nKS_t1/double(ntoys) << std::endl;
+  std::cout << "Corrected prob. for chi2 test: " << nBC_t1/double(ntoys) << std::endl;
+  auto c1 = new TCanvas(); c1->Divide(1, 2);
+  c1->cd(1); hKS_t1->Draw();
+  c1->cd(2); hBC_t1->Draw();
+  c1->SaveAs("figures/toys_m1_CR.root");
+  cout<<"------ End: validate for m1 ------" <<endl;
 
-  cout<<"------ Start: validate for m2 (no iso) ------" <<endl;
-  // Validate m2 with no-iso data at CR
-  TH1D *h1_control_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D")->createHistogram("m2", m_bins);
-  h1_control_offDiagonal_massF_data->SetStats(0);
-  h1_control_offDiagonal_massF_data->SetMarkerStyle(20);
-  h1_control_offDiagonal_massF_data->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
-  h1_control_offDiagonal_massF_data->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massF_data->GetYaxis()->SetRangeUser(0., validate_m2_no_iso_Ymax);//value from the constant.h
-
-  TH1D *h1_control_offDiagonal_massF_template = new TH1D( *h2D_template2D_offDiagonal->ProjectionY() );
-  h1_control_offDiagonal_massF_template->Scale( h1_control_offDiagonal_massF_data->Integral() / h1_control_offDiagonal_massF_template->Integral() );
-  h1_control_offDiagonal_massF_template->SetLineColor(kRed);
-  h1_control_offDiagonal_massF_template->SetLineWidth(2);
-  h1_control_offDiagonal_massF_template->SetMarkerColor(kRed);
-
-  TCanvas * c_control_offDiagonal_massF = new TCanvas("c_control_offDiagonal_massF", "c_control_offDiagonal_massF");
-  c_control_offDiagonal_massF->cd();
-  h1_control_offDiagonal_massF_data->Draw("e1");
-  h1_control_offDiagonal_massF_template->Draw("HIST same");
-  txtHeader->Draw();
-  c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.pdf");
-  c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.png");
-  c_control_offDiagonal_massF->SaveAs("figures/Validation_m2_no_iso_CR.root");
-  cout<<"Chi^2 test: m2 (no iso) "<<endl;
-  h1_control_offDiagonal_massF_data->Chi2Test(h1_control_offDiagonal_massF_template, "WW P");
-  cout<<"------ End: validate for m2 (no iso) ------" <<endl;
-
-  cout<<"------ Start: validate for m2 (iso) ------" <<endl;
-  // Validate m2 with iso data at CR: limited stats, just FYI
+  //----------------------------------------------------
+  cout<<"                                    " <<endl;
+  cout<<"------ Start: validate for m2 ------" <<endl;
+  //----------------------------------------------------
   TH1D *h1_control_Iso_offDiagonal_massF_data = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D")->createHistogram("m2", m_bins);
   h1_control_Iso_offDiagonal_massF_data->SetStats(0);
   h1_control_Iso_offDiagonal_massF_data->SetMarkerStyle(20);
@@ -326,40 +311,78 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massF_template->SetLineColor(kRed);
   h1_control_Iso_offDiagonal_massF_template->SetLineWidth(2);
   h1_control_Iso_offDiagonal_massF_template->SetMarkerColor(kRed);
+  for (Int_t i = 0; i < m_bins; ++i) h1_control_Iso_offDiagonal_massF_template->SetBinError(i, 0);
 
   TCanvas * c_control_Iso_offDiagonal_massF = new TCanvas("c_control_Iso_offDiagonal_massF", "c_control_Iso_offDiagonal_massF");
   c_control_Iso_offDiagonal_massF->cd();
   h1_control_Iso_offDiagonal_massF_data->Draw("e1");
   h1_control_Iso_offDiagonal_massF_template->Draw("HIST same");
   txtHeader->Draw();
-  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.pdf");
-  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.png");
-  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_iso_CR.root");
-  cout<<"Chi^2 test: m2 (iso) "<<endl;
-  h1_control_Iso_offDiagonal_massF_data->Chi2Test(h1_control_Iso_offDiagonal_massF_template, "WW P");
-  cout<<"------ End: validate for m2 (iso) ------" <<endl;
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_CR.pdf");
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_CR.png");
+  c_control_Iso_offDiagonal_massF->SaveAs("figures/Validation_m2_CR.root");
+  //--------------------------
+  //     Compatibility test
+  //--------------------------
+  //K-S test
+  double KSprob_2 = h1_control_Iso_offDiagonal_massF_data->KolmogorovTest(h1_control_Iso_offDiagonal_massF_template);
+  double KSdist_2 = h1_control_Iso_offDiagonal_massF_data->KolmogorovTest(h1_control_Iso_offDiagonal_massF_template, "M");
+  cout<<"K-S test prob.: "<< KSprob_2 << "; dist.: "<< KSdist_2 <<endl;
+  //Chisquare test
+  auto func2 = [&](double *x, double*) { int ibin = h1_control_Iso_offDiagonal_massF_template->FindBin(x[0]); return h1_control_Iso_offDiagonal_massF_template->GetBinContent(ibin);};
+  auto f2 = new TF1("f2", func2, h1_control_Iso_offDiagonal_massF_template->GetXaxis()->GetXmin(), h1_control_Iso_offDiagonal_massF_template->GetXaxis()->GetXmax(), 0);
+  double BCchi2_2 = h1_control_Iso_offDiagonal_massF_data->Chisquare(f2, "L");
+  double BCprob_2 = TMath::Prob(BCchi2_2, h1_control_Iso_offDiagonal_massF_data->GetNbinsX());
+  cout<<"Chisquare test prob.: "<< BCprob_2 << "; chi2: "<< BCchi2_2 << "; ndof: " << h1_control_Iso_offDiagonal_massF_data->GetNbinsX() <<endl;
+  //Toy experiments for calibration
+  auto h_t2 = (TH1*) h1_control_Iso_offDiagonal_massF_data->Clone();//placeholder to fill pseudo data from f1/template
+  auto hKS_t2 = new TH1D("hKS_t2", "K-S distance", 100, 0, 1);//K-S distance distibution from pseudo exp.
+  auto hBC_t2 = new TH1D("hBC_t2", "Baker-Cousins chi2", 100, 0, 300);//chi2 distibution from pseudo exp.
+  int nKS_t2 = 0;
+  int nBC_t2 = 0;
+  int nentries_t2 = h1_control_Iso_offDiagonal_massF_data->Integral(1, h1_control_Iso_offDiagonal_massF_data->GetNbinsX());
+  for (int i = 0; i < ntoys; ++i) {
+    h_t2->Reset();
+    h_t2->FillRandom("f2", nentries_t2);
+    double KSdist_t2  = h_t2->KolmogorovTest(h1_control_Iso_offDiagonal_massF_template, "M");
+    double BCchi2_t2 =  h_t2->Chisquare(f2, "L");
+    hKS_t2->Fill(KSdist_t2);
+    hBC_t2->Fill(BCchi2_t2);
+    if (KSdist_t2 > KSdist_2) nKS_t2++;
+    if (BCchi2_t2 > BCchi2_2) nBC_t2++;
+  }
+  std::cout << "Corrected prob. for K-S  test: " << nKS_t2/double(ntoys) << std::endl;
+  std::cout << "Corrected prob. for chi2 test: " << nBC_t2/double(ntoys) << std::endl;
+  auto c2 = new TCanvas(); c2->Divide(1, 2);
+  c2->cd(1); hKS_t2->Draw();
+  c2->cd(2); hBC_t2->Draw();
+  c2->SaveAs("figures/toys_m2_CR.root");
+  cout<<"------ End: validate for m2 ------" <<endl;
 
   //**************************************************************************************
   //                                      Part 2/3
-  //       Use pdf from workspace: template1D_m1_below_Jpsi, template1D_m1_above_Jpsi,
-  //                               template1D_m2_below_Jpsi, template1D_m2_above_Jpsi
   //       Similar to Part 1/3 except excluding J/psi
   //**************************************************************************************
-  TH1D* h1D_template1D_m1_below_Jpsi = (TH1D*)w->pdf("template1D_m1_below_Jpsi")->createHistogram("m1_below_Jpsi", m_bins_below_Jpsi);//normalized to 1
+  //!!!Note!!!: These histograms below from 1D pdfs are not normalized to 1, they contain actual entries.
+  TH1D* h1D_template1D_m1_below_Jpsi = (TH1D*)w->pdf("template1D_m1_below_Jpsi")->createHistogram("m1_below_Jpsi", m_bins_below_Jpsi);
   TH1D* h1D_template1D_m1_above_Jpsi = (TH1D*)w->pdf("template1D_m1_above_Jpsi")->createHistogram("m1_above_Jpsi", m_bins_above_Jpsi);
   TH1D* h1D_template1D_m2_below_Jpsi = (TH1D*)w->pdf("template1D_m2_below_Jpsi")->createHistogram("m2_below_Jpsi", m_bins_below_Jpsi);
   TH1D* h1D_template1D_m2_above_Jpsi = (TH1D*)w->pdf("template1D_m2_above_Jpsi")->createHistogram("m2_above_Jpsi", m_bins_above_Jpsi);
-  //Scale them according to the actual fitted data entry 2017
+  cout<<" h1D_template1D_m1_below_Jpsi entries: "<< h1D_template1D_m1_below_Jpsi->Integral() <<endl;
+  cout<<" h1D_template1D_m1_above_Jpsi entries: "<< h1D_template1D_m1_above_Jpsi->Integral() <<endl;
+  cout<<" h1D_template1D_m2_below_Jpsi entries: "<< h1D_template1D_m2_below_Jpsi->Integral() <<endl;
+  cout<<" h1D_template1D_m2_above_Jpsi entries: "<< h1D_template1D_m2_above_Jpsi->Integral() <<endl;
   cout<<" ds_dimuorphan_bg_m1_below_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m1_below_Jpsi")->sumEntries() <<endl;
   cout<<" ds_dimuorphan_bg_m1_above_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m1_above_Jpsi")->sumEntries() <<endl;
   cout<<" ds_dimuorphan_bg_m2_below_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m2_below_Jpsi")->sumEntries() <<endl;
   cout<<" ds_dimuorphan_bg_m2_above_Jpsi entries: "<< w->data("ds_dimuorphan_bg_m2_above_Jpsi")->sumEntries() <<endl;
-  h1D_template1D_m1_below_Jpsi->Scale(w->data("ds_dimuorphan_bg_m1_below_Jpsi")->sumEntries());
-  h1D_template1D_m1_above_Jpsi->Scale(w->data("ds_dimuorphan_bg_m1_above_Jpsi")->sumEntries());
-  h1D_template1D_m2_below_Jpsi->Scale(w->data("ds_dimuorphan_bg_m2_below_Jpsi")->sumEntries());
-  h1D_template1D_m2_above_Jpsi->Scale(w->data("ds_dimuorphan_bg_m2_above_Jpsi")->sumEntries());
+  //Scale to the actual fitted data entries
+  h1D_template1D_m1_below_Jpsi->Scale(w->data("ds_dimuorphan_bg_m1_below_Jpsi")->sumEntries()*1./h1D_template1D_m1_below_Jpsi->Integral());
+  h1D_template1D_m1_above_Jpsi->Scale(w->data("ds_dimuorphan_bg_m1_above_Jpsi")->sumEntries()*1./h1D_template1D_m1_above_Jpsi->Integral());
+  h1D_template1D_m2_below_Jpsi->Scale(w->data("ds_dimuorphan_bg_m2_below_Jpsi")->sumEntries()*1./h1D_template1D_m2_below_Jpsi->Integral());
+  h1D_template1D_m2_above_Jpsi->Scale(w->data("ds_dimuorphan_bg_m2_above_Jpsi")->sumEntries()*1./h1D_template1D_m2_above_Jpsi->Integral());
 
-  //Combine into 2D histo use 1D histo
+  //Create 2D template use 1D histo product
   TH2D* h2D_template2D_exclude_Jpsi = new TH2D("h2D_template2D_exclude_Jpsi", "", m_bins, m_min, m_max, m_bins, m_min, m_max);
   for(int i=1;i<=m_bins;i++) {
     for(int j=1;j<=m_bins;j++) {
@@ -508,37 +531,12 @@ void LowMassBKGPlot2D() {
   c_template2D_m1_vs_m2_exclude_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_exclude_Jpsi.root");
 
   //************************************************************************************
-  //         Validate the exclude Jpsi version with 2 dimu events at CR (iso & no-iso)
+  //         Validate the exclude Jpsi version with 2 dimu events at CR
   //************************************************************************************
-  cout<<"------ Start: validate for m1 (no J/Psi, no iso) ------" <<endl;
-  //Validate m1 with non-iso data at CR
-  TH1D *h1_control_offDiagonal_massC_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D_no_Jpsi")->createHistogram("m1", m_bins);
-  h1_control_offDiagonal_massC_data_no_Jpsi->SetStats(0);
-  h1_control_offDiagonal_massC_data_no_Jpsi->SetMarkerStyle(20);
-  h1_control_offDiagonal_massC_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
-  h1_control_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massC_data_no_Jpsi->GetYaxis()->SetRangeUser(0., 100.);
-
-  TH1D *h1_control_offDiagonal_massC_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionX() );
-  h1_control_offDiagonal_massC_template_no_Jpsi->Scale( h1_control_offDiagonal_massC_data_no_Jpsi->Integral() / h1_control_offDiagonal_massC_template_no_Jpsi->Integral() );
-  h1_control_offDiagonal_massC_template_no_Jpsi->SetLineColor(kRed);
-  h1_control_offDiagonal_massC_template_no_Jpsi->SetLineWidth(2);
-  h1_control_offDiagonal_massC_template_no_Jpsi->SetMarkerColor(kRed);
-
-  TCanvas * c_control_offDiagonal_massC_no_Jpsi = new TCanvas("c_control_offDiagonal_massC_no_Jpsi", "c_control_offDiagonal_massC_no_Jpsi");
-  c_control_offDiagonal_massC_no_Jpsi->cd();
-  h1_control_offDiagonal_massC_data_no_Jpsi->Draw("e1");
-  h1_control_offDiagonal_massC_template_no_Jpsi->Draw("HIST same");
-  txtHeader->Draw();
-  c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.pdf");
-  c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.png");
-  c_control_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_no_iso_CR_exclude_Jpsi.root");
-  cout<<"Chi^2 test: m1 (no J/psi, no iso) "<<endl;
-  h1_control_offDiagonal_massC_data_no_Jpsi->Chi2Test(h1_control_offDiagonal_massC_template_no_Jpsi, "WW P");
-  cout<<"------ End: validate for m1 (no J/Psi, no iso) ------" <<endl;
-
-  cout<<"------ Start: validate for m1 (no J/Psi, iso) ------" <<endl;
-  //Validate m1 with iso data at CR: very low stats, more important
+  //----------------------------------------------------
+  cout<<"                                               " <<endl;
+  cout<<"------ Start: validate for m1 (no J/Psi) ------" <<endl;
+  //----------------------------------------------------
   TH1D *h1_control_Iso_offDiagonal_massC_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi")->createHistogram("m1", m_bins);
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->SetStats(0);
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->SetMarkerStyle(20);
@@ -551,83 +549,128 @@ void LowMassBKGPlot2D() {
   h1_control_Iso_offDiagonal_massC_template_no_Jpsi->SetLineColor(kRed);
   h1_control_Iso_offDiagonal_massC_template_no_Jpsi->SetLineWidth(2);
   h1_control_Iso_offDiagonal_massC_template_no_Jpsi->SetMarkerColor(kRed);
+  for (Int_t i = 0; i < m_bins; ++i) h1_control_Iso_offDiagonal_massC_template_no_Jpsi->SetBinError(i, 0);
 
   TCanvas * c_control_Iso_offDiagonal_massC_no_Jpsi = new TCanvas("c_control_Iso_offDiagonal_massC_no_Jpsi", "c_control_Iso_offDiagonal_massC_no_Jpsi");
   c_control_Iso_offDiagonal_massC_no_Jpsi->cd();
   h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Draw("e1");
   h1_control_Iso_offDiagonal_massC_template_no_Jpsi->Draw("HIST same");
   txtHeader->Draw();
-  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.pdf");
-  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.png");
-  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_iso_CR_exclude_Jpsi.root");
-  cout<<"Chi^2 test: m1 (no J/psi, iso) "<<endl;
-  h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Chi2Test(h1_control_Iso_offDiagonal_massC_template_no_Jpsi, "WW P");
-  cout<<"------ End: validate for m1 (no J/Psi, iso) ------" <<endl;
+  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_CR_exclude_Jpsi.pdf");
+  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_CR_exclude_Jpsi.png");
+  c_control_Iso_offDiagonal_massC_no_Jpsi->SaveAs("figures/Validation_m1_CR_exclude_Jpsi.root");
+  //--------------------------
+  //     Compatibility test
+  //--------------------------
+  //K-S test
+  double KSprob_3 = h1_control_Iso_offDiagonal_massC_data_no_Jpsi->KolmogorovTest(h1_control_Iso_offDiagonal_massC_template_no_Jpsi);
+  double KSdist_3 = h1_control_Iso_offDiagonal_massC_data_no_Jpsi->KolmogorovTest(h1_control_Iso_offDiagonal_massC_template_no_Jpsi, "M");
+  cout<<"K-S test prob.: "<< KSprob_3 << "; dist.: "<< KSdist_3 <<endl;
+  //Chisquare test
+  auto func3 = [&](double *x, double*) { int ibin = h1_control_Iso_offDiagonal_massC_template_no_Jpsi->FindBin(x[0]); return h1_control_Iso_offDiagonal_massC_template_no_Jpsi->GetBinContent(ibin);};
+  auto f3 = new TF1("f3", func3, h1_control_Iso_offDiagonal_massC_template_no_Jpsi->GetXaxis()->GetXmin(), h1_control_Iso_offDiagonal_massC_template_no_Jpsi->GetXaxis()->GetXmax(), 0);
+  double BCchi2_3 = h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Chisquare(f3, "L");
+  double BCprob_3 = TMath::Prob(BCchi2_3, h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetNbinsX());
+  cout<<"Chisquare test prob.: "<< BCprob_3 << "; chi2: "<< BCchi2_3 << "; ndof: " << h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetNbinsX() <<endl;
+  //Toy experiments for calibration
+  auto h_t3 = (TH1*) h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Clone();//placeholder to fill pseudo data from template, same bins as data
+  auto hKS_t3 = new TH1D("hKS_t3", "K-S distance", 100, 0, 1);//K-S distance distibution from pseudo exp.
+  auto hBC_t3 = new TH1D("hBC_t3", "Baker-Cousins chi2", 100, 0, 300);//chi2 distibution from pseudo exp.
+  int nKS_t3 = 0;
+  int nBC_t3 = 0;
+  int nentries_t3 = h1_control_Iso_offDiagonal_massC_data_no_Jpsi->Integral(1, h1_control_Iso_offDiagonal_massC_data_no_Jpsi->GetNbinsX());
+  for (int i = 0; i < ntoys; ++i) {
+    h_t3->Reset();
+    h_t3->FillRandom("f3", nentries_t3);
+    double KSdist_t3 = h_t3->KolmogorovTest(h1_control_Iso_offDiagonal_massC_template_no_Jpsi, "M");
+    double BCchi2_t3 =  h_t3->Chisquare(f3, "L");
+    hKS_t3->Fill(KSdist_t3);
+    hBC_t3->Fill(BCchi2_t3);
+    if (KSdist_t3 > KSdist_3) nKS_t3++;
+    if (BCchi2_t3 > BCchi2_3) nBC_t3++;
+  }
+  std::cout << "Corrected prob. for K-S  test: " << nKS_t3/double(ntoys) << std::endl;
+  std::cout << "Corrected prob. for chi2 test: " << nBC_t3/double(ntoys) << std::endl;
+  auto c3 = new TCanvas(); c3->Divide(1, 2);
+  c3->cd(1); hKS_t3->Draw();
+  c3->cd(2); hBC_t3->Draw();
+  c3->SaveAs("figures/toys_m1_CR_exclude_Jpsi.root");
+  cout<<"------ End: validate for m1 (no J/Psi) ------" <<endl;
 
-  cout<<"------ Start: validate for m2 (no J/Psi, no iso) ------" <<endl;
-  //Validate m2 with no-iso data at CR
-  TH1D *h1_control_offDiagonal_massF_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_offDiagonal_2D_no_Jpsi")->createHistogram("m2", m_bins);
-  h1_control_offDiagonal_massF_data_no_Jpsi->SetStats(0);
-  h1_control_offDiagonal_massF_data_no_Jpsi->SetMarkerStyle(20);
-  h1_control_offDiagonal_massF_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
-  h1_control_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetRangeUser(0., 100.);
-
-  TH1D *h1_control_offDiagonal_massF_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionY() );
-  h1_control_offDiagonal_massF_template_no_Jpsi->Scale( h1_control_offDiagonal_massF_data_no_Jpsi->Integral() / h1_control_offDiagonal_massF_template_no_Jpsi->Integral() );
-  h1_control_offDiagonal_massF_template_no_Jpsi->SetLineColor(kRed);
-  h1_control_offDiagonal_massF_template_no_Jpsi->SetLineWidth(2);
-  h1_control_offDiagonal_massF_template_no_Jpsi->SetMarkerColor(kRed);
-
-  TCanvas * c_control_offDiagonal_massF_no_Jpsi = new TCanvas("c_control_offDiagonal_massF_no_Jpsi", "c_control_offDiagonal_massF_no_Jpsi");
-  c_control_offDiagonal_massF_no_Jpsi->cd();
-  h1_control_offDiagonal_massF_data_no_Jpsi->Draw("e1");
-  h1_control_offDiagonal_massF_template_no_Jpsi->Draw("HIST same");
-  txtHeader->Draw();
-  c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.pdf");
-  c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.png");
-  c_control_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_no_iso_CR_exclude_Jpsi.root");
-  cout<<"Chi^2 test: m2 (no J/psi, no iso) "<<endl;
-  h1_control_offDiagonal_massF_data_no_Jpsi->Chi2Test(h1_control_offDiagonal_massF_template_no_Jpsi, "WW P");
-  cout<<"------ End: validate for m2 (no J/Psi, no iso) ------" <<endl;
-
-  cout<<"------ Start: validate for m2 (no J/Psi, iso) ------" <<endl;
-  //Validate m2 with iso data at CR: limited stats, just FYI
+  //----------------------------------------------------
+  cout<<"                                               " <<endl;
+  cout<<"------ Start: validate for m2 (no J/Psi) ------" <<endl;
+  //----------------------------------------------------
   TH1D *h1_control_Iso_offDiagonal_massF_data_no_Jpsi = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi")->createHistogram("m2", m_bins);
   h1_control_Iso_offDiagonal_massF_data_no_Jpsi->SetStats(0);
   h1_control_Iso_offDiagonal_massF_data_no_Jpsi->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
-  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetRangeUser(0.,10.);
+  h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetYaxis()->SetRangeUser(0., 10.);
 
   TH1D *h1_control_Iso_offDiagonal_massF_template_no_Jpsi = new TH1D( *h2D_template2D_exclude_Jpsi_offDiagonal->ProjectionY() );
   h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Scale( h1_control_Iso_offDiagonal_massF_data_no_Jpsi->Integral() / h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Integral() );
   h1_control_Iso_offDiagonal_massF_template_no_Jpsi->SetLineColor(kRed);
   h1_control_Iso_offDiagonal_massF_template_no_Jpsi->SetLineWidth(2);
   h1_control_Iso_offDiagonal_massF_template_no_Jpsi->SetMarkerColor(kRed);
+  for (Int_t i = 0; i < m_bins; ++i) h1_control_Iso_offDiagonal_massF_template_no_Jpsi->SetBinError(i, 0);
 
   TCanvas * c_control_Iso_offDiagonal_massF_no_Jpsi = new TCanvas("c_control_Iso_offDiagonal_massF_no_Jpsi", "c_control_Iso_offDiagonal_massF_no_Jpsi");
   c_control_Iso_offDiagonal_massF_no_Jpsi->cd();
   h1_control_Iso_offDiagonal_massF_data_no_Jpsi->Draw("e1");
   h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Draw("HIST same");
   txtHeader->Draw();
-  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.pdf");
-  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.png");
-  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_iso_CR_exclude_Jpsi.root");
-  cout<<"Chi^2 test: m2 (no J/psi, iso) "<<endl;
-  h1_control_Iso_offDiagonal_massF_template_no_Jpsi->Chi2Test(h1_control_Iso_offDiagonal_massF_data_no_Jpsi, "WW P");
-  cout<<"------ Start: validate for m2 (no J/Psi, iso) ------" <<endl;
+  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_CR_exclude_Jpsi.pdf");
+  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_CR_exclude_Jpsi.png");
+  c_control_Iso_offDiagonal_massF_no_Jpsi->SaveAs("figures/Validation_m2_CR_exclude_Jpsi.root");
+  //--------------------------
+  //     Compatibility test
+  //--------------------------
+  //K-S test
+  double KSprob_4 = h1_control_Iso_offDiagonal_massF_data_no_Jpsi->KolmogorovTest(h1_control_Iso_offDiagonal_massF_template_no_Jpsi);
+  double KSdist_4 = h1_control_Iso_offDiagonal_massF_data_no_Jpsi->KolmogorovTest(h1_control_Iso_offDiagonal_massF_template_no_Jpsi, "M");
+  cout<<"K-S test prob.: "<< KSprob_4 << "; dist.: "<< KSdist_4 <<endl;
+  //Chisquare test
+  auto func4 = [&](double *x, double*) { int ibin = h1_control_Iso_offDiagonal_massF_template_no_Jpsi->FindBin(x[0]); return h1_control_Iso_offDiagonal_massF_template_no_Jpsi->GetBinContent(ibin);};
+  auto f4 = new TF1("f4", func4, h1_control_Iso_offDiagonal_massF_template_no_Jpsi->GetXaxis()->GetXmin(), h1_control_Iso_offDiagonal_massF_template_no_Jpsi->GetXaxis()->GetXmax(), 0);
+  double BCchi2_4 = h1_control_Iso_offDiagonal_massF_data_no_Jpsi->Chisquare(f4, "L");
+  double BCprob_4 = TMath::Prob(BCchi2_4, h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetNbinsX());
+  cout<<"Chisquare test prob.: "<< BCprob_4 << "; chi2: "<< BCchi2_4 << "; ndof: " << h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetNbinsX() <<endl;
+  //Toy experiments for calibration
+  auto h_t4 = (TH1*) h1_control_Iso_offDiagonal_massF_data_no_Jpsi->Clone();//placeholder to fill pseudo data from f1/template, same bins
+  auto hKS_t4 = new TH1D("hKS_t4", "K-S distance", 100, 0, 1);//K-S distance distibution from pseudo exp.
+  auto hBC_t4 = new TH1D("hBC_t4", "Baker-Cousins chi2", 100, 0, 300);//chi2 distibution from pseudo exp.
+  int nKS_t4 = 0;
+  int nBC_t4 = 0;
+  int nentries_t4 = h1_control_Iso_offDiagonal_massF_data_no_Jpsi->Integral(1, h1_control_Iso_offDiagonal_massF_data_no_Jpsi->GetNbinsX());
+  for (int i = 0; i < ntoys; ++i) {
+    h_t4->Reset();
+    h_t4->FillRandom("f4", nentries_t4);
+    double KSdist_t4  = h_t4->KolmogorovTest(h1_control_Iso_offDiagonal_massF_template_no_Jpsi, "M");
+    double BCchi2_t4 =  h_t4->Chisquare(f4, "L");
+    hKS_t4->Fill(KSdist_t4);
+    hBC_t4->Fill(BCchi2_t4);
+    if (KSdist_t4 > KSdist_4) nKS_t4++;
+    if (BCchi2_t4 > BCchi2_4) nBC_t4++;
+  }
+  std::cout << "Corrected prob. for K-S  test: " << nKS_t4/double(ntoys) << std::endl;
+  std::cout << "Corrected prob. for chi2 test: " << nBC_t4/double(ntoys) << std::endl;
+  auto c4 = new TCanvas(); c4->Divide(1, 2);
+  c4->cd(1); hKS_t4->Draw();
+  c4->cd(2); hBC_t4->Draw();
+  c4->SaveAs("figures/toys_m2_CR_exclude_Jpsi.root");
+  cout<<"------ Start: validate for m2 (no J/Psi) ------" <<endl;
 
   //**************************************************************************************
   //                                      Part 3/3
   //       Use pdf from workspace: template2D_below_Jpsi, template2D_above_Jpsi
   //       Similar to Part 1/3 except it's done for below Jpsi only and above Jpsi only,
-  //       This is for the purpose of yield sanity check, so no plots A.T.M.
+  //       This is for the purpose of checking yield, so no plots A.T.M.
   //**************************************************************************************
   //=================
   //Below Jpsi ONLY
   //=================
-  TH2D* h2D_template2D_below_Jpsi = (TH2D*)w->pdf("template2D_below_Jpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);
+  TH2D* h2D_template2D_below_Jpsi = (TH2D*)w->pdf("template2D_below_Jpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);//normalized
   TH2D *h2D_template2D_below_Jpsi_diagonal = (TH2D*)h2D_template2D_below_Jpsi->Clone();
   TH2D *h2D_template2D_below_Jpsi_offDiagonal = (TH2D*)h2D_template2D_below_Jpsi->Clone();
 
@@ -662,7 +705,7 @@ void LowMassBKGPlot2D() {
   //=================
   //Above Jpsi ONLY
   //=================
-  TH2D* h2D_template2D_above_Jpsi = (TH2D*)w->pdf("template2D_above_Jpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);
+  TH2D* h2D_template2D_above_Jpsi = (TH2D*)w->pdf("template2D_above_Jpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);//normalized
   TH2D *h2D_template2D_above_Jpsi_diagonal = (TH2D*)h2D_template2D_above_Jpsi->Clone();
   TH2D *h2D_template2D_above_Jpsi_offDiagonal = (TH2D*)h2D_template2D_above_Jpsi->Clone();
 

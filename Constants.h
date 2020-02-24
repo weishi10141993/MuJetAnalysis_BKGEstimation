@@ -25,16 +25,14 @@ const unsigned int m_bins_above_Jpsi = 144;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in LowMassBKGPlot2D !
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//number of toys used for calibration
+int ntoys = 1000000;
+
 //Y axis max in validation plots SetRangeUser: normally don't need to change
 const double validate_m1_iso_Ymax_2017    = 35.;
-const double validate_m1_no_iso_Ymax_2017 = 350.;
 const double validate_m2_iso_Ymax_2017    = 10.;
-const double validate_m2_no_iso_Ymax_2017 = 250.;
-
-const double validate_m1_iso_Ymax_2018    = 35.;
-const double validate_m1_no_iso_Ymax_2018 = 700.;
+const double validate_m1_iso_Ymax_2018    = 25.;
 const double validate_m2_iso_Ymax_2018    = 20.;
-const double validate_m2_no_iso_Ymax_2018 = 450.;
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in HighMassBKGShape  !

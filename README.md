@@ -16,7 +16,6 @@ A data driven method is used to estimate the SM yield.
 ```
 root -l -b -q LowMassBKGFit1D.C #For plot and fit 1D template and save to work space
 root -l -b -q LowMassBKGPlot2D.C  #For 2D template and draw 2D data points
-
 ```
 
 ## High mass
