@@ -200,7 +200,7 @@ void LowMassBKGFit1D() {
   w->import(*ds_dimuorphan_bg_m2_above_Jpsi);
 
   //Draw before fiting
-  RooPlot* plotC1 = w->var("m1")->frame(Title("m1 data tempalate NO FIT"),Bins(m_bins));
+  RooPlot* plotC1 = w->var("m1")->frame(Title("m1 data tempalate NO FIT"), Bins(m_bins));
   w->data("ds_dimuorphan_bg_m1")->plotOn(plotC1, DataError(RooAbsData::SumW2), Name("data_m1"));
   plotC1->GetYaxis()->SetTitle("Events/0.04GeV");
   TCanvas * c1 = new TCanvas("c1");
@@ -209,7 +209,7 @@ void LowMassBKGFit1D() {
   c1->SaveAs("figures/dimuorphan_m1.png");
   c1->SaveAs("figures/dimuorphan_m1.root");
 
-  RooPlot* plotC2 = w->var("m2")->frame(Title("m2 data tempalate NO FIT"),Bins(m_bins));
+  RooPlot* plotC2 = w->var("m2")->frame(Title("m2 data tempalate NO FIT"), Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotC2, DataError(RooAbsData::SumW2), Name("data_m2"));
   plotC2->GetYaxis()->SetTitle("Events/0.04GeV");
   plotC2->Draw(); txtHeader->Draw();
@@ -217,7 +217,7 @@ void LowMassBKGFit1D() {
   c1->SaveAs("figures/dimuorphan_m2.png");
   c1->SaveAs("figures/dimuorphan_m2.root");
 
-  RooPlot* plotC1_below_Jpsi = w->var("m1_below_Jpsi")->frame(Title("m1 data tempalate NO FIT below Jpsi"),Bins(m_bins_below_Jpsi));
+  RooPlot* plotC1_below_Jpsi = w->var("m1_below_Jpsi")->frame(Title("m1 data tempalate NO FIT below Jpsi"), Bins(m_bins_below_Jpsi));
   w->data("ds_dimuorphan_bg_m1_below_Jpsi")->plotOn(plotC1_below_Jpsi, DataError(RooAbsData::SumW2), Name("data_m1_below_Jpsi"));
   plotC1_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
   plotC1_below_Jpsi->Draw(); txtHeader->Draw();
@@ -225,7 +225,7 @@ void LowMassBKGFit1D() {
   c1->SaveAs("figures/dimuorphan_m1_below_Jpsi.png");
   c1->SaveAs("figures/dimuorphan_m1_below_Jpsi.root");
 
-  RooPlot* plotC1_above_Jpsi = w->var("m1_above_Jpsi")->frame(Title("m1 data tempalate NO FIT above Jpsi"),Bins(m_bins_above_Jpsi));
+  RooPlot* plotC1_above_Jpsi = w->var("m1_above_Jpsi")->frame(Title("m1 data tempalate NO FIT above Jpsi"), Bins(m_bins_above_Jpsi));
   w->data("ds_dimuorphan_bg_m1_above_Jpsi")->plotOn(plotC1_above_Jpsi, DataError(RooAbsData::SumW2), Name("data_m1_above_Jpsi"));
   plotC1_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
   plotC1_above_Jpsi->Draw(); txtHeader->Draw();
@@ -233,7 +233,7 @@ void LowMassBKGFit1D() {
   c1->SaveAs("figures/dimuorphan_m1_above_Jpsi.png");
   c1->SaveAs("figures/dimuorphan_m1_above_Jpsi.root");
 
-  RooPlot* plotC2_below_Jpsi = w->var("m2_below_Jpsi")->frame(Title("m2 data tempalate NO FIT below Jpsi"),Bins(m_bins_below_Jpsi));
+  RooPlot* plotC2_below_Jpsi = w->var("m2_below_Jpsi")->frame(Title("m2 data tempalate NO FIT below Jpsi"), Bins(m_bins_below_Jpsi));
   w->data("ds_dimuorphan_bg_m2_below_Jpsi")->plotOn(plotC2_below_Jpsi, DataError(RooAbsData::SumW2), Name("data_m2_below_Jpsi"));
   plotC2_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
   plotC2_below_Jpsi->Draw(); txtHeader->Draw();
@@ -241,7 +241,7 @@ void LowMassBKGFit1D() {
   c1->SaveAs("figures/dimuorphan_m2_below_Jpsi.png");
   c1->SaveAs("figures/dimuorphan_m2_below_Jpsi.root");
 
-  RooPlot* plotC2_above_Jpsi = w->var("m2_above_Jpsi")->frame(Title("m2 data tempalate NO FIT above Jpsi"),Bins(m_bins_above_Jpsi));
+  RooPlot* plotC2_above_Jpsi = w->var("m2_above_Jpsi")->frame(Title("m2 data tempalate NO FIT above Jpsi"), Bins(m_bins_above_Jpsi));
   w->data("ds_dimuorphan_bg_m2_above_Jpsi")->plotOn(plotC2_above_Jpsi, DataError(RooAbsData::SumW2), Name("data_m2_above_Jpsi"));
   plotC2_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
   plotC2_above_Jpsi->Draw(); txtHeader->Draw();
@@ -268,17 +268,17 @@ void LowMassBKGFit1D() {
   w->factory("Gaussian::psiC(m1, 3.68609, psiC_sigma[0.031, 0.01, 0.04])");
 
   w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 10000.]*adHocC, norm_MmumuC[200., 0., 35000.]*MmumuC, norm_bgC[4400., 1000., 30000.]*bgC, norm_etaC[1.3151e+01, 0., 1000.]*etaC, norm_rhoC[1.0107e+02, 0., 1000.]*rhoC, norm_phiC[9.8640e+01, 0., 1000.]*phiC, norm_JpsiC[8000., 10., 20000.]*JpsiC, norm_psiC[50., 0., 1000.]*psiC)");
-  RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));
+  RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));//this is fit to unbinned data (data is not binned into a histogram), extended means extended parameter: number of events 
   cout<<"------------------RooFitResult for m1---------------------"<<endl;
   rC->Print();
 
-  RooPlot* plotC = w->var("m1")->frame(Title("1D template for orphan dimuon high pT"),Bins(m_bins));
-  w->data("ds_dimuorphan_bg_m1")->plotOn(plotC, DataError(RooAbsData::SumW2), Name("data_m1"));
-  w->pdf("template1D_m1")->plotOn(plotC,LineColor(kRed),Precision(0.0001),Name("template1D_m1"));
+  RooPlot* plotC = w->var("m1")->frame(Title("1D template for orphan dimuon high pT"), Bins(m_bins));
+  w->data("ds_dimuorphan_bg_m1")->plotOn(plotC, DataError(RooAbsData::SumW2), Name("data_m1"));//data is binned now: RooHist
+  w->pdf("template1D_m1")->plotOn(plotC, LineColor(kRed), Precision(0.0001), Name("template1D_m1"));//template: RooCurve
   plotC->GetYaxis()->SetTitle("Events/0.04GeV");
 
   // Upper pad: fit overlay data
-  TCanvas * c_template1D_m1 = new TCanvas("c_template1D_m1", "c_template1D_m1",800,800);
+  TCanvas * c_template1D_m1 = new TCanvas("c_template1D_m1", "c_template1D_m1", 800, 800);
   c_template1D_m1->Clear();
   TPad *pad1 = new TPad("pad1", "pad1", 0, 0.3, 1, 1.0);
   pad1->SetBottomMargin(0); pad1->Draw(); pad1->cd();
@@ -293,7 +293,7 @@ void LowMassBKGFit1D() {
   h_dataFit1->SetLineColor(kBlack); h_dataFit1->SetMarkerStyle(20); h_dataFit1->SetMarkerColor(1); h_dataFit1->SetStats(0);
   h_dataFit1->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit1->GetXaxis()->SetTitleSize(20); h_dataFit1->GetXaxis()->SetTitleFont(43); h_dataFit1->GetXaxis()->SetTitleOffset(3.0); h_dataFit1->GetXaxis()->SetLabelSize(15); h_dataFit1->GetXaxis()->SetLabelFont(43);
   h_dataFit1->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1->GetYaxis()->SetNdivisions(505); h_dataFit1->GetYaxis()->CenterTitle(); h_dataFit1->GetYaxis()->SetTitleSize(20); h_dataFit1->GetYaxis()->SetTitleFont(43); h_dataFit1->GetYaxis()->SetTitleOffset(.9); h_dataFit1->GetYaxis()->SetLabelSize(15); h_dataFit1->GetYaxis()->SetLabelFont(43);
-  TH1F *hdata = (TH1F*) ds_dimuorphan_bg_m1->createHistogram("hdata",m1,Binning(m_bins, m_min, m_max));
+  TH1F *hdata = (TH1F*) ds_dimuorphan_bg_m1->createHistogram("hdata", m1, Binning(m_bins, m_min, m_max));
   TH1F* h_func = new TH1F("h_func","", m_bins, m_min, m_max);
   w->pdf("template1D_m1")->fillHistogram(h_func, m1, hdata->GetEntries());
   for(unsigned int iB=1; iB<m_bins; iB++){
@@ -323,7 +323,7 @@ void LowMassBKGFit1D() {
   cout<<"------------------RooFitResult for m1 (below J/psi)---------------------"<<endl;
   rC_below_Jpsi->Print();
 
-  RooPlot* plotC_below_Jpsi = w->var("m1_below_Jpsi")->frame(Title("1D template for orphan dimuon high pT below Jpsi"),Bins(m_bins_below_Jpsi));
+  RooPlot* plotC_below_Jpsi = w->var("m1_below_Jpsi")->frame(Title("1D template for orphan dimuon high pT below Jpsi"), Bins(m_bins_below_Jpsi));
   w->data("ds_dimuorphan_bg_m1_below_Jpsi")->plotOn(plotC_below_Jpsi, DataError(RooAbsData::SumW2), Name("data_m1_below_Jpsi"));
   w->pdf("template1D_m1_below_Jpsi")->plotOn(plotC_below_Jpsi, LineColor(kRed), Precision(0.0001), Name("template1D_m1_below_Jpsi")); // By default only fitted range is shown
   plotC_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
@@ -370,7 +370,7 @@ void LowMassBKGFit1D() {
   cout<<"------------------RooFitResult for m1 (above J/psi)---------------------"<<endl;
   rC_above_Jpsi->Print();
 
-  RooPlot* plotC_above_Jpsi = w->var("m1_above_Jpsi")->frame(Title("1D template for orphan dimuon high pT above Jpsi"),Bins(m_bins_above_Jpsi));
+  RooPlot* plotC_above_Jpsi = w->var("m1_above_Jpsi")->frame(Title("1D template for orphan dimuon high pT above Jpsi"), Bins(m_bins_above_Jpsi));
   w->data("ds_dimuorphan_bg_m1_above_Jpsi")->plotOn(plotC_above_Jpsi, DataError(RooAbsData::SumW2), Name("data_m1_above_Jpsi"));
   w->pdf("template1D_m1_above_Jpsi")->plotOn(plotC_above_Jpsi, LineColor(kRed), Precision(0.0001), Name("template1D_m1_above_Jpsi"));
   plotC_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
@@ -427,7 +427,7 @@ void LowMassBKGFit1D() {
   cout<<"------------------RooFitResult for m2---------------------"<<endl;
   rF->Print();
 
-  RooPlot* plotF = w->var("m2")->frame(Title("BG template for orphan dimuon no high pT"),Bins(m_bins));
+  RooPlot* plotF = w->var("m2")->frame(Title("BG template for orphan dimuon no high pT"), Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotF, DataError(RooAbsData::SumW2), Name("data_m2"));
   w->pdf("template1D_m2")->plotOn(plotF,LineColor(kRed),Precision(0.0001),Name("template1D_m2"));
   plotF->GetYaxis()->SetTitle("Events/0.04GeV");
@@ -447,7 +447,7 @@ void LowMassBKGFit1D() {
   h_dataFit2->SetLineColor(kBlack); h_dataFit2->SetMarkerStyle(20); h_dataFit2->SetMarkerColor(1); h_dataFit2->SetStats(0);
   h_dataFit2->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit2->GetXaxis()->SetTitleSize(20); h_dataFit2->GetXaxis()->SetTitleFont(43); h_dataFit2->GetXaxis()->SetTitleOffset(3.0); h_dataFit2->GetXaxis()->SetLabelSize(15); h_dataFit2->GetXaxis()->SetLabelFont(43);
   h_dataFit2->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2->GetYaxis()->SetNdivisions(505); h_dataFit2->GetYaxis()->CenterTitle(); h_dataFit2->GetYaxis()->SetTitleSize(20); h_dataFit2->GetYaxis()->SetTitleFont(43); h_dataFit2->GetYaxis()->SetTitleOffset(.9); h_dataFit2->GetYaxis()->SetLabelSize(15); h_dataFit2->GetYaxis()->SetLabelFont(43);
-  TH1F *hdata2 = (TH1F*) ds_dimuorphan_bg_m2->createHistogram("hdata2",m2,Binning(m_bins, m_min, m_max));
+  TH1F *hdata2 = (TH1F*) ds_dimuorphan_bg_m2->createHistogram("hdata2", m2, Binning(m_bins, m_min, m_max));
   TH1F* h_func2 = new TH1F("h_func2","", m_bins, m_min, m_max);
   w->pdf("template1D_m2")->fillHistogram(h_func2, m2, hdata2->GetEntries());
   for(unsigned int iB=1; iB<m_bins; iB++){
@@ -477,7 +477,7 @@ void LowMassBKGFit1D() {
   cout<<"------------------RooFitResult for m2 (below J/psi)---------------------"<<endl;
   rF_below_Jpsi->Print();
 
-  RooPlot* plotF_below_Jpsi = w->var("m2_below_Jpsi")->frame(Title("BG template for orphan dimuon no high pT below Jpsi"),Bins(m_bins_below_Jpsi));
+  RooPlot* plotF_below_Jpsi = w->var("m2_below_Jpsi")->frame(Title("BG template for orphan dimuon no high pT below Jpsi"), Bins(m_bins_below_Jpsi));
   w->data("ds_dimuorphan_bg_m2_below_Jpsi")->plotOn(plotF_below_Jpsi, DataError(RooAbsData::SumW2), Name("data_m2_below_Jpsi"));
   w->pdf("template1D_m2_below_Jpsi")->plotOn(plotF_below_Jpsi,LineColor(kRed),Precision(0.0001),Name("template1D_m2_below_Jpsi"));
   plotF_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
@@ -524,7 +524,7 @@ void LowMassBKGFit1D() {
   cout<<"------------------RooFitResult for m2 (above J/psi)---------------------"<<endl;
   rF_above_Jpsi->Print();
 
-  RooPlot* plotF_above_Jpsi = w->var("m2_above_Jpsi")->frame(Title("BG template for orphan dimuon no high pT above Jpsi"),Bins(m_bins_above_Jpsi));
+  RooPlot* plotF_above_Jpsi = w->var("m2_above_Jpsi")->frame(Title("BG template for orphan dimuon no high pT above Jpsi"), Bins(m_bins_above_Jpsi));
   w->data("ds_dimuorphan_bg_m2_above_Jpsi")->plotOn(plotF_above_Jpsi, DataError(RooAbsData::SumW2), Name("data_m2_above_Jpsi"));
   w->pdf("template1D_m2_above_Jpsi")->plotOn(plotF_above_Jpsi,LineColor(kRed),Precision(0.0001),Name("template1D_m2_above_Jpsi"));
   plotF_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
@@ -597,8 +597,8 @@ void LowMassBKGFit1D() {
   RooCBShape Jpsi_m1("Jpsi_m1", "Jpsi_m1", m1, Jpsi_m1_mean, Jpsi_m1_sigma, Jpsi_m1_alpha, Jpsi_m1_n);
   w->import(Jpsi_m1);
 
-  RooPlot* plot_Jpsi_m1 = w->var("m1")->frame(Title("J/psi template m1"),Bins(m_bins));
-  w->pdf("Jpsi_m1")->plotOn(plot_Jpsi_m1,LineColor(kRed),Precision(0.0001),Name("plot_Jpsi_m1"));
+  RooPlot* plot_Jpsi_m1 = w->var("m1")->frame(Title("J/psi template m1"), Bins(m_bins));
+  w->pdf("Jpsi_m1")->plotOn(plot_Jpsi_m1, LineColor(kRed), Precision(0.0001), Name("plot_Jpsi_m1"));
 
   TCanvas * c_template1D_Jpsi_m1_RooPlot = new TCanvas("c_template1D_Jpsi_m1_RooPlot", "c_template1D_Jpsi_m1_RooPlot");
   c_template1D_Jpsi_m1_RooPlot->cd();
@@ -627,8 +627,8 @@ void LowMassBKGFit1D() {
   RooCBShape Jpsi_m2("Jpsi_m2", "Jpsi_m2", m2, Jpsi_m2_mean, Jpsi_m2_sigma, Jpsi_m2_alpha, Jpsi_m2_n);
   w->import(Jpsi_m2);//normalized to 1
 
-  RooPlot* plot_Jpsi_m2 = w->var("m2")->frame(Title("J/psi template m2"),Bins(m_bins));
-  w->pdf("Jpsi_m2")->plotOn(plot_Jpsi_m2,LineColor(kRed),Precision(0.0001),Name("plot_Jpsi_m2"));
+  RooPlot* plot_Jpsi_m2 = w->var("m2")->frame(Title("J/psi template m2"), Bins(m_bins));
+  w->pdf("Jpsi_m2")->plotOn(plot_Jpsi_m2, LineColor(kRed), Precision(0.0001), Name("plot_Jpsi_m2"));
 
   TCanvas * c_template1D_Jpsi_m2_RooPlot = new TCanvas("c_template1D_Jpsi_m2_RooPlot", "c_template1D_Jpsi_m2_RooPlot");
   c_template1D_Jpsi_m2_RooPlot->cd();
@@ -710,11 +710,9 @@ void LowMassBKGFit1D() {
 
   //Creating 2 dimu dataset
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D","ds_dimudimu_control_Iso_offDiagonal_2D", tree_dimudimu_control_Iso_offDiagonal_2D, RooArgSet(m1,m2));
-  //RooDataSet* ds_dimudimu_control_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_offDiagonal_2D","ds_dimudimu_control_offDiagonal_2D", tree_dimudimu_control_offDiagonal_2D, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_signal_2D = new RooDataSet("ds_dimudimu_signal_2D","ds_dimudimu_signal_2D", tree_dimudimu_signal_2D, RooArgSet(m1,m2));
   //No J/psi version
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi, RooArgSet(m1,m2));
-  //RooDataSet* ds_dimudimu_control_offDiagonal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_control_offDiagonal_2D_no_Jpsi","ds_dimudimu_control_offDiagonal_2D_no_Jpsi", tree_dimudimu_control_offDiagonal_2D_no_Jpsi, RooArgSet(m1,m2));
   RooDataSet* ds_dimudimu_signal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_signal_2D_no_Jpsi", "ds_dimudimu_signal_2D_no_Jpsi", tree_dimudimu_signal_2D_no_Jpsi, RooArgSet(m1,m2));
   //Below Jpsi only
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi, RooArgSet(m1_below_Jpsi,m2_below_Jpsi));
