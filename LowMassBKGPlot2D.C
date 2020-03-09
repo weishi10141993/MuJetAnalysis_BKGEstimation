@@ -775,7 +775,7 @@ void LowMassBKGPlot2D() {
   TH1D *h1_control_Iso_offDiagonal_massF_data_below_Jpsi = (TH1D*) w->data("ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi")->createHistogram("m2_below_Jpsi", m_bins_below_Jpsi);
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->SetStats(0);
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->SetMarkerStyle(20);
-  h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetYaxis()->SetRangeUser(0., 10.);
 
