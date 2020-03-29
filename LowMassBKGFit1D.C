@@ -268,7 +268,7 @@ void LowMassBKGFit1D() {
   w->factory("Gaussian::psiC(m1, 3.68609, psiC_sigma[0.031, 0.01, 0.04])");
 
   w->factory("SUM::template1D_m1(norm_adHocC[20., 0., 10000.]*adHocC, norm_MmumuC[200., 0., 35000.]*MmumuC, norm_bgC[4400., 1000., 30000.]*bgC, norm_etaC[1.3151e+01, 0., 1000.]*etaC, norm_rhoC[1.0107e+02, 0., 1000.]*rhoC, norm_phiC[9.8640e+01, 0., 1000.]*phiC, norm_JpsiC[8000., 10., 20000.]*JpsiC, norm_psiC[50., 0., 1000.]*psiC)");
-  RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));//this is fit to unbinned data (data is not binned into a histogram), extended means extended parameter: number of events 
+  RooFitResult *rC = w->pdf("template1D_m1")->fitTo(*(w->data("ds_dimuorphan_bg_m1")), Extended(1), Save(), SumW2Error(kTRUE));//this is fit to unbinned data (data is not binned into a histogram), extended means extended parameter: number of events
   cout<<"------------------RooFitResult for m1---------------------"<<endl;
   rC->Print();
 

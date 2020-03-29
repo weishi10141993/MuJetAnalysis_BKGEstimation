@@ -368,7 +368,7 @@ void HighMassBKGShape()
   MC_SR_m1->SetLineColor(2);
   MC_SR_m1->SetFillColor(2);
   MC_SR_m1->SetFillStyle(3004);
-  MC_SR_m1->Draw("E2 SAME");
+  MC_SR_m1->Draw("E2 SAME"); txtHeader->Draw("SAME");
   Double_t MC_SR_m1_error;
   Double_t MC_SR_m1_integral = MC_SR_m1->IntegralAndError(1, HM_m_bins, MC_SR_m1_error, "");
   std::cout << "MC SR m1 integral = " << MC_SR_m1_integral << " +/- " << MC_SR_m1_error << std::endl;
@@ -408,7 +408,7 @@ void HighMassBKGShape()
   MC_SR_m2->SetLineColor(2);
   MC_SR_m2->SetFillColor(2);
   MC_SR_m2->SetFillStyle(3004);
-  MC_SR_m2->Draw("E2 SAME");
+  MC_SR_m2->Draw("E2 SAME"); txtHeader->Draw("SAME");
   Double_t MC_SR_m2_error;
   Double_t MC_SR_m2_integral = MC_SR_m2->IntegralAndError(1, HM_m_bins, MC_SR_m2_error, "");
   std::cout << "MC SR m2 integral = " << MC_SR_m2_integral << " +/- " << MC_SR_m2_error << std::endl;
