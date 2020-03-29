@@ -1,4 +1,4 @@
-/fdata/hepx/store/user/wshi/2018DataNtuples/out_ana_2018A.root
-/fdata/hepx/store/user/wshi/2018DataNtuples/out_ana_2018B.root
-/fdata/hepx/store/user/wshi/2018DataNtuples/out_ana_2018C.root
-/fdata/hepx/store/user/wshi/2018DataNtuples/out_ana_2018D.root
+/scratch/user/ws13/2018DataNtuples/out_ana_2018A.root
+/scratch/user/ws13/2018DataNtuples/out_ana_2018B.root
+/scratch/user/ws13/2018DataNtuples/out_ana_2018C.root
+/scratch/user/ws13/2018DataNtuples/out_ana_2018D.root

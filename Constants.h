@@ -43,8 +43,8 @@ const double       HM_m_max  = 59.0;
 const unsigned int HM_m_bins = 12;//bin size 4GeV
 
 //Directory of histograms
-TString store_2017 = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/2017";
-TString store_2018 = "/fdata/hepx/store/user/wshi/SMBKGatHighMass/2018";
+TString store_2017 = "/scratch/user/ws13/SMBKGatHighMass/2017";
+TString store_2018 = "/scratch/user/ws13/SMBKGatHighMass/2018";
 
 //Scale MC events to Data (Xsec*Lumi/tot MC evt), not including SF like trigger, muon id etc
 //The order is important here: DY 0J, 1J, 2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
