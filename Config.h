@@ -36,7 +36,7 @@ namespace BKG_cfg {
 
     if(year == 2017){
       luminosity = lumi_2017;
-      inputFile1 = "Input_2017CDEF.txt";
+      inputFile1 = "Input_2017CDEF_2SAmu_NoVtxProbCut.txt";
       inputFile2 = "ws_2017_FINAL.root";
       store      = store_2017;
       validate_m1_iso_Ymax    = validate_m1_iso_Ymax_2017;
@@ -51,7 +51,7 @@ namespace BKG_cfg {
     }//end 2017
     else if(year == 2018){
       luminosity = lumi_2018;
-      inputFile1 = "Input_2018ABCD.txt";
+      inputFile1 = "Input_2018ABCD_2SAmu_NoVtxProbCut_4HLT.txt";
       inputFile2 = "ws_2018_FINAL.root";
       store      = store_2018;
       validate_m1_iso_Ymax    = validate_m1_iso_Ymax_2018;

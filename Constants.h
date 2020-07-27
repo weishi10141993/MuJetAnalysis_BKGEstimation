@@ -8,9 +8,9 @@ const double lumi_2018 = 59.97;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in LowMassBKGFit1D  !
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-TString pT_cut  = "17";
-TString eta_cut = "0.9";
-TString iso_cut = "1.5";//isolation cut for leading muon in dimu for Run2 analysis
+TString pT_cut  = "24";//offline high pT cut for 2018 trigger L2Mu23
+TString eta_cut = "2.0";
+TString iso_cut = "2.3";//isolation cut for dimu
 
 const double       m_min  = 0.2113;
 const double       m_max  = 9.;
@@ -48,8 +48,8 @@ TString store_2018 = "/scratch/user/ws13/SMBKGatHighMass/2018";
 
 //Scale MC events to Data (Xsec*Lumi/tot MC evt), not including SF like trigger, muon id etc
 //The order is important here: DY 0J, 1J, 2J, ZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
-Float_t MC_ScaleFactors_2017[7] = {2.2491001E+00, 3.7980782E-01, 2.4748488E-01, 3.0278414E-03, 7.0425976E-02, 4.6355268E-04, 6.3245328E-05};
-Float_t MC_ScaleFactors_2018[7] = {3.4145686E+00, 6.2974242E-01, 3.6185455E-01, 4.1624890E-03, 1.0998854E-01, 7.6245783E-04, 1.0461031E-04};
+Float_t MC_ScaleFactors_2017[7] = {2.2149318E+00, 3.7806072E-01, 2.5133039E-01, 3.0278414E-03, 7.0425976E-02, 4.6355268E-04, 6.3245328E-05};
+Float_t MC_ScaleFactors_2018[7] = {3.4145686E+00, 6.2974242E-01, 3.5720940E-01, 4.1624890E-03, 1.0998854E-01, 7.6245783E-04, 1.0461031E-04};
 
 //Color in final legend for each bkg process, same order as above
 Color_t MC_Colors[7] = {20, 30, 40, 9, 8, 7, 6};

@@ -1,0 +1,4 @@
+/scratch/user/ws13/2017DataNtuples_2SAmu_NoVtxProbCut/out_ana_2017C.root
+/scratch/user/ws13/2017DataNtuples_2SAmu_NoVtxProbCut/out_ana_2017D.root
+/scratch/user/ws13/2017DataNtuples_2SAmu_NoVtxProbCut/out_ana_2017E.root
+/scratch/user/ws13/2017DataNtuples_2SAmu_NoVtxProbCut/out_ana_2017F.root

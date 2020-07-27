@@ -1,0 +1,10 @@
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/out_ana_2018A.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/out_ana_2018B.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/out_ana_2018C.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/2018D0.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/2018D1.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/2018D2.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/2018D3.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/2018D4.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/2018D5.root
+/scratch/user/ws13/2018DataNtuples_2SAmu_NoVtxProbCut_4HLT/2018D6.root

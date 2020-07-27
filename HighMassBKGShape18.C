@@ -2,7 +2,7 @@
 //* For background shape modeling by comparing MC to DATA at Control Region                     *
 //* Source most recent root version:                                                            *
 //* . /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.04/x86_64-centos7-gcc48-opt/bin/thisroot.sh *
-//* Run it as: root -l -b -q HighMassBKGShape.C                                                 *
+//* Run it as: root -l -b -q HighMassBKGShape18.C                                                 *
 //*                    Wei Shi @Sep 24, 2019, Rice U.                                           *
 //***********************************************************************************************
 #include "TFile.h"
@@ -21,7 +21,7 @@
 #include "Constants.h"//local const file
 #include "Config.h"
 
-void HighMassBKGShape()
+void HighMassBKGShape18()
 {
   //Configure inputs for year
   BKG_cfg::ConfigureInput(year);
@@ -39,13 +39,13 @@ void HighMassBKGShape()
   TFile *file_tmp(0);
   THStack *MC_hs_CR_m1 = new THStack("MC_hs_CR_m1", "");
   THStack *MC_hs_CR_m2 = new THStack("MC_hs_CR_m2", "");
-  THStack *MC_hs_CR_orphdimumass = new THStack("MC_hs_CR_orphdimumass", "");
+  //THStack *MC_hs_CR_orphdimumass = new THStack("MC_hs_CR_orphdimumass", "");
   THStack *MC_hs_SR_m1 = new THStack("MC_hs_SR_m1", "");
   THStack *MC_hs_SR_m2 = new THStack("MC_hs_SR_m2", "");
   //For plotting summed error for above stacked plots
   TH1F *MC_CR_m1 = new TH1F("MC_CR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *MC_CR_m2 = new TH1F("MC_CR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
-  TH1F *MC_CR_orphdimumass = new TH1F("MC_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
+  //TH1F *MC_CR_orphdimumass = new TH1F("MC_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *MC_SR_m1 = new TH1F("MC_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *MC_SR_m2 = new TH1F("MC_SR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
 
@@ -76,13 +76,13 @@ void HighMassBKGShape()
     MC_hs_CR_m2->Add(MCBKGShapeCRmassF);
     MC_CR_m2->Add(MCBKGShapeCRmassF);
 
-    TH1F *MCBKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("MCBKGShapeOrphDimumass");
+    /*TH1F *MCBKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("MCBKGShapeOrphDimumass");
     MCBKGShapeOrphDimumass->Scale(MC_ScaleFactors[i]);
     MCBKGShapeOrphDimumass->SetLineColor(MC_Colors[i]);
     MCBKGShapeOrphDimumass->SetFillColor(MC_Colors[i]);
     MCBKGShapeOrphDimumass->SetMarkerColor(MC_Colors[i]);
     MC_hs_CR_orphdimumass->Add(MCBKGShapeOrphDimumass);
-    MC_CR_orphdimumass->Add(MCBKGShapeOrphDimumass);
+    MC_CR_orphdimumass->Add(MCBKGShapeOrphDimumass);*/
 
     TH1F *MCBKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("MCBKGShapeSRmassC");
     MCBKGShapeSRmassC->Scale(MC_ScaleFactors[i]);
@@ -105,7 +105,7 @@ void HighMassBKGShape()
   TString DATA_file_name;
   TH1F *DATA_CR_m1 = new TH1F("DATA_CR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *DATA_CR_m2 = new TH1F("DATA_CR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
-  TH1F *DATA_CR_orphdimumass = new TH1F("DATA_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
+  //TH1F *DATA_CR_orphdimumass = new TH1F("DATA_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
 
@@ -120,7 +120,7 @@ void HighMassBKGShape()
 
     TH1F *DATABKGShapeCRmassC = (TH1F*)file_tmp->Get("BKGShapeCRmassC")->Clone("DATABKGShapeCRmassC"); DATA_CR_m1->Add(DATABKGShapeCRmassC);
     TH1F *DATABKGShapeCRmassF = (TH1F*)file_tmp->Get("BKGShapeCRmassF")->Clone("DATABKGShapeCRmassF"); DATA_CR_m2->Add(DATABKGShapeCRmassF);
-    TH1F *DATABKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("DATABKGShapeOrphDimumass"); DATA_CR_orphdimumass->Add(DATABKGShapeOrphDimumass);
+    //TH1F *DATABKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("DATABKGShapeOrphDimumass"); DATA_CR_orphdimumass->Add(DATABKGShapeOrphDimumass);
     TH1F *DATABKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("DATABKGShapeSRmassC"); DATA_SR_m1->Add(DATABKGShapeSRmassC);
     TH1F *DATABKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("DATABKGShapeSRmassF"); DATA_SR_m2->Add(DATABKGShapeSRmassF);
   }
@@ -128,9 +128,9 @@ void HighMassBKGShape()
   //write to output file
   TFile myPlot(outFileHMShape, "RECREATE");
 
-  //***************
-  //* For m1 at CR*
-  //***************
+  //===============
+  //= For m1 at CR*
+  //===============
   TCanvas *CR1=new TCanvas("CR1", "CR m1",700,500); CR1->Clear();
   TPad *CR1pad1 = new TPad("CR1pad1", "CR1pad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
   CR1pad1->SetBottomMargin(0); CR1pad1->Draw();
@@ -204,9 +204,9 @@ void HighMassBKGShape()
   pull_CR_m1->Draw("P");
   CR1->Write();
 
-  //***************
-  //* For m2 at CR*
-  //***************
+  //===============
+  //= For m2 at CR*
+  //===============
   TCanvas *CR2=new TCanvas("CR2","CR m2",700,500); CR2->Clear();
   TPad *CR2pad1 = new TPad("CR2pad1", "CR2pad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
   CR2pad1->SetBottomMargin(0); CR2pad1->Draw();
@@ -279,9 +279,10 @@ void HighMassBKGShape()
   pull_CR_m2->Draw("P");
   CR2->Write();
 
-  //******************
-  //* For orphan dimu*
-  //******************
+/*
+  //==================
+  //= For orphan dimu*
+  //==================
   TCanvas *CROrphDimuM=new TCanvas("CROrphDimuM","CR Orphan Dimu Mass",700,500); CROrphDimuM->Clear();
   TPad *CROrphDimuMpad1 = new TPad("CROrphDimuMpad1", "CROrphDimuMpad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
   CROrphDimuMpad1->SetBottomMargin(0); CROrphDimuMpad1->Draw();
@@ -352,11 +353,11 @@ void HighMassBKGShape()
   pull_CR_orphdimumass->SetMarkerStyle(20);
   pull_CR_orphdimumass->SetMarkerSize(0.6);
   pull_CR_orphdimumass->Draw("P");
-  CROrphDimuM->Write();
+  CROrphDimuM->Write();*/
 
-  //***************
-  //* For m1 at SR*
-  //***************
+  //===============
+  //= For m1 at SR*
+  //===============
   //Consider to do a simple poly 0/1-fit on the shape
   //Data blinded until approval
   TCanvas *SR1=new TCanvas("SR1","SR m1",700,500);
@@ -396,9 +397,9 @@ void HighMassBKGShape()
   gPad->RedrawAxis();
   SR1->Write();
 
-  //***************
-  //* For m2 at SR*
-  //***************
+  //===============
+  //= For m2 at SR*
+  //===============
   TCanvas *SR2=new TCanvas("SR2","SR m2",700,500);
   SR2->cd();
   MC_hs_SR_m2->Draw("HIST");

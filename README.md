@@ -9,22 +9,22 @@ cmsenv
 git clone -b test git@github.com:weishi10141993/MuJetAnalysis_bbBarEstimation
 ```
 ## User Config
-Edit Config.h to change the year (default is 2018 ) you want to do the estimation. This configuration be picked up in later macros. Many constants used in later macros are also defined in Constants.h in the main directory.
+Edit Config.h to change the year (default is 2018) you want to do the estimation. This configuration be picked up in later macros. Many constants used in later macros are also defined in Constants.h in the main directory.
 
 ## Low mass
 A data driven method is used to estimate the SM yield.
 ```
-root -l -b -q LowMassBKGFit1D.C #For plot and fit 1D template and save to work space
-root -l -b -q LowMassBKGPlot2D.C  #For 2D template and draw 2D data points
+root -l -b -q LowMassBKGFit1D18.C #For plot and fit 1D template and save to work space
+root -l -b -q LowMassBKGPlot2D18.C  #For 2D template and draw 2D data points
 ```
 
 ## High mass
 A MC vs data comparison at the control region. And it also gives the MC distributions at signal region.
 ```
-root -l -b -q HighMassBKGShape.C
+root -l -b -q HighMassBKGShape18.C
 ```
 
 A sanity check is done with ABCD method, which is purely data-driven. It gives estimated yield in signal region A. The stability of this method is also checked.
 ```
-root -l -b -q HighMassBKGABCD.C
+root -l -b -q HighMassBKGABCD18.C
 ```
