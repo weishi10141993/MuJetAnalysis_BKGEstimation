@@ -68,7 +68,7 @@ namespace BKG_cfg {
       std::cout << "*** User input year is unknown! Please check. ***" << std::endl;
     }
 
-    header         = header + "#bf{CMS} #it{Preliminary}    " + Form("%.2f", luminosity) + "fb^{-1} (" + Form("%d", year) + " 13 TeV)";
+    header         = header + "#bf{CMS} #it{Preliminary}    " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
     outFileLM      = outFileLM + "ws_" + Form("%d", year) + "_FINAL.root";
     outFileHMABCD  = outFileHMABCD + "ABCD_" + Form("%d", year) + "_FINAL.root";
     outFileHMShape = outFileHMShape + "HighMassBKGShape_" + Form("%d", year) + "_FINAL.root";

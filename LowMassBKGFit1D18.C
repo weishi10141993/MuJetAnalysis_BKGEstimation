@@ -122,7 +122,7 @@ void LowMassBKGFit1D18() {
   //**********************************************************************************
   //m1: Orphan associated dimu both mu have high pT mu 24GeV and |eta|<2
   ostringstream stream_cut_bg_m1_iso;
-  stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.18*(1 - orph_dimu_nSAMu)*exp( -( 0.099 + 0.115*orph_dimu_dR + 0.311*pow(orph_dimu_dR, 2) + 0.074*pow(orph_dimu_dR, 3) )*fabs(orph_dimu_Lxy/2.9) ) && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) && ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.2*(1 - orph_dimu_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(orph_dimu_dR)) + 109.83*pow(sqrt(orph_dimu_dR), 2) - 92.7445*pow(sqrt(orph_dimu_dR), 3) + 36.8351*pow(sqrt(orph_dimu_dR), 4) )*pow(fabs(orph_dimu_Lxy/10.0), 2.0) ) && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) && ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
   TString cut_bg_m1_iso = stream_cut_bg_m1_iso.str();
   //Print selections to check
   std::cout << "m1 selctions (low mass): " << cut_bg_m1_iso.Data() << std::endl;
@@ -130,35 +130,35 @@ void LowMassBKGFit1D18() {
 
   //m1_below_Jpsi: Same as above except below J/psi
   ostringstream stream_cut_bg_m1_iso_below_Jpsi;
-  stream_cut_bg_m1_iso_below_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.18*(1 - orph_dimu_nSAMu)*exp( -( 0.099 + 0.115*orph_dimu_dR + 0.311*pow(orph_dimu_dR, 2) + 0.074*pow(orph_dimu_dR, 3) )*fabs(orph_dimu_Lxy/2.9) ) && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) && ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_Jpsi_dn;
+  stream_cut_bg_m1_iso_below_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.2*(1 - orph_dimu_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(orph_dimu_dR)) + 109.83*pow(sqrt(orph_dimu_dR), 2) - 92.7445*pow(sqrt(orph_dimu_dR), 3) + 36.8351*pow(sqrt(orph_dimu_dR), 4) )*pow(fabs(orph_dimu_Lxy/10.0), 2.0) ) && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) && ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_Jpsi_dn;
   TString cut_bg_m1_iso_below_Jpsi = stream_cut_bg_m1_iso_below_Jpsi.str();
   std::cout << "m1 selctions (low mass below J/psi): " << cut_bg_m1_iso_below_Jpsi.Data() << std::endl;
   TTree* tree_dimuorphan_bg_m1_below_Jpsi = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso_below_Jpsi);
 
   //m1_above_Jpsi: Same as above except above J/psi
   ostringstream stream_cut_bg_m1_iso_above_Jpsi;
-  stream_cut_bg_m1_iso_above_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.18*(1 - orph_dimu_nSAMu)*exp( -( 0.099 + 0.115*orph_dimu_dR + 0.311*pow(orph_dimu_dR, 2) + 0.074*pow(orph_dimu_dR, 3) )*fabs(orph_dimu_Lxy/2.9) ) && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) && ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_Jpsi_up << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m1_iso_above_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.2*(1 - orph_dimu_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(orph_dimu_dR)) + 109.83*pow(sqrt(orph_dimu_dR), 2) - 92.7445*pow(sqrt(orph_dimu_dR), 3) + 36.8351*pow(sqrt(orph_dimu_dR), 4) )*pow(fabs(orph_dimu_Lxy/10.0), 2.0) ) && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) && ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_Jpsi_up << " && orph_dimu_mass < " << m_max;
   TString cut_bg_m1_iso_above_Jpsi = stream_cut_bg_m1_iso_above_Jpsi.str();
   std::cout << "m1 selctions (low mass above J/psi): " << cut_bg_m1_iso_above_Jpsi.Data() << std::endl;
   TTree* tree_dimuorphan_bg_m1_above_Jpsi = chain_data_dimuorphan.CopyTree(cut_bg_m1_iso_above_Jpsi);
 
   //m2: Orphan mu has high pT mu 24GeV and |eta|<2
   ostringstream stream_cut_bg_m2_iso;
-  stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.18*(1 - orph_dimu_nSAMu)*exp( -( 0.099 + 0.115*orph_dimu_dR + 0.311*pow(orph_dimu_dR, 2) + 0.074*pow(orph_dimu_dR, 3) )*fabs(orph_dimu_Lxy/2.9) ) && orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m2_iso << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.2*(1 - orph_dimu_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(orph_dimu_dR)) + 109.83*pow(sqrt(orph_dimu_dR), 2) - 92.7445*pow(sqrt(orph_dimu_dR), 3) + 36.8351*pow(sqrt(orph_dimu_dR), 4) )*pow(fabs(orph_dimu_Lxy/10.0), 2.0) ) && orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
   TString cut_bg_m2_iso = stream_cut_bg_m2_iso.str();
   std::cout << "m2 selctions (low mass): " << cut_bg_m2_iso.Data() << std::endl;
   TTree* tree_dimuorphan_bg_m2 = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso);
 
   //m2: Same as above except below J/psi
   ostringstream stream_cut_bg_m2_iso_below_Jpsi;
-  stream_cut_bg_m2_iso_below_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.18*(1 - orph_dimu_nSAMu)*exp( -( 0.099 + 0.115*orph_dimu_dR + 0.311*pow(orph_dimu_dR, 2) + 0.074*pow(orph_dimu_dR, 3) )*fabs(orph_dimu_Lxy/2.9) ) && orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_Jpsi_dn;
+  stream_cut_bg_m2_iso_below_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.2*(1 - orph_dimu_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(orph_dimu_dR)) + 109.83*pow(sqrt(orph_dimu_dR), 2) - 92.7445*pow(sqrt(orph_dimu_dR), 3) + 36.8351*pow(sqrt(orph_dimu_dR), 4) )*pow(fabs(orph_dimu_Lxy/10.0), 2.0) ) && orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_Jpsi_dn;
   TString cut_bg_m2_iso_below_Jpsi = stream_cut_bg_m2_iso_below_Jpsi.str();
   std::cout << "m2 selctions (low mass below J/psi): " << cut_bg_m2_iso_below_Jpsi.Data() << std::endl;
   TTree* tree_dimuorphan_bg_m2_below_Jpsi = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso_below_Jpsi);
 
   //m2: Same as above except above J/psi
   ostringstream stream_cut_bg_m2_iso_above_Jpsi;
-  stream_cut_bg_m2_iso_above_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.18*(1 - orph_dimu_nSAMu)*exp( -( 0.099 + 0.115*orph_dimu_dR + 0.311*pow(orph_dimu_dR, 2) + 0.074*pow(orph_dimu_dR, 3) )*fabs(orph_dimu_Lxy/2.9) ) && orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " && orph_dimu_mass > " << m_Jpsi_up << " && orph_dimu_mass < " << m_max;
+  stream_cut_bg_m2_iso_above_Jpsi << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.2*(1 - orph_dimu_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(orph_dimu_dR)) + 109.83*pow(sqrt(orph_dimu_dR), 2) - 92.7445*pow(sqrt(orph_dimu_dR), 3) + 36.8351*pow(sqrt(orph_dimu_dR), 4) )*pow(fabs(orph_dimu_Lxy/10.0), 2.0) ) && orph_PtOrph > " << pT_cut << " && TMath::Abs(orph_EtaOrph) < " << eta_cut << " && orph_dimu_mass > " << m_Jpsi_up << " && orph_dimu_mass < " << m_max;
   TString cut_bg_m2_iso_above_Jpsi = stream_cut_bg_m2_iso_above_Jpsi.str();
   std::cout << "m2 selctions (low mass above J/psi): " << cut_bg_m2_iso_above_Jpsi.Data() << std::endl;
   TTree* tree_dimuorphan_bg_m2_above_Jpsi = chain_data_dimuorphan.CopyTree(cut_bg_m2_iso_above_Jpsi);
@@ -647,97 +647,75 @@ void LowMassBKGFit1D18() {
   //****************************************************************************
   //           For later use in LowMassBKGPlot2D.C: datasets of 2 dimu events
   //****************************************************************************
-  cout << "Create trees on signal events" << endl;
-
   //To be used for scatter plot 2 dimu events @ CR later in LowMassBKGPlot2D.C
   //No need to apply cuts associated to higher mass signals above 11 GeV, such as DY cut and SAmu bkg cut
-  ostringstream stream_cut_control_Iso_offDiagonal;
-  stream_cut_control_Iso_offDiagonal << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonC_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonC_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonC_FittedVtx_dR), 3) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 1.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonF_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonF_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonF_FittedVtx_dR), 3) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 1.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.00797247 + 0.00477863*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.000364457*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 1.15049e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.09187e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_max;
-  TString cut_control_Iso_offDiagonal = stream_cut_control_Iso_offDiagonal.str();
-  std::cout << "2-dimu CR selctions (low mass): " << cut_control_Iso_offDiagonal.Data() << std::endl;
-  TTree* tree_dimudimu_control_Iso_offDiagonal_2D = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal);
-
-  //Same as above but without J/psi
-  ostringstream stream_cut_control_Iso_offDiagonal_no_Jpsi;
-  stream_cut_control_Iso_offDiagonal_no_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonC_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonC_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonC_FittedVtx_dR), 3) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 1.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonF_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonF_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonF_FittedVtx_dR), 3) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 1.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.00797247 + 0.00477863*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.000364457*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 1.15049e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.09187e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && ( (diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << ") || (diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < "<< m_max << ") ) && ( (diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn << ") || (diMuonF_FittedVtx_m > "<< m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max <<") )";
-  TString cut_control_Iso_offDiagonal_no_Jpsi = stream_cut_control_Iso_offDiagonal_no_Jpsi.str();
-  std::cout << "2-dimu CR selctions (low mass no J/psi): " << cut_control_Iso_offDiagonal_no_Jpsi.Data() << std::endl;
-  TTree* tree_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal_no_Jpsi);
-
-  //To be used to unblind the SR (scatter plot) later in LowMassBKGPlot2D.C (difference to above: mass cut <, not >=)
-  ostringstream stream_cut_signal;
-  stream_cut_signal << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonC_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonC_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonC_FittedVtx_dR), 3) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 1.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonF_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonF_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonF_FittedVtx_dR), 3) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 1.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 5*(0.00797247 + 0.00477863*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.000364457*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 1.15049e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.09187e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_max;
-  TString cut_signal = stream_cut_signal.str();
-  std::cout << "2-dimu SR selctions (low mass): " << cut_signal.Data() << std::endl;
-  TTree* tree_dimudimu_signal_2D = chain_data_dimudimu.CopyTree(cut_signal);
-
-  //Same as above but without J/psi
-  ostringstream stream_cut_signal_no_Jpsi;
-  stream_cut_signal_no_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonC_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonC_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonC_FittedVtx_dR), 3) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 1.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonF_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonF_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonF_FittedVtx_dR), 3) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 1.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 5*(0.00797247 + 0.00477863*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.000364457*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 1.15049e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.09187e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && ( (diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << ") || (diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < "<< m_max << ") ) && ( (diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn << ") || (diMuonF_FittedVtx_m > "<< m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max <<") )";
-  TString cut_signal_no_Jpsi = stream_cut_signal_no_Jpsi.str();
-  std::cout << "2-dimu SR selctions (low mass no J/psi): " << cut_signal_no_Jpsi.Data() << std::endl;
-  TTree* tree_dimudimu_signal_2D_no_Jpsi = chain_data_dimudimu.CopyTree(cut_signal_no_Jpsi);
-
-  //Below Jpsi only
+  cout << "Create trees on signal events" << endl;
+  
+  //=========================================
+  //= Below Jpsi only: mass window is poly3 =
+  //=========================================
+  // CR for bkg estimate and validate
   ostringstream stream_cut_control_Iso_offDiagonal_below_Jpsi;
-  stream_cut_control_Iso_offDiagonal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonC_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonC_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonC_FittedVtx_dR), 3) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 1.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonF_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonF_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonF_FittedVtx_dR), 3) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 1.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.00797247 + 0.00477863*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.000364457*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 1.15049e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.09187e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
+  stream_cut_control_Iso_offDiagonal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.00849813 + 0.00475107*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 - 0.00665393*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) + 0.00337777*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) ) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
   TString cut_control_Iso_offDiagonal_below_Jpsi = stream_cut_control_Iso_offDiagonal_below_Jpsi.str();
   std::cout << "2-dimu CR selctions (low mass below J/psi only): " << cut_control_Iso_offDiagonal_below_Jpsi.Data() << std::endl;
   TTree* tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal_below_Jpsi);
 
-  //Above Jpsi only
+  // SR for unblinding
+  ostringstream stream_cut_signal_below_Jpsi;
+  stream_cut_signal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 5*(0.00849813 + 0.00475107*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 - 0.00665393*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) + 0.00337777*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) ) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
+  TString cut_signal_below_Jpsi = stream_cut_signal_below_Jpsi.str();
+  std::cout << "2-dimu SR selctions (low mass no J/psi): " << cut_signal_below_Jpsi.Data() << std::endl;
+  TTree* tree_dimudimu_signal_2D_below_Jpsi = chain_data_dimudimu.CopyTree(cut_signal_below_Jpsi);
+
+  //=========================================
+  //= Above Jpsi only: mass window is poly4 =
+  //=========================================
+  // CR for bkg estimate and validate
   ostringstream stream_cut_control_Iso_offDiagonal_above_Jpsi;
-  stream_cut_control_Iso_offDiagonal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonC_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonC_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonC_FittedVtx_dR), 3) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 1.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 3.606 - 12.424*(sqrt(diMuonF_FittedVtx_dR)) + 13.871*pow(sqrt(diMuonF_FittedVtx_dR), 2) -2.052*pow(sqrt(diMuonF_FittedVtx_dR), 3) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 1.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.00797247 + 0.00477863*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.000364457*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 1.15049e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.09187e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
+  stream_cut_control_Iso_offDiagonal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.0472738 - 0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
   TString cut_control_Iso_offDiagonal_above_Jpsi = stream_cut_control_Iso_offDiagonal_above_Jpsi.str();
   std::cout << "2-dimu CR selctions (low mass above J/psi only): " << cut_control_Iso_offDiagonal_above_Jpsi.Data() << std::endl;
   TTree* tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi = chain_data_dimudimu.CopyTree(cut_control_Iso_offDiagonal_above_Jpsi);
 
-  //Setting Names
-  tree_dimudimu_control_Iso_offDiagonal_2D->GetBranch("diMuonC_FittedVtx_m")->SetName("m1");
-  tree_dimudimu_control_Iso_offDiagonal_2D->GetBranch("diMuonF_FittedVtx_m")->SetName("m2");
-  tree_dimudimu_signal_2D->GetBranch("diMuonC_FittedVtx_m")->SetName("m1");
-  tree_dimudimu_signal_2D->GetBranch("diMuonF_FittedVtx_m")->SetName("m2");
-  //No J/psi version
-  tree_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->GetBranch("diMuonC_FittedVtx_m")->SetName("m1");
-  tree_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->GetBranch("diMuonF_FittedVtx_m")->SetName("m2");
-  tree_dimudimu_signal_2D_no_Jpsi->GetBranch("diMuonC_FittedVtx_m")->SetName("m1");
-  tree_dimudimu_signal_2D_no_Jpsi->GetBranch("diMuonF_FittedVtx_m")->SetName("m2");
+  // SR for unblinding
+  ostringstream stream_cut_signal_above_Jpsi;
+  stream_cut_signal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 5*(0.0472738 - 0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
+  TString cut_signal_above_Jpsi = stream_cut_signal_above_Jpsi.str();
+  std::cout << "2-dimu SR selctions (low mass no J/psi): " << cut_signal_above_Jpsi.Data() << std::endl;
+  TTree* tree_dimudimu_signal_2D_above_Jpsi = chain_data_dimudimu.CopyTree(cut_signal_above_Jpsi);
+
   //Below Jpsi only
   tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_below_Jpsi");
   tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_below_Jpsi");
+  tree_dimudimu_signal_2D_below_Jpsi->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_below_Jpsi");
+  tree_dimudimu_signal_2D_below_Jpsi->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_below_Jpsi");
   //Above Jpsi only
   tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Jpsi");
   tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Jpsi");
+  tree_dimudimu_signal_2D_above_Jpsi->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Jpsi");
+  tree_dimudimu_signal_2D_above_Jpsi->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Jpsi");
 
-  //Creating 2 dimu dataset
-  RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D","ds_dimudimu_control_Iso_offDiagonal_2D", tree_dimudimu_control_Iso_offDiagonal_2D, RooArgSet(m1,m2));
-  RooDataSet* ds_dimudimu_signal_2D = new RooDataSet("ds_dimudimu_signal_2D","ds_dimudimu_signal_2D", tree_dimudimu_signal_2D, RooArgSet(m1,m2));
-  //No J/psi version
-  RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi, RooArgSet(m1,m2));
-  RooDataSet* ds_dimudimu_signal_2D_no_Jpsi = new RooDataSet("ds_dimudimu_signal_2D_no_Jpsi", "ds_dimudimu_signal_2D_no_Jpsi", tree_dimudimu_signal_2D_no_Jpsi, RooArgSet(m1,m2));
-  //Below Jpsi only
+  //Below Jpsi only version
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi, RooArgSet(m1_below_Jpsi,m2_below_Jpsi));
-  //Above Jpsi only
+  RooDataSet* ds_dimudimu_signal_2D_below_Jpsi = new RooDataSet("ds_dimudimu_signal_2D_below_Jpsi", "ds_dimudimu_signal_2D_below_Jpsi", tree_dimudimu_signal_2D_below_Jpsi, RooArgSet(m1_below_Jpsi,m2_below_Jpsi));
+  //Above Jpsi only version
   RooDataSet* ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi = new RooDataSet("ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi","ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi", tree_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi, RooArgSet(m1_above_Jpsi,m2_above_Jpsi));
+  RooDataSet* ds_dimudimu_signal_2D_above_Jpsi = new RooDataSet("ds_dimudimu_signal_2D_above_Jpsi", "ds_dimudimu_signal_2D_above_Jpsi", tree_dimudimu_signal_2D_above_Jpsi, RooArgSet(m1_above_Jpsi,m2_above_Jpsi));
 
-  ds_dimudimu_control_Iso_offDiagonal_2D->Print("s");
-  ds_dimudimu_signal_2D->Print("s");
-  //No J/psi version
-  ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi->Print("s");
-  ds_dimudimu_signal_2D_no_Jpsi->Print("s");
   //Below Jpsi only
   ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->Print("s");
+  ds_dimudimu_signal_2D_below_Jpsi->Print("s");
   //Above Jpsi only
   ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->Print("s");
+  ds_dimudimu_signal_2D_above_Jpsi->Print("s");
 
-  w->import(*ds_dimudimu_control_Iso_offDiagonal_2D);
-  w->import(*ds_dimudimu_signal_2D);
-  //No J/psi version
-  w->import(*ds_dimudimu_control_Iso_offDiagonal_2D_no_Jpsi);
-  w->import(*ds_dimudimu_signal_2D_no_Jpsi);
   //Below Jpsi only
   w->import(*ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi);
+  w->import(*ds_dimudimu_signal_2D_below_Jpsi);
+  //Above Jpsi only
   w->import(*ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi);
+  w->import(*ds_dimudimu_signal_2D_above_Jpsi);
 
   //****************************************************************************
   //                           Save to Workspace
