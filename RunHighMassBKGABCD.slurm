@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=ABCD18
-#SBATCH --time=02:00:00
+#SBATCH --time=01:00:00
 #SBATCH --ntasks=1
-#SBATCH --mem=12000M
+#SBATCH --mem=10000M
 #SBATCH --output=ABCD18.out.%j
 #SBATCH --account=122747014089
 
