@@ -1,7 +1,8 @@
-//*****************************************************************************************************
-//* For estimating the bkg yield at high mass bins based on an ABCD method and check its stability    *
-//*                                       Wei Shi @Sep 25, 2019, Rice U.                              *
-//*****************************************************************************************************
+//=========================================================================
+//= cmsenv                                                                =
+//= Run it as: root -l -b -q HighMassBKGABCD18.C                          =
+//=          Wei Shi @Nov 20, 2019, Rice U.                               =
+//=========================================================================
 #include "TFile.h"
 #include "TTree.h"
 #include "TH1.h"
@@ -34,29 +35,39 @@ void HighMassBKGABCD18() {
     }
   }
 
-  double VarX[12] = {30, 20, 10,  5, 30, 20, 10,  5, 30, 20, 10,  5};//Mass inequality
-  double VarY[12] = {60, 60, 60, 60, 40, 40, 40, 40, 20, 20, 20, 20};//Max(Iso1, Iso2)
+  //Check correlation factor
+  TH2F *IsoDimu = new TH2F("IsoDimu", "", 10000, 0., 1000., 10000, 0., 1000.);
+  ostringstream stream_cut_tmp;
+  stream_cut_tmp << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && recoRePaired2muleading_m < 76 && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Upsilon_up << " && diMuonC_FittedVtx_m < " << m_highmax << " && diMuonF_FittedVtx_m > " << m_Upsilon_up << " && diMuonF_FittedVtx_m < " << m_highmax;
+  TString cut_tmp = stream_cut_tmp.str();
 
-  double A[12]    = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//Estimated BKG yield in region A ~ B*D/C
-  double ErrA[12] = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//Error on A ~ |A|*sqrt(1/B+1/C+1/D), assuming poisson stats in BCD
-  double B[12]    = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//BKG in B
-  double C[12]    = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//BKG in C
-  double D[12]    = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};//BKG in D
+  TTree* tree_dimudimu_tmp = chain_data_dimudimu.CopyTree(cut_tmp);
+  tree_dimudimu_tmp->Draw("diMuonC_IsoTk_FittedVtx:diMuonF_IsoTk_FittedVtx >> IsoDimu", "", "COLZ");
+
+
+  double VarX[1] = {100.0};//Iso dimu1
+  double VarY[1] = {100.0};//Iso dimu2
+
+  double A[1]    = {0};//Estimated BKG yield in region A ~ B*D/C
+  double ErrA[1] = {0};//Error on A ~ |A|*sqrt(1/B+1/C+1/D), assuming poisson stats in BCD
+  double B[1]    = {0};//BKG in B
+  double C[1]    = {0};//BKG in C
+  double D[1]    = {0};//BKG in D
 
   //Print Table
   cout<<"********************************************************************"<<endl;
   cout<<"* ( VarX, VarY ) *    B    *    C    *    D    *   <A>   *   ErrA  *"<<endl;
-  for (int i = 0; i < 12; i++) {
+  for (int i = 0; i < 1; i++) {
     ostringstream stream_cut_B;
-    stream_cut_B << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && recoRePaired2muleading_m < 76 && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && TMath::Max(diMuonC_IsoTk_FittedVtx,diMuonF_IsoTk_FittedVtx)<"<< VarY[i] <<" && TMath::Max(diMuonC_IsoTk_FittedVtx,diMuonF_IsoTk_FittedVtx)>="<< iso_cut <<" && fabs(diMuonC_FittedVtx_m - diMuonF_FittedVtx_m) - 5*( -0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) )<0.236369 && diMuonC_FittedVtx_m>11. && diMuonC_FittedVtx_m<59. && diMuonF_FittedVtx_m>11. && diMuonF_FittedVtx_m<59.";
+    stream_cut_B << "diMuonC_IsoTk_FittedVtx < "<< iso_cut <<" && diMuonF_IsoTk_FittedVtx < "<< VarY[i] <<" && diMuonF_IsoTk_FittedVtx >= " << iso_cut << " && is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && recoRePaired2muleading_m < 76 && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Upsilon_up << " && diMuonC_FittedVtx_m < " << m_highmax << " && diMuonF_FittedVtx_m > " << m_Upsilon_up << " && diMuonF_FittedVtx_m < " << m_highmax;
     TString cut_B = stream_cut_B.str();
 
     ostringstream stream_cut_C;
-    stream_cut_C << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && recoRePaired2muleading_m < 76 && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && TMath::Max(diMuonC_IsoTk_FittedVtx,diMuonF_IsoTk_FittedVtx)<"<< VarY[i] <<" && TMath::Max(diMuonC_IsoTk_FittedVtx,diMuonF_IsoTk_FittedVtx)>="<< iso_cut <<" && fabs(diMuonC_FittedVtx_m - diMuonF_FittedVtx_m) - 5*( -0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) )<"<< VarX[i] <<" && fabs(diMuonC_FittedVtx_m - diMuonF_FittedVtx_m) - 5*( -0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) )>=0.236369 && diMuonC_FittedVtx_m>11. && diMuonC_FittedVtx_m<59. && diMuonF_FittedVtx_m>11. && diMuonF_FittedVtx_m<59.";
+    stream_cut_C << "diMuonC_IsoTk_FittedVtx < "<< VarX[i] <<" && diMuonC_IsoTk_FittedVtx >= "<< iso_cut <<" && diMuonF_IsoTk_FittedVtx < "<< VarY[i] <<" && diMuonF_IsoTk_FittedVtx >= " << iso_cut << " && is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && recoRePaired2muleading_m < 76 && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Upsilon_up << " && diMuonC_FittedVtx_m < " << m_highmax << " && diMuonF_FittedVtx_m > " << m_Upsilon_up << " && diMuonF_FittedVtx_m < " << m_highmax;
     TString cut_C = stream_cut_C.str();
 
     ostringstream stream_cut_D;
-    stream_cut_D << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && recoRePaired2muleading_m < 76 && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && TMath::Max(diMuonC_IsoTk_FittedVtx,diMuonF_IsoTk_FittedVtx)<"<< iso_cut <<" && fabs(diMuonC_FittedVtx_m - diMuonF_FittedVtx_m) - 5*( -0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) )<"<< VarX[i] <<" && fabs(diMuonC_FittedVtx_m - diMuonF_FittedVtx_m) - 5*( -0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) )>=0.236369 && diMuonC_FittedVtx_m>11. && diMuonC_FittedVtx_m<59. && diMuonF_FittedVtx_m>11. && diMuonF_FittedVtx_m<59.";
+    stream_cut_D << "diMuonC_IsoTk_FittedVtx < "<< VarX[i] <<" && diMuonC_IsoTk_FittedVtx >= "<< iso_cut <<" && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && recoRePaired2muleading_m < 76 && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Upsilon_up << " && diMuonC_FittedVtx_m < " << m_highmax << " && diMuonF_FittedVtx_m > " << m_Upsilon_up << " && diMuonF_FittedVtx_m < " << m_highmax;
     TString cut_D = stream_cut_D.str();
 
     TTree* tree_dimudimu_B = chain_data_dimudimu.CopyTree(cut_B);
@@ -79,16 +90,18 @@ void HighMassBKGABCD18() {
   //Draw <A> ErrA in one plot
   TFile myPlot(outFileHMABCD, "RECREATE");
 
+  IsoDimu->Write();
+
   TCanvas *C1=new TCanvas("C1", "C1", 700, 500);
   C1->cd();
   TH1F *Yield = new TH1F();
-  for(unsigned int iB=1; iB<=12; iB++){
+  for(unsigned int iB=1; iB<=1; iB++){
     Yield->SetBinContent(iB, A[iB-1] );
     Yield->SetBinError(iB, ErrA[iB-1]);
     Yield->GetXaxis()->SetBinLabel(iB, Form("(%.0f, %.0f)", VarX[iB-1], VarY[iB-1]) );
   }
   Yield->SetMarkerStyle(20);
-  Yield->GetXaxis()->SetTitle("(Max VarX, Max VarY)");
+  Yield->GetXaxis()->SetTitle("(Max Iso_{#mu#mu1}, Max Iso_{#mu#mu2})");
   Yield->GetYaxis()->SetTitle("Events");
   Yield->SetTitle("Estimated Background Yield in Signal Region A");
   Yield->SetStats(0);

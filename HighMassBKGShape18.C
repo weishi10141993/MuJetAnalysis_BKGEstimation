@@ -1,10 +1,8 @@
-//***********************************************************************************************
-//* For background shape modeling by comparing MC to DATA at Control Region                     *
-//* Source most recent root version:                                                            *
-//* . /cvmfs/sft.cern.ch/lcg/app/releases/ROOT/6.18.04/x86_64-centos7-gcc48-opt/bin/thisroot.sh *
-//* Run it as: root -l -b -q HighMassBKGShape18.C                                                 *
-//*                    Wei Shi @Sep 24, 2019, Rice U.                                           *
-//***********************************************************************************************
+//=========================================================================
+//= cmsenv                                                                =
+//= Run it as: root -l -b -q HighMassBKGShape18.C                         =
+//=          Wei Shi @Nov 20, 2019, Rice U.                               =
+//=========================================================================
 #include "TFile.h"
 #include "TTree.h"
 #include "TH1.h"
@@ -109,7 +107,7 @@ void HighMassBKGShape18()
   TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
 
-  for (int j = 0; j < 4; j++) {
+  for (int j = 0; j < 1; j++) {
     DATA_file_name.Form( "%s/%s", store.Data(), DATA_files[j].Data() );
     std::cout << "Opening file #"<< j+1 << ": " << DATA_file_name.Data() << std::endl;
     file_tmp = TFile::Open(DATA_file_name);
@@ -139,7 +137,7 @@ void HighMassBKGShape18()
   //MC vs DATA
   CR1pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(100); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(100); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/3.5GeV");
   //Plot MC error
   MC_CR_m1->SetLineColor(2); MC_CR_m1->SetFillColor(2); MC_CR_m1->SetFillStyle(3004); MC_CR_m1->Draw("E2 SAME");
   Double_t MC_CR_m1_error;
@@ -215,7 +213,7 @@ void HighMassBKGShape18()
   //MC vs DATA
   CR2pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(100); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(100); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/3.5GeV");
   //Plot MC error
   MC_CR_m2->SetLineColor(2); MC_CR_m2->SetFillColor(2); MC_CR_m2->SetFillStyle(3004); MC_CR_m2->Draw("E2 SAME");
   Double_t MC_CR_m2_error;
@@ -365,7 +363,7 @@ void HighMassBKGShape18()
   MC_hs_SR_m1->Draw("HIST");
   MC_hs_SR_m1->SetMaximum(10);
   MC_hs_SR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
-  MC_hs_SR_m1->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_SR_m1->GetYaxis()->SetTitle("Events/3.5GeV");
   MC_SR_m1->SetLineColor(2);
   MC_SR_m1->SetFillColor(2);
   MC_SR_m1->SetFillStyle(3004);
@@ -405,7 +403,7 @@ void HighMassBKGShape18()
   MC_hs_SR_m2->Draw("HIST");
   MC_hs_SR_m2->SetMaximum(10);
   MC_hs_SR_m2->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]");
-  MC_hs_SR_m2->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_SR_m2->GetYaxis()->SetTitle("Events/3.5GeV");
   MC_SR_m2->SetLineColor(2);
   MC_SR_m2->SetFillColor(2);
   MC_SR_m2->SetFillStyle(3004);

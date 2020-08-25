@@ -1,8 +1,8 @@
 #!/bin/bash
 #SBATCH --job-name=LowMassBKG2D18
-#SBATCH --time=01:00:00
+#SBATCH --time=01:30:00
 #SBATCH --ntasks=1
-#SBATCH --mem=700M
+#SBATCH --mem=2000M
 #SBATCH --output=LowMassBKG2D.out.%j
 #SBATCH --account=122747014089
 

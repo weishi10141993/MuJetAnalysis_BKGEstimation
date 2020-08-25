@@ -14,13 +14,16 @@ TString iso_cut = "2.3";//isolation cut for dimu
 
 const double       m_min  = 0.2113;
 const double       m_max  = 9.;
+const double       m_highmax = 60.;
 const unsigned int m_bins = 220;
 
 //Used for excluding the J/psi region when constructing 1D/2D template
 const double       m_Jpsi_dn = 2.72;
 const double       m_Jpsi_up = 3.24;
+const double       m_Upsilon_up = 11.;
 const unsigned int m_bins_below_Jpsi = 63;//bin size is ~0.04GeV, as above
 const unsigned int m_bins_above_Jpsi = 144;
+const unsigned int m_bins_above_Upsilon = 98;//bin size is 0.5GeV
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in LowMassBKGPlot2D !
@@ -37,10 +40,10 @@ const double validate_m2_iso_Ymax_2018    = 20.;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in HighMassBKGShape  !
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//Mass range and bin size at high mass 11-59GeV
+//Mass range and bin size at high mass
 const double       HM_m_min  = 11.0;
-const double       HM_m_max  = 59.0;
-const unsigned int HM_m_bins = 12;//bin size 4GeV
+const double       HM_m_max  = 60.0;
+const unsigned int HM_m_bins = 14;//bin size 3.5GeV
 
 //Directory of histograms
 TString store_2017 = "/scratch/user/ws13/SMBKGatHighMass/2017";
@@ -67,11 +70,8 @@ TString MC_files_2017[7] = {
   "HighMassBKGShape_2017_ggHToZZTo4L.root",
   "HighMassBKGShape_2017_ggToZZTo4mu.root"
 };
-TString DATA_files_2017[4] = {
-  "HighMassBKGShape_2017C.root",
-  "HighMassBKGShape_2017D.root",
-  "HighMassBKGShape_2017E.root",
-  "HighMassBKGShape_2017F.root"
+TString DATA_files_2017[1] = {
+  "HighMassBKGShape_2017DoubleMuon_ABCD.root"
 };
 
 TString MC_files_2018[7] = {
@@ -83,9 +83,7 @@ TString MC_files_2018[7] = {
   "HighMassBKGShape_2018_ggHToZZTo4L.root",
   "HighMassBKGShape_2018_ggToZZTo4mu.root"
 };
-TString DATA_files_2018[4] = {
-  "HighMassBKGShape_2018A.root",
-  "HighMassBKGShape_2018B.root",
-  "HighMassBKGShape_2018C.root",
-  "HighMassBKGShape_2018D.root"
+//DoubleMuon dataset
+TString DATA_files_2018[1] = {
+  "HighMassBKGShape_2018DoubleMuon_ABCD.root"
 };
