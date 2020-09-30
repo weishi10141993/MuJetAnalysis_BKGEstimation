@@ -24,7 +24,7 @@ A MC vs data comparison at the control region. And it also gives the MC distribu
 root -l -b -q HighMassBKGShape18.C
 ```
 
-A sanity check is done with ABCD method, which is purely data-driven. It gives estimated yield in signal region A. The stability of this method is also checked.
+[Obselete] A sanity check is done with ABCD method, which is purely data-driven. It gives estimated yield in signal region A. The stability of this method is also checked.
 ```
 root -l -b -q HighMassBKGABCD18.C
 ```
