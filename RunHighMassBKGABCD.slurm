@@ -4,7 +4,7 @@
 #SBATCH --ntasks=1
 #SBATCH --mem=10000M
 #SBATCH --output=ABCD18.out.%j
-#SBATCH --account=122747014089
+#SBATCH --account=122747014489
 
 module load cctools
 export PARROT_CVMFS_ALIEN_CACHE=/scratch/group/mitchcomp/CVMFS_cache

@@ -24,7 +24,7 @@ void HighMassBKGShape18()
   //Configure inputs for year
   BKG_cfg::ConfigureInput(year);
 
-  TLegend *txtHeader = new TLegend(.13, .935, 0.97, 1.);
+  TLegend *txtHeader = new TLegend(0.09, 0.905, 0.89, 0.94);
   txtHeader->SetFillColor(kWhite);
   txtHeader->SetFillStyle(0);
   txtHeader->SetBorderSize(0);
@@ -44,6 +44,8 @@ void HighMassBKGShape18()
   TH1F *MC_CR_m1 = new TH1F("MC_CR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *MC_CR_m2 = new TH1F("MC_CR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
   //TH1F *MC_CR_orphdimumass = new TH1F("MC_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
+
+  //used for plot error
   TH1F *MC_SR_m1 = new TH1F("MC_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *MC_SR_m2 = new TH1F("MC_SR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
 
@@ -353,10 +355,9 @@ void HighMassBKGShape18()
   pull_CR_orphdimumass->Draw("P");
   CROrphDimuM->Write();*/
 
-  //===============
-  //= For m1 at SR*
-  //===============
-  //Consider to do a simple poly 0/1-fit on the shape
+  //================
+  //= For m1 at SR =
+  //================
   //Data blinded until approval
   TCanvas *SR1=new TCanvas("SR1","SR m1",700,500);
   SR1->cd();
@@ -394,10 +395,65 @@ void HighMassBKGShape18()
   SR1->Update(); SR1L->SetX1NDC(0.15); SR1L->SetX2NDC(0.5); SR1L->SetY1NDC(0.5); SR1L->SetY2NDC(0.9); SR1->Modified();
   gPad->RedrawAxis();
   SR1->Write();
+  //---------------------------------------------------------------------------------------------
+  //- Print bin content and bin error for all bins to be used for background pdf shape variation
+  //- Bin #0 contains the underflow. Normally starts from #1
+  //---------------------------------------------------------------------------------------------
+  std::cout << "=== Print bin content and bin error: MC SR m1 ===" << std::endl;
+  std::cout << "bin # * " << "bin content * " << "bin error" << std::endl;
+  for(unsigned int iB=1; iB<=HM_m_bins; iB++){ std::cout << left << setw(8) << iB << left << setw(14) << MC_SR_m1->GetBinContent(iB) << left << setw(9) << MC_SR_m1->GetBinError(iB) << std::endl; }
+  //-----------------------------------------------------------------
+  //- Draw interpolation lines between bins using nominal bin content
+  //-----------------------------------------------------------------
+  double plotMCm1[16];
+  //lower and upper bound is fixed
+  plotMCm1[0] = 11.0; plotMCm1[15] = 60.0;
+  //nominal, +1/-1 sigma cases: 14+2points, 2 is for the lower and upper bounds
+  double plotMCm1contentNom[16];
+  double plotMCm1contentUp[16];
+  double plotMCm1contentDn[16];
+  double plotMCm1contentBraidA[16];
+  double plotMCm1contentBraidB[16];
+  for (int i = 0; i < 14; i++) {
+    plotMCm1[i+1] = MCBinCenterMass[i];
+    plotMCm1contentNom[i+1] = MCBinContentm1[i];
+    plotMCm1contentUp[i+1] = MCBinContentm1[i] + MCBinErrm1[i];
+    plotMCm1contentDn[i+1] = MCBinContentm1[i] - MCBinErrm1[i];
+    if ( (i+1) % 2 == 0 ) { plotMCm1contentBraidA[i+1] = MCBinContentm1[i] - MCBinErrm1[i]; }
+    else { plotMCm1contentBraidA[i+1] = MCBinContentm1[i] + MCBinErrm1[i]; }
+    if ( (i+1) % 2 == 0 ) { plotMCm1contentBraidB[i+1] = MCBinContentm1[i] + MCBinErrm1[i]; }
+    else { plotMCm1contentBraidB[i+1] = MCBinContentm1[i] - MCBinErrm1[i]; }
+  }
+  plotMCm1contentNom[0]    = BKG_cfg::My_BKGShapem1(11.0);            plotMCm1contentNom[15]    = BKG_cfg::My_BKGShapem1(60.0);
+  plotMCm1contentUp[0]     = BKG_cfg::My_BKGShapem1SigmaUp(11.0);     plotMCm1contentUp[15]     = BKG_cfg::My_BKGShapem1SigmaUp(60.0);
+  plotMCm1contentDn[0]     = BKG_cfg::My_BKGShapem1SigmaDn(11.0);     plotMCm1contentDn[15]     = BKG_cfg::My_BKGShapem1SigmaDn(60.0);
+  plotMCm1contentBraidA[0] = BKG_cfg::My_BKGShapem1SigmaBraidA(11.0); plotMCm1contentBraidA[15] = BKG_cfg::My_BKGShapem1SigmaBraidA(60.0);
+  plotMCm1contentBraidB[0] = BKG_cfg::My_BKGShapem1SigmaBraidB(11.0); plotMCm1contentBraidB[15] = BKG_cfg::My_BKGShapem1SigmaBraidB(60.0);
+  //plot
+  TGraph* BkgPdfm1Nom = new TGraph(16, plotMCm1, plotMCm1contentNom);
+  TGraph* BkgPdfm1Up  = new TGraph(16, plotMCm1, plotMCm1contentUp);
+  TGraph* BkgPdfm1Dn  = new TGraph(16, plotMCm1, plotMCm1contentDn);
+  TGraph* BkgPdfm1BraidA  = new TGraph(16, plotMCm1, plotMCm1contentBraidA);
+  TGraph* BkgPdfm1BraidB  = new TGraph(16, plotMCm1, plotMCm1contentBraidB);
+  BkgPdfm1Nom->SetLineColor(2); BkgPdfm1Nom->SetLineStyle(1); BkgPdfm1Nom->SetLineWidth(2);
+  BkgPdfm1Up->SetLineColor(2); BkgPdfm1Up->SetLineStyle(2); BkgPdfm1Up->SetLineWidth(2);
+  BkgPdfm1Dn->SetLineColor(2); BkgPdfm1Dn->SetLineStyle(3); BkgPdfm1Dn->SetLineWidth(2);
+  BkgPdfm1BraidA->SetLineColor(4); BkgPdfm1BraidA->SetLineStyle(4); BkgPdfm1BraidA->SetLineWidth(2);
+  BkgPdfm1BraidB->SetLineColor(28); BkgPdfm1BraidB->SetLineStyle(5); BkgPdfm1BraidB->SetLineWidth(2);
+  BkgPdfm1Nom->Draw("L"); BkgPdfm1Up->Draw("L"); BkgPdfm1Dn->Draw("L"); BkgPdfm1BraidA->Draw("L"); BkgPdfm1BraidB->Draw("L");
+  auto BkgPdfm1Legend = new TLegend(0.6, 0.5, 0.9, 0.9);
+  BkgPdfm1Legend->SetHeader("Shape Interpolation: m_{#mu#mu1}", "C");
+  BkgPdfm1Legend->AddEntry(BkgPdfm1Nom,    "Nominal", "l");
+  BkgPdfm1Legend->AddEntry(BkgPdfm1Up,     "Nominal + 1 #sigma", "l");
+  BkgPdfm1Legend->AddEntry(BkgPdfm1Dn,     "Nominal - 1 #sigma", "l");
+  BkgPdfm1Legend->AddEntry(BkgPdfm1BraidA, "Braid A", "l");
+  BkgPdfm1Legend->AddEntry(BkgPdfm1BraidB, "Braid B", "l");
+  BkgPdfm1Legend->Draw();
+  SR1->SaveAs("HighMassShape/SRm1Variations.pdf");
 
-  //===============
-  //= For m2 at SR*
-  //===============
+  //================
+  //= For m2 at SR =
+  //================
   TCanvas *SR2=new TCanvas("SR2","SR m2",700,500);
   SR2->cd();
   MC_hs_SR_m2->Draw("HIST");
@@ -434,6 +490,57 @@ void HighMassBKGShape18()
   SR2->Update(); SR2L->SetX1NDC(0.15); SR2L->SetX2NDC(0.5); SR2L->SetY1NDC(0.5); SR2L->SetY2NDC(0.9); SR2->Modified();
   gPad->RedrawAxis();
   SR2->Write();
+  //Print bin content and bin error for all bins to be used for background pdf shape variation
+  std::cout << "=== Print bin content and bin error: MC SR m2 ===" << std::endl;
+  std::cout << "bin # * " << "bin content * " << "bin error" << std::endl;
+  for(unsigned int iB=1; iB<=HM_m_bins; iB++){ std::cout << left << setw(8) << iB << left << setw(14) << MC_SR_m2->GetBinContent(iB) << left << setw(9) << MC_SR_m2->GetBinError(iB) << std::endl; }
+  //-----------------------------------------------------------------
+  //- Draw interpolation lines between bins using nominal bin content
+  //-----------------------------------------------------------------
+  //nominal case: 14+2points, 2 is for the 11 GeV and 60 GeV bound
+  double plotMCm2[16];
+  plotMCm2[0] = 11.0; plotMCm2[15] = 60.0;
+  double plotMCm2contentNom[16];
+  double plotMCm2contentUp[16];
+  double plotMCm2contentDn[16];
+  double plotMCm2contentBraidA[16];
+  double plotMCm2contentBraidB[16];
+  for (int i = 0; i < 14; i++) {
+    plotMCm2[i+1] = MCBinCenterMass[i];
+    plotMCm2contentNom[i+1] = MCBinContentm2[i];
+    plotMCm2contentUp[i+1] = MCBinContentm2[i] + MCBinErrm2[i];
+    plotMCm2contentDn[i+1] = MCBinContentm2[i] - MCBinErrm2[i];
+    if ( (i+1) % 2 == 0 ) { plotMCm2contentBraidA[i+1] = MCBinContentm2[i] - MCBinErrm2[i]; }
+    else { plotMCm2contentBraidA[i+1] = MCBinContentm2[i] + MCBinErrm2[i]; }
+    if ( (i+1) % 2 == 0 ) { plotMCm2contentBraidB[i+1] = MCBinContentm2[i] + MCBinErrm2[i]; }
+    else { plotMCm2contentBraidB[i+1] = MCBinContentm2[i] - MCBinErrm2[i]; }
+  }
+  plotMCm2contentNom[0]    = BKG_cfg::My_BKGShapem2(11.0);            plotMCm2contentNom[15]    = BKG_cfg::My_BKGShapem2(60.0);
+  plotMCm2contentUp[0]     = BKG_cfg::My_BKGShapem2SigmaUp(11.0);     plotMCm2contentUp[15]     = BKG_cfg::My_BKGShapem2SigmaUp(60.0);
+  plotMCm2contentDn[0]     = BKG_cfg::My_BKGShapem2SigmaDn(11.0);     plotMCm2contentDn[15]     = BKG_cfg::My_BKGShapem2SigmaDn(60.0);
+  plotMCm2contentBraidA[0] = BKG_cfg::My_BKGShapem2SigmaBraidA(11.0); plotMCm2contentBraidA[15] = BKG_cfg::My_BKGShapem2SigmaBraidA(60.0);
+  plotMCm2contentBraidB[0] = BKG_cfg::My_BKGShapem2SigmaBraidB(11.0); plotMCm2contentBraidB[15] = BKG_cfg::My_BKGShapem2SigmaBraidB(60.0);
+  //plot
+  TGraph* BkgPdfm2Nom = new TGraph(16, plotMCm2, plotMCm2contentNom);
+  TGraph* BkgPdfm2Up  = new TGraph(16, plotMCm2, plotMCm2contentUp);
+  TGraph* BkgPdfm2Dn  = new TGraph(16, plotMCm2, plotMCm2contentDn);
+  TGraph* BkgPdfm2BraidA  = new TGraph(16, plotMCm2, plotMCm2contentBraidA);
+  TGraph* BkgPdfm2BraidB  = new TGraph(16, plotMCm2, plotMCm2contentBraidB);
+  BkgPdfm2Nom->SetLineColor(2); BkgPdfm2Nom->SetLineStyle(1); BkgPdfm2Nom->SetLineWidth(2);
+  BkgPdfm2Up->SetLineColor(2); BkgPdfm2Up->SetLineStyle(2); BkgPdfm2Up->SetLineWidth(2);
+  BkgPdfm2Dn->SetLineColor(2); BkgPdfm2Dn->SetLineStyle(3); BkgPdfm2Dn->SetLineWidth(2);
+  BkgPdfm2BraidA->SetLineColor(4); BkgPdfm2BraidA->SetLineStyle(4); BkgPdfm2BraidA->SetLineWidth(2);
+  BkgPdfm2BraidB->SetLineColor(28); BkgPdfm2BraidB->SetLineStyle(5); BkgPdfm2BraidB->SetLineWidth(2);
+  BkgPdfm2Nom->Draw("L"); BkgPdfm2Up->Draw("L"); BkgPdfm2Dn->Draw("L"); BkgPdfm2BraidA->Draw("L"); BkgPdfm2BraidB->Draw("L");
+  auto BkgPdfm2Legend = new TLegend(0.6, 0.5, 0.9, 0.9);
+  BkgPdfm2Legend->SetHeader("Shape Interpolation: m_{#mu#mu2}", "C");
+  BkgPdfm2Legend->AddEntry(BkgPdfm2Nom,    "Nominal", "l");
+  BkgPdfm2Legend->AddEntry(BkgPdfm2Up,     "Nominal + 1 #sigma", "l");
+  BkgPdfm2Legend->AddEntry(BkgPdfm2Dn,     "Nominal - 1 #sigma", "l");
+  BkgPdfm2Legend->AddEntry(BkgPdfm2BraidA, "Braid A", "l");
+  BkgPdfm2Legend->AddEntry(BkgPdfm2BraidB, "Braid B", "l");
+  BkgPdfm2Legend->Draw();
+  SR2->SaveAs("HighMassShape/SRm2Variations.pdf");
 
   myPlot.Close();
 
