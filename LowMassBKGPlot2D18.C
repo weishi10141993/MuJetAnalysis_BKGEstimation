@@ -65,14 +65,25 @@ void LowMassBKGPlot2D18() {
   BKG_cfg::ConfigureInput(year);
   setTDRStyle();
 
-  TLegend *txtHeader = new TLegend(.003,.95,0.97,1.);
+  //for template
+  TLegend *txtHeader = new TLegend(.00001, 0.95, 0.94, 1.);
   txtHeader->SetFillColor(kWhite);
   txtHeader->SetFillStyle(0);
   txtHeader->SetBorderSize(0);
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader(header);
+  txtHeader->SetHeader(headertpl2);
+
+  //for validation plot
+  TLegend *txtHeadervld = new TLegend(0.14, 0.93, 0.98, 0.98);
+  txtHeadervld->SetFillColor(kWhite);
+  txtHeadervld->SetFillStyle(0);
+  txtHeadervld->SetBorderSize(0);
+  txtHeadervld->SetTextFont(42);
+  txtHeadervld->SetTextSize(0.045);
+  txtHeadervld->SetTextAlign(22);
+  txtHeadervld->SetHeader(headervld);
 
   //gStyle->SetPalette(52); //Grey Scale
   Double_t Red[2]    = {1.00, 0.00};
@@ -306,6 +317,7 @@ void LowMassBKGPlot2D18() {
   h1_control_Iso_offDiagonal_massC_data_below_Jpsi->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massC_data_below_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h1_control_Iso_offDiagonal_massC_data_below_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_Iso_offDiagonal_massC_data_below_Jpsi->GetYaxis()->SetTitleOffset(0.9);
   h1_control_Iso_offDiagonal_massC_data_below_Jpsi->GetYaxis()->SetRangeUser(0., 10.);
 
   TH1D *h1_control_Iso_offDiagonal_massC_template_below_Jpsi = new TH1D( *h2D_template2D_below_Jpsi_offDiagonal->ProjectionX() );
@@ -319,7 +331,7 @@ void LowMassBKGPlot2D18() {
   c_control_Iso_offDiagonal_massC_below_Jpsi->cd();
   h1_control_Iso_offDiagonal_massC_data_below_Jpsi->Draw("e1");
   h1_control_Iso_offDiagonal_massC_template_below_Jpsi->Draw("HIST same");
-  txtHeader->Draw();
+  txtHeadervld->Draw();
   c_control_Iso_offDiagonal_massC_below_Jpsi->SaveAs("figures/Validation_m1_CR_below_Jpsi.pdf");
   c_control_Iso_offDiagonal_massC_below_Jpsi->SaveAs("figures/Validation_m1_CR_below_Jpsi.png");
   c_control_Iso_offDiagonal_massC_below_Jpsi->SaveAs("figures/Validation_m1_CR_below_Jpsi.root");
@@ -370,6 +382,7 @@ void LowMassBKGPlot2D18() {
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetYaxis()->SetTitleOffset(0.9);
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->GetYaxis()->SetRangeUser(0., 10.);
 
   TH1D *h1_control_Iso_offDiagonal_massF_template_below_Jpsi = new TH1D( *h2D_template2D_below_Jpsi_offDiagonal->ProjectionY() );
@@ -383,7 +396,7 @@ void LowMassBKGPlot2D18() {
   c_control_Iso_offDiagonal_massF_below_Jpsi->cd();
   h1_control_Iso_offDiagonal_massF_data_below_Jpsi->Draw("e1");
   h1_control_Iso_offDiagonal_massF_template_below_Jpsi->Draw("HIST same");
-  txtHeader->Draw();
+  txtHeadervld->Draw();
   c_control_Iso_offDiagonal_massF_below_Jpsi->SaveAs("figures/Validation_m2_CR_below_Jpsi.pdf");
   c_control_Iso_offDiagonal_massF_below_Jpsi->SaveAs("figures/Validation_m2_CR_below_Jpsi.png");
   c_control_Iso_offDiagonal_massF_below_Jpsi->SaveAs("figures/Validation_m2_CR_below_Jpsi.root");
@@ -570,6 +583,7 @@ void LowMassBKGPlot2D18() {
   h1_control_Iso_offDiagonal_massC_data_above_Jpsi->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massC_data_above_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
   h1_control_Iso_offDiagonal_massC_data_above_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_Iso_offDiagonal_massC_data_above_Jpsi->GetYaxis()->SetTitleOffset(0.9);
   h1_control_Iso_offDiagonal_massC_data_above_Jpsi->GetYaxis()->SetRangeUser(0., 10.);
 
   TH1D *h1_control_Iso_offDiagonal_massC_template_above_Jpsi = new TH1D( *h2D_template2D_above_Jpsi_offDiagonal->ProjectionX() );
@@ -583,7 +597,7 @@ void LowMassBKGPlot2D18() {
   c_control_Iso_offDiagonal_massC_above_Jpsi->cd();
   h1_control_Iso_offDiagonal_massC_data_above_Jpsi->Draw("e1");
   h1_control_Iso_offDiagonal_massC_template_above_Jpsi->Draw("HIST same");
-  txtHeader->Draw();
+  txtHeadervld->Draw();
   c_control_Iso_offDiagonal_massC_above_Jpsi->SaveAs("figures/Validation_m1_CR_above_Jpsi.pdf");
   c_control_Iso_offDiagonal_massC_above_Jpsi->SaveAs("figures/Validation_m1_CR_above_Jpsi.png");
   c_control_Iso_offDiagonal_massC_above_Jpsi->SaveAs("figures/Validation_m1_CR_above_Jpsi.root");
@@ -634,6 +648,7 @@ void LowMassBKGPlot2D18() {
   h1_control_Iso_offDiagonal_massF_data_above_Jpsi->SetMarkerStyle(20);
   h1_control_Iso_offDiagonal_massF_data_above_Jpsi->GetXaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
   h1_control_Iso_offDiagonal_massF_data_above_Jpsi->GetYaxis()->SetTitle("Events/0.04 GeV");
+  h1_control_Iso_offDiagonal_massF_data_above_Jpsi->GetYaxis()->SetTitleOffset(0.9);
   h1_control_Iso_offDiagonal_massF_data_above_Jpsi->GetYaxis()->SetRangeUser(0., 10.);
 
   TH1D *h1_control_Iso_offDiagonal_massF_template_above_Jpsi = new TH1D( *h2D_template2D_above_Jpsi_offDiagonal->ProjectionY() );
@@ -647,7 +662,7 @@ void LowMassBKGPlot2D18() {
   c_control_Iso_offDiagonal_massF_above_Jpsi->cd();
   h1_control_Iso_offDiagonal_massF_data_above_Jpsi->Draw("e1");
   h1_control_Iso_offDiagonal_massF_template_above_Jpsi->Draw("HIST same");
-  txtHeader->Draw();
+  txtHeadervld->Draw();
   c_control_Iso_offDiagonal_massF_above_Jpsi->SaveAs("figures/Validation_m2_CR_above_Jpsi.pdf");
   c_control_Iso_offDiagonal_massF_above_Jpsi->SaveAs("figures/Validation_m2_CR_above_Jpsi.png");
   c_control_Iso_offDiagonal_massF_above_Jpsi->SaveAs("figures/Validation_m2_CR_above_Jpsi.root");

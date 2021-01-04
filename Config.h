@@ -43,7 +43,12 @@ double MCBinErrm2[14] = {0.00767975, 0.0153949, 0.357711, 0.0224435, 0.0240383, 
 //!  Initialize variables for macros  !
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 Float_t luminosity;//Luminosity of a year
-TString header = "";//header of plots
+TString headertpl = "";//header of template 1D
+TString headerfit = "";//header of fit low mass
+TString headertpl2 = "";//header of template 2D
+TString headervld = "";//header of template validation plots
+TString header1 = "";//header of CR plots with pulls
+TString header = "";//header of SR plots without pulls
 
 TString inputFile1;//Run 2 data Ntuples used for HighMassBKGABCD and LowMassBKGFit1D
 TString outFileLM = "";//output file of LowMassBKGFit1D, will also be used in limit calculation
@@ -99,7 +104,18 @@ namespace BKG_cfg {
       std::cout << "*** User input year is unknown! Please check. ***" << std::endl;
     }
 
-    header         = header + "#bf{CMS} #it{Preliminary}                                             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    //for low mass data 1D template
+    headertpl      = headertpl + "#bf{CMS} #it{Preliminary}             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    //for low mass fit overlay data
+    headerfit      = headerfit + "#bf{CMS} #it{Preliminary}                                             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    //for low mass data 2D template
+    headertpl2     = headertpl2 + "#bf{CMS} #it{Preliminary}              " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    //for low mass data 2D template validation
+    headervld      = headervld + "#bf{CMS} #it{Preliminary}             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    //For high mass CR with lower panel
+    header1        = header1 + "#bf{CMS} #it{Preliminary}                                                                                       " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    //For high mass SR without lower panel
+    header         = header +    "#bf{CMS} #it{Preliminary}                                             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
     outFileLM      = outFileLM + "ws_" + Form("%d", year) + "_FINAL.root";
     outFileHMABCD  = outFileHMABCD + "ABCD_" + Form("%d", year) + "_FINAL.root";
     outFileHMShape = outFileHMShape + "HighMassBKGShape_" + Form("%d", year) + "_FINAL.root";

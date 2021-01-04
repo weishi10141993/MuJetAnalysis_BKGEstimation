@@ -66,14 +66,23 @@ void LowMassBKGFit1D18() {
   BKG_cfg::ConfigureInput(year);
   setTDRStyle();
 
-  TLegend *txtHeader = new TLegend(.13,.935,0.97,1.);
+  TLegend *txtHeaderfit = new TLegend(0.14, 0.935, 0.98, 1);
+  txtHeaderfit->SetFillColor(kWhite);
+  txtHeaderfit->SetFillStyle(0);
+  txtHeaderfit->SetBorderSize(0);
+  txtHeaderfit->SetTextFont(42);
+  txtHeaderfit->SetTextSize(0.045);
+  txtHeaderfit->SetTextAlign(22);
+  txtHeaderfit->SetHeader(headerfit);
+
+  TLegend *txtHeader = new TLegend(0.14, 0.935, 0.98, 1);
   txtHeader->SetFillColor(kWhite);
   txtHeader->SetFillStyle(0);
   txtHeader->SetBorderSize(0);
   txtHeader->SetTextFont(42);
   txtHeader->SetTextSize(0.045);
   txtHeader->SetTextAlign(22);
-  txtHeader->SetHeader(header);
+  txtHeader->SetHeader(headertpl);
 
   //Output ws
   RooWorkspace* w = new RooWorkspace("w");
@@ -337,7 +346,7 @@ void LowMassBKGFit1D18() {
   RooPlot* plotC = w->var("m1")->frame(Title("1D template for orphan dimuon high pT"), Bins(m_bins));
   w->data("ds_dimuorphan_bg_m1")->plotOn(plotC, DataError(RooAbsData::SumW2), Name("data_m1"));//data is binned now: RooHist
   w->pdf("template1D_m1")->plotOn(plotC, LineColor(kRed), Precision(0.0001), Name("template1D_m1"));//template: RooCurve
-  plotC->GetYaxis()->SetTitle("Events/0.04GeV");
+  plotC->GetYaxis()->SetTitle("Events/0.04GeV"); plotC->GetYaxis()->SetTitleOffset(1.1);
 
   // Upper pad: fit overlay data
   TCanvas * c_template1D_m1 = new TCanvas("c_template1D_m1", "c_template1D_m1", 800, 800);
@@ -345,7 +354,7 @@ void LowMassBKGFit1D18() {
   TPad *pad1 = new TPad("pad1", "pad1", 0, 0.3, 1, 1.0);
   pad1->SetBottomMargin(0); pad1->Draw(); pad1->cd();
   plotC->Draw("same");
-  txtHeader->Draw("same");
+  txtHeaderfit->Draw("same");
   c_template1D_m1->cd(); c_template1D_m1->Update();
 
   // Lower pad: Fit/Data ratio
@@ -354,7 +363,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit1 = new TH1F("h_dataFit1","", m_bins, m_min, m_max);
   h_dataFit1->SetLineColor(kBlack); h_dataFit1->SetMarkerStyle(20); h_dataFit1->SetMarkerColor(1); h_dataFit1->SetStats(0);
   h_dataFit1->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit1->GetXaxis()->SetTitleSize(20); h_dataFit1->GetXaxis()->SetTitleFont(43); h_dataFit1->GetXaxis()->SetTitleOffset(3.0); h_dataFit1->GetXaxis()->SetLabelSize(15); h_dataFit1->GetXaxis()->SetLabelFont(43);
-  h_dataFit1->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1->GetYaxis()->SetNdivisions(505); h_dataFit1->GetYaxis()->CenterTitle(); h_dataFit1->GetYaxis()->SetTitleSize(20); h_dataFit1->GetYaxis()->SetTitleFont(43); h_dataFit1->GetYaxis()->SetTitleOffset(.9); h_dataFit1->GetYaxis()->SetLabelSize(15); h_dataFit1->GetYaxis()->SetLabelFont(43);
+  h_dataFit1->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1->GetYaxis()->SetNdivisions(505); h_dataFit1->GetYaxis()->CenterTitle(); h_dataFit1->GetYaxis()->SetTitleSize(20); h_dataFit1->GetYaxis()->SetTitleFont(43); h_dataFit1->GetYaxis()->SetTitleOffset(1.2); h_dataFit1->GetYaxis()->SetLabelSize(15); h_dataFit1->GetYaxis()->SetLabelFont(43);
   TH1F *hdata = (TH1F*) ds_dimuorphan_bg_m1->createHistogram("hdata", m1, Binning(m_bins, m_min, m_max));
   TH1F* h_func = new TH1F("h_func","", m_bins, m_min, m_max);
   w->pdf("template1D_m1")->fillHistogram(h_func, m1, hdata->GetEntries());
@@ -388,7 +397,7 @@ void LowMassBKGFit1D18() {
   RooPlot* plotC_below_Jpsi = w->var("m1_below_Jpsi")->frame(Title("1D template for orphan dimuon high pT below Jpsi"), Bins(m_bins_below_Jpsi));
   w->data("ds_dimuorphan_bg_m1_below_Jpsi")->plotOn(plotC_below_Jpsi, DataError(RooAbsData::SumW2), Name("data_m1_below_Jpsi"));
   w->pdf("template1D_m1_below_Jpsi")->plotOn(plotC_below_Jpsi, LineColor(kRed), Precision(0.0001), Name("template1D_m1_below_Jpsi")); // By default only fitted range is shown
-  plotC_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
+  plotC_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV"); plotC_below_Jpsi->GetYaxis()->SetTitleOffset(1.1);
 
   // Upper pad: fit overlay data
   TCanvas * c_template1D_m1_below_Jpsi = new TCanvas("c_template1D_m1_below_Jpsi", "c_template1D_m1_below_Jpsi", 800, 800);
@@ -396,7 +405,7 @@ void LowMassBKGFit1D18() {
   TPad *pad1_below_Jpsi = new TPad("pad1_below_Jpsi", "pad1_below_Jpsi", 0, 0.3, 1, 1.0);
   pad1_below_Jpsi->SetBottomMargin(0); pad1_below_Jpsi->Draw(); pad1_below_Jpsi->cd();
   plotC_below_Jpsi->Draw("same");
-  txtHeader->Draw("same");
+  txtHeaderfit->Draw("same");
   c_template1D_m1_below_Jpsi->cd(); c_template1D_m1_below_Jpsi->Update();
 
   // Lower pad: Fit/Data ratio
@@ -405,7 +414,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit1_below_Jpsi = new TH1F("h_dataFit1_below_Jpsi","", m_bins_below_Jpsi, m_min, m_Jpsi_dn);
   h_dataFit1_below_Jpsi->SetLineColor(kBlack); h_dataFit1_below_Jpsi->SetMarkerStyle(20); h_dataFit1_below_Jpsi->SetMarkerColor(1); h_dataFit1_below_Jpsi->SetStats(0);
   h_dataFit1_below_Jpsi->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit1_below_Jpsi->GetXaxis()->SetTitleSize(20); h_dataFit1_below_Jpsi->GetXaxis()->SetTitleFont(43); h_dataFit1_below_Jpsi->GetXaxis()->SetTitleOffset(3.0); h_dataFit1_below_Jpsi->GetXaxis()->SetLabelSize(15); h_dataFit1_below_Jpsi->GetXaxis()->SetLabelFont(43);
-  h_dataFit1_below_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1_below_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit1_below_Jpsi->GetYaxis()->CenterTitle(); h_dataFit1_below_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit1_below_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit1_below_Jpsi->GetYaxis()->SetTitleOffset(.9); h_dataFit1_below_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit1_below_Jpsi->GetYaxis()->SetLabelFont(43);
+  h_dataFit1_below_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1_below_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit1_below_Jpsi->GetYaxis()->CenterTitle(); h_dataFit1_below_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit1_below_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit1_below_Jpsi->GetYaxis()->SetTitleOffset(1.2); h_dataFit1_below_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit1_below_Jpsi->GetYaxis()->SetLabelFont(43);
   TH1F *hdata_below_Jpsi = (TH1F*) ds_dimuorphan_bg_m1_below_Jpsi->createHistogram("hdata_below_Jpsi", m1_below_Jpsi, Binning(m_bins_below_Jpsi, m_min, m_Jpsi_dn));
   TH1F* h_func_below_Jpsi = new TH1F("h_func_below_Jpsi","", m_bins_below_Jpsi, m_min, m_Jpsi_dn);
   w->pdf("template1D_m1_below_Jpsi")->fillHistogram(h_func_below_Jpsi, m1_below_Jpsi, hdata_below_Jpsi->GetEntries());
@@ -435,7 +444,7 @@ void LowMassBKGFit1D18() {
   RooPlot* plotC_above_Jpsi = w->var("m1_above_Jpsi")->frame(Title("1D template for orphan dimuon high pT above Jpsi"), Bins(m_bins_above_Jpsi));
   w->data("ds_dimuorphan_bg_m1_above_Jpsi")->plotOn(plotC_above_Jpsi, DataError(RooAbsData::SumW2), Name("data_m1_above_Jpsi"));
   w->pdf("template1D_m1_above_Jpsi")->plotOn(plotC_above_Jpsi, LineColor(kRed), Precision(0.0001), Name("template1D_m1_above_Jpsi"));
-  plotC_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
+  plotC_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV"); plotC_above_Jpsi->GetYaxis()->SetTitleOffset(1.1);
 
   // Upper pad: fit overlay data
   TCanvas * c_template1D_m1_above_Jpsi = new TCanvas("c_template1D_m1_above_Jpsi", "c_template1D_m1_above_Jpsi", 800, 800);
@@ -443,7 +452,7 @@ void LowMassBKGFit1D18() {
   TPad *pad1_above_Jpsi = new TPad("pad1_above_Jpsi", "pad1_above_Jpsi", 0, 0.3, 1, 1.0);
   pad1_above_Jpsi->SetBottomMargin(0); pad1_above_Jpsi->Draw(); pad1_above_Jpsi->cd();
   plotC_above_Jpsi->Draw("same");
-  txtHeader->Draw("same");
+  txtHeaderfit->Draw("same");
   c_template1D_m1_above_Jpsi->cd(); c_template1D_m1_above_Jpsi->Update();
 
   // Lower pad: Fit/Data ratio
@@ -452,7 +461,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit1_above_Jpsi = new TH1F("h_dataFit1_above_Jpsi","", m_bins_above_Jpsi, m_Jpsi_up, m_max);
   h_dataFit1_above_Jpsi->SetLineColor(kBlack); h_dataFit1_above_Jpsi->SetMarkerStyle(20); h_dataFit1_above_Jpsi->SetMarkerColor(1); h_dataFit1_above_Jpsi->SetStats(0);
   h_dataFit1_above_Jpsi->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit1_above_Jpsi->GetXaxis()->SetTitleSize(20); h_dataFit1_above_Jpsi->GetXaxis()->SetTitleFont(43); h_dataFit1_above_Jpsi->GetXaxis()->SetTitleOffset(3.0); h_dataFit1_above_Jpsi->GetXaxis()->SetLabelSize(15); h_dataFit1_above_Jpsi->GetXaxis()->SetLabelFont(43);
-  h_dataFit1_above_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1_above_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit1_above_Jpsi->GetYaxis()->CenterTitle(); h_dataFit1_above_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit1_above_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit1_above_Jpsi->GetYaxis()->SetTitleOffset(.9); h_dataFit1_above_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit1_above_Jpsi->GetYaxis()->SetLabelFont(43);
+  h_dataFit1_above_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1_above_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit1_above_Jpsi->GetYaxis()->CenterTitle(); h_dataFit1_above_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit1_above_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit1_above_Jpsi->GetYaxis()->SetTitleOffset(1.2); h_dataFit1_above_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit1_above_Jpsi->GetYaxis()->SetLabelFont(43);
   TH1F *hdata_above_Jpsi = (TH1F*) ds_dimuorphan_bg_m1_above_Jpsi->createHistogram("hdata_above_Jpsi", m1_above_Jpsi, Binning(m_bins_above_Jpsi, m_Jpsi_up, m_max));
   TH1F* h_func_above_Jpsi = new TH1F("h_func_above_Jpsi","", m_bins_above_Jpsi, m_Jpsi_up, m_max);
   w->pdf("template1D_m1_above_Jpsi")->fillHistogram(h_func_above_Jpsi, m1_above_Jpsi, hdata_above_Jpsi->GetEntries());
@@ -489,7 +498,7 @@ void LowMassBKGFit1D18() {
   TPad *pad1_above_Upsilon = new TPad("pad1_above_Upsilon", "pad1_above_Upsilon", 0, 0.3, 1, 1.0);
   pad1_above_Upsilon->SetBottomMargin(0); pad1_above_Upsilon->Draw(); pad1_above_Upsilon->cd();
   plotC_above_Upsilon->Draw("same");
-  txtHeader->Draw("same");
+  txtHeaderfit->Draw("same");
   c_template1D_m1_above_Upsilon->cd(); c_template1D_m1_above_Upsilon->Update();
 
   // Lower pad: Fit/Data ratio
@@ -498,7 +507,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit1_above_Upsilon = new TH1F("h_dataFit1_above_Upsilon","", m_bins_above_Upsilon, m_Upsilon_up, m_highmax);
   h_dataFit1_above_Upsilon->SetLineColor(kBlack); h_dataFit1_above_Upsilon->SetMarkerStyle(20); h_dataFit1_above_Upsilon->SetMarkerColor(1); h_dataFit1_above_Upsilon->SetStats(0);
   h_dataFit1_above_Upsilon->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit1_above_Upsilon->GetXaxis()->SetTitleSize(20); h_dataFit1_above_Upsilon->GetXaxis()->SetTitleFont(43); h_dataFit1_above_Upsilon->GetXaxis()->SetTitleOffset(3.0); h_dataFit1_above_Upsilon->GetXaxis()->SetLabelSize(15); h_dataFit1_above_Upsilon->GetXaxis()->SetLabelFont(43);
-  h_dataFit1_above_Upsilon->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1_above_Upsilon->GetYaxis()->SetNdivisions(505); h_dataFit1_above_Upsilon->GetYaxis()->CenterTitle(); h_dataFit1_above_Upsilon->GetYaxis()->SetTitleSize(20); h_dataFit1_above_Upsilon->GetYaxis()->SetTitleFont(43); h_dataFit1_above_Upsilon->GetYaxis()->SetTitleOffset(.9); h_dataFit1_above_Upsilon->GetYaxis()->SetLabelSize(15); h_dataFit1_above_Upsilon->GetYaxis()->SetLabelFont(43);
+  h_dataFit1_above_Upsilon->GetYaxis()->SetTitle("Fit/Data"); h_dataFit1_above_Upsilon->GetYaxis()->SetNdivisions(505); h_dataFit1_above_Upsilon->GetYaxis()->CenterTitle(); h_dataFit1_above_Upsilon->GetYaxis()->SetTitleSize(20); h_dataFit1_above_Upsilon->GetYaxis()->SetTitleFont(43); h_dataFit1_above_Upsilon->GetYaxis()->SetTitleOffset(1.2); h_dataFit1_above_Upsilon->GetYaxis()->SetLabelSize(15); h_dataFit1_above_Upsilon->GetYaxis()->SetLabelFont(43);
   TH1F *hdata_above_Upsilon = (TH1F*) ds_dimuorphan_bg_m1_above_Upsilon->createHistogram("hdata_above_Upsilon", m1_above_Upsilon, Binning(m_bins_above_Upsilon, m_Upsilon_up, m_highmax));
   TH1F* h_func_above_Upsilon = new TH1F("h_func_above_Upsilon", "", m_bins_above_Upsilon, m_Upsilon_up, m_highmax);
   w->pdf("template1D_m1_above_Upsilon")->fillHistogram(h_func_above_Upsilon, m1_above_Upsilon, hdata_above_Upsilon->GetEntries());
@@ -538,14 +547,14 @@ void LowMassBKGFit1D18() {
   RooPlot* plotF = w->var("m2")->frame(Title("BG template for orphan dimuon no high pT"), Bins(m_bins));
   w->data("ds_dimuorphan_bg_m2")->plotOn(plotF, DataError(RooAbsData::SumW2), Name("data_m2"));
   w->pdf("template1D_m2")->plotOn(plotF,LineColor(kRed),Precision(0.0001),Name("template1D_m2"));
-  plotF->GetYaxis()->SetTitle("Events/0.04GeV");
+  plotF->GetYaxis()->SetTitle("Events/0.04GeV"); plotF->GetYaxis()->SetTitleOffset(1.1);
 
   // Upper pad: fit overlay data
   TCanvas * c_template1D_m2 = new TCanvas("c_template1D_m2", "c_template1D_m2", 800, 800);
   c_template1D_m2->Clear();
   TPad *pad1b = new TPad("pad1b", "pad1b", 0, 0.3, 1, 1.0);
   pad1b->SetBottomMargin(0); pad1b->Draw(); pad1b->cd();
-  plotF->Draw("same"); txtHeader->Draw("same");
+  plotF->Draw("same"); txtHeaderfit->Draw("same");
   c_template1D_m2->cd(); c_template1D_m2->Update();
 
   // Lower pad: Fit/Data ratio
@@ -554,7 +563,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit2 = new TH1F("h_dataFit2","", m_bins, m_min, m_max);
   h_dataFit2->SetLineColor(kBlack); h_dataFit2->SetMarkerStyle(20); h_dataFit2->SetMarkerColor(1); h_dataFit2->SetStats(0);
   h_dataFit2->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit2->GetXaxis()->SetTitleSize(20); h_dataFit2->GetXaxis()->SetTitleFont(43); h_dataFit2->GetXaxis()->SetTitleOffset(3.0); h_dataFit2->GetXaxis()->SetLabelSize(15); h_dataFit2->GetXaxis()->SetLabelFont(43);
-  h_dataFit2->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2->GetYaxis()->SetNdivisions(505); h_dataFit2->GetYaxis()->CenterTitle(); h_dataFit2->GetYaxis()->SetTitleSize(20); h_dataFit2->GetYaxis()->SetTitleFont(43); h_dataFit2->GetYaxis()->SetTitleOffset(.9); h_dataFit2->GetYaxis()->SetLabelSize(15); h_dataFit2->GetYaxis()->SetLabelFont(43);
+  h_dataFit2->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2->GetYaxis()->SetNdivisions(505); h_dataFit2->GetYaxis()->CenterTitle(); h_dataFit2->GetYaxis()->SetTitleSize(20); h_dataFit2->GetYaxis()->SetTitleFont(43); h_dataFit2->GetYaxis()->SetTitleOffset(1.2); h_dataFit2->GetYaxis()->SetLabelSize(15); h_dataFit2->GetYaxis()->SetLabelFont(43);
   TH1F *hdata2 = (TH1F*) ds_dimuorphan_bg_m2->createHistogram("hdata2", m2, Binning(m_bins, m_min, m_max));
   TH1F* h_func2 = new TH1F("h_func2","", m_bins, m_min, m_max);
   w->pdf("template1D_m2")->fillHistogram(h_func2, m2, hdata2->GetEntries());
@@ -588,7 +597,7 @@ void LowMassBKGFit1D18() {
   RooPlot* plotF_below_Jpsi = w->var("m2_below_Jpsi")->frame(Title("BG template for orphan dimuon no high pT below Jpsi"), Bins(m_bins_below_Jpsi));
   w->data("ds_dimuorphan_bg_m2_below_Jpsi")->plotOn(plotF_below_Jpsi, DataError(RooAbsData::SumW2), Name("data_m2_below_Jpsi"));
   w->pdf("template1D_m2_below_Jpsi")->plotOn(plotF_below_Jpsi,LineColor(kRed),Precision(0.0001),Name("template1D_m2_below_Jpsi"));
-  plotF_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
+  plotF_below_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV"); plotF_below_Jpsi->GetYaxis()->SetTitleOffset(1.1);
 
   // Upper pad: fit overlay data
   TCanvas * c_template1D_m2_below_Jpsi = new TCanvas("c_template1D_m2_below_Jpsi", "c_template1D_m2_below_Jpsi", 800, 800);
@@ -596,7 +605,7 @@ void LowMassBKGFit1D18() {
   TPad *pad1b_below_Jpsi = new TPad("pad1b_below_Jpsi", "pad1b_below_Jpsi", 0, 0.3, 1, 1.0);
   pad1b_below_Jpsi->SetBottomMargin(0); pad1b_below_Jpsi->Draw(); pad1b_below_Jpsi->cd();
   plotF_below_Jpsi->Draw("same");
-  txtHeader->Draw("same");
+  txtHeaderfit->Draw("same");
   c_template1D_m2_below_Jpsi->cd(); c_template1D_m2_below_Jpsi->Update();
 
   // Lower pad: Fit/Data ratio
@@ -605,7 +614,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit2_below_Jpsi = new TH1F("h_dataFit2_below_Jpsi","", m_bins_below_Jpsi, m_min, m_Jpsi_dn);
   h_dataFit2_below_Jpsi->SetLineColor(kBlack); h_dataFit2_below_Jpsi->SetMarkerStyle(20); h_dataFit2_below_Jpsi->SetMarkerColor(1); h_dataFit2_below_Jpsi->SetStats(0);
   h_dataFit2_below_Jpsi->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit2_below_Jpsi->GetXaxis()->SetTitleSize(20); h_dataFit2_below_Jpsi->GetXaxis()->SetTitleFont(43); h_dataFit2_below_Jpsi->GetXaxis()->SetTitleOffset(3.0); h_dataFit2_below_Jpsi->GetXaxis()->SetLabelSize(15); h_dataFit2_below_Jpsi->GetXaxis()->SetLabelFont(43);
-  h_dataFit2_below_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2_below_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit2_below_Jpsi->GetYaxis()->CenterTitle(); h_dataFit2_below_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit2_below_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit2_below_Jpsi->GetYaxis()->SetTitleOffset(.9); h_dataFit2_below_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit2_below_Jpsi->GetYaxis()->SetLabelFont(43);
+  h_dataFit2_below_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2_below_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit2_below_Jpsi->GetYaxis()->CenterTitle(); h_dataFit2_below_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit2_below_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit2_below_Jpsi->GetYaxis()->SetTitleOffset(1.2); h_dataFit2_below_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit2_below_Jpsi->GetYaxis()->SetLabelFont(43);
   TH1F *hdata2_below_Jpsi = (TH1F*) ds_dimuorphan_bg_m2_below_Jpsi->createHistogram("hdata2_below_Jpsi", m2_below_Jpsi, Binning(m_bins_below_Jpsi, m_min, m_Jpsi_dn));
   TH1F* h_func2_below_Jpsi = new TH1F("h_func2_below_Jpsi","", m_bins_below_Jpsi, m_min, m_Jpsi_dn);
   w->pdf("template1D_m2_below_Jpsi")->fillHistogram(h_func2_below_Jpsi, m2_below_Jpsi, hdata2_below_Jpsi->GetEntries());
@@ -635,7 +644,7 @@ void LowMassBKGFit1D18() {
   RooPlot* plotF_above_Jpsi = w->var("m2_above_Jpsi")->frame(Title("BG template for orphan dimuon no high pT above Jpsi"), Bins(m_bins_above_Jpsi));
   w->data("ds_dimuorphan_bg_m2_above_Jpsi")->plotOn(plotF_above_Jpsi, DataError(RooAbsData::SumW2), Name("data_m2_above_Jpsi"));
   w->pdf("template1D_m2_above_Jpsi")->plotOn(plotF_above_Jpsi,LineColor(kRed),Precision(0.0001),Name("template1D_m2_above_Jpsi"));
-  plotF_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV");
+  plotF_above_Jpsi->GetYaxis()->SetTitle("Events/0.04GeV"); plotF_above_Jpsi->GetYaxis()->SetTitleOffset(1.1);
 
   // Upper pad: fit overlay data
   TCanvas * c_template1D_m2_above_Jpsi = new TCanvas("c_template1D_m2_above_Jpsi", "c_template1D_m2_above_Jpsi", 800, 800);
@@ -643,7 +652,7 @@ void LowMassBKGFit1D18() {
   TPad *pad1b_above_Jpsi = new TPad("pad1b_above_Jpsi", "pad1b_above_Jpsi", 0, 0.3, 1, 1.0);
   pad1b_above_Jpsi->SetBottomMargin(0); pad1b_above_Jpsi->Draw(); pad1b_above_Jpsi->cd();
   plotF_above_Jpsi->Draw("same");
-  txtHeader->Draw("same");
+  txtHeaderfit->Draw("same");
   c_template1D_m2_above_Jpsi->cd(); c_template1D_m2_above_Jpsi->Update();
 
   // Lower pad: Fit/Data ratio
@@ -652,7 +661,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit2_above_Jpsi = new TH1F("h_dataFit2_above_Jpsi","", m_bins_above_Jpsi, m_Jpsi_up, m_max);
   h_dataFit2_above_Jpsi->SetLineColor(kBlack); h_dataFit2_above_Jpsi->SetMarkerStyle(20); h_dataFit2_above_Jpsi->SetMarkerColor(1); h_dataFit2_above_Jpsi->SetStats(0);
   h_dataFit2_above_Jpsi->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit2_above_Jpsi->GetXaxis()->SetTitleSize(20); h_dataFit2_above_Jpsi->GetXaxis()->SetTitleFont(43); h_dataFit2_above_Jpsi->GetXaxis()->SetTitleOffset(3.0); h_dataFit2_above_Jpsi->GetXaxis()->SetLabelSize(15); h_dataFit2_above_Jpsi->GetXaxis()->SetLabelFont(43);
-  h_dataFit2_above_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2_above_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit2_above_Jpsi->GetYaxis()->CenterTitle(); h_dataFit2_above_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit2_above_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit2_above_Jpsi->GetYaxis()->SetTitleOffset(.9); h_dataFit2_above_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit2_above_Jpsi->GetYaxis()->SetLabelFont(43);
+  h_dataFit2_above_Jpsi->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2_above_Jpsi->GetYaxis()->SetNdivisions(505); h_dataFit2_above_Jpsi->GetYaxis()->CenterTitle(); h_dataFit2_above_Jpsi->GetYaxis()->SetTitleSize(20); h_dataFit2_above_Jpsi->GetYaxis()->SetTitleFont(43); h_dataFit2_above_Jpsi->GetYaxis()->SetTitleOffset(1.2); h_dataFit2_above_Jpsi->GetYaxis()->SetLabelSize(15); h_dataFit2_above_Jpsi->GetYaxis()->SetLabelFont(43);
   TH1F *hdata2_above_Jpsi = (TH1F*) ds_dimuorphan_bg_m2_above_Jpsi->createHistogram("hdata2_above_Jpsi", m2_above_Jpsi, Binning(m_bins_above_Jpsi, m_Jpsi_up, m_max));
   TH1F* h_func2_above_Jpsi = new TH1F("h_func2_above_Jpsi","", m_bins_above_Jpsi, m_Jpsi_up, m_max);
   w->pdf("template1D_m2_above_Jpsi")->fillHistogram(h_func2_above_Jpsi, m2_above_Jpsi, hdata2_above_Jpsi->GetEntries());
@@ -689,7 +698,7 @@ void LowMassBKGFit1D18() {
   TPad *pad1b_above_Upsilon = new TPad("pad1b_above_Upsilon", "pad1b_above_Upsilon", 0, 0.3, 1, 1.0);
   pad1b_above_Upsilon->SetBottomMargin(0); pad1b_above_Upsilon->Draw(); pad1b_above_Upsilon->cd();
   plotF_above_Upsilon->Draw("same");
-  txtHeader->Draw("same");
+  txtHeaderfit->Draw("same");
   c_template1D_m2_above_Upsilon->cd(); c_template1D_m2_above_Upsilon->Update();
 
   // Lower pad: Fit/Data ratio
@@ -698,7 +707,7 @@ void LowMassBKGFit1D18() {
   TH1F *h_dataFit2_above_Upsilon = new TH1F("h_dataFit2_above_Upsilon","", m_bins_above_Upsilon, m_Upsilon_up, m_highmax);
   h_dataFit2_above_Upsilon->SetLineColor(kBlack); h_dataFit2_above_Upsilon->SetMarkerStyle(20); h_dataFit2_above_Upsilon->SetMarkerColor(1); h_dataFit2_above_Upsilon->SetStats(0);
   h_dataFit2_above_Upsilon->GetXaxis()->SetTitle("Mass [GeV]"); h_dataFit2_above_Upsilon->GetXaxis()->SetTitleSize(20); h_dataFit2_above_Upsilon->GetXaxis()->SetTitleFont(43); h_dataFit2_above_Upsilon->GetXaxis()->SetTitleOffset(3.0); h_dataFit2_above_Upsilon->GetXaxis()->SetLabelSize(15); h_dataFit2_above_Upsilon->GetXaxis()->SetLabelFont(43);
-  h_dataFit2_above_Upsilon->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2_above_Upsilon->GetYaxis()->SetNdivisions(505); h_dataFit2_above_Upsilon->GetYaxis()->CenterTitle(); h_dataFit2_above_Upsilon->GetYaxis()->SetTitleSize(20); h_dataFit2_above_Upsilon->GetYaxis()->SetTitleFont(43); h_dataFit2_above_Upsilon->GetYaxis()->SetTitleOffset(.9); h_dataFit2_above_Upsilon->GetYaxis()->SetLabelSize(15); h_dataFit2_above_Upsilon->GetYaxis()->SetLabelFont(43);
+  h_dataFit2_above_Upsilon->GetYaxis()->SetTitle("Fit/Data"); h_dataFit2_above_Upsilon->GetYaxis()->SetNdivisions(505); h_dataFit2_above_Upsilon->GetYaxis()->CenterTitle(); h_dataFit2_above_Upsilon->GetYaxis()->SetTitleSize(20); h_dataFit2_above_Upsilon->GetYaxis()->SetTitleFont(43); h_dataFit2_above_Upsilon->GetYaxis()->SetTitleOffset(1.2); h_dataFit2_above_Upsilon->GetYaxis()->SetLabelSize(15); h_dataFit2_above_Upsilon->GetYaxis()->SetLabelFont(43);
   TH1F *hdata2_above_Upsilon = (TH1F*) ds_dimuorphan_bg_m2_above_Upsilon->createHistogram("hdata2_above_Upsilon", m2_above_Upsilon, Binning(m_bins_above_Upsilon, m_Upsilon_up, m_highmax));
   TH1F* h_func2_above_Upsilon = new TH1F("h_func2_above_Upsilon","", m_bins_above_Upsilon, m_Upsilon_up, m_highmax);
   w->pdf("template1D_m2_above_Upsilon")->fillHistogram(h_func2_above_Upsilon, m2_above_Upsilon, hdata2_above_Upsilon->GetEntries());
@@ -815,13 +824,6 @@ void LowMassBKGFit1D18() {
   //HERE: No need to apply cuts associated to higher mass signals above 11 GeV, such as DY cut and SAmu bkg cut
   // CR for bkg estimate and validate
   ostringstream stream_cut_control_Iso_offDiagonal_below_Jpsi;
-  /*
-  stream_cut_control_Iso_offDiagonal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.00849813 + 0.00475107*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 - 0.00665393*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) + 0.00337777*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) ) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
-  */
-  /*
-  //N*Crystal ball sigma, N=2 here
-  stream_cut_control_Iso_offDiagonal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 2*(0.003681 + 0.007583*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
-  */
   stream_cut_control_Iso_offDiagonal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
   TString cut_control_Iso_offDiagonal_below_Jpsi = stream_cut_control_Iso_offDiagonal_below_Jpsi.str();
   std::cout << "2-dimu CR selctions (low mass below J/psi only): " << cut_control_Iso_offDiagonal_below_Jpsi.Data() << std::endl;
@@ -830,12 +832,6 @@ void LowMassBKGFit1D18() {
 
   // SR for unblinding
   ostringstream stream_cut_signal_below_Jpsi;
-  /*
-  stream_cut_signal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 5*(0.00849813 + 0.00475107*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 - 0.00665393*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) + 0.00337777*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) ) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
-  */
-  /*
-  stream_cut_signal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 2*(0.003681 + 0.007583*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
-  */
   stream_cut_signal_below_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_min << " && diMuonC_FittedVtx_m < " << m_Jpsi_dn << " && diMuonF_FittedVtx_m > " << m_min << " && diMuonF_FittedVtx_m < " << m_Jpsi_dn;
   TString cut_signal_below_Jpsi = stream_cut_signal_below_Jpsi.str();
   std::cout << "2-dimu SR selctions (low mass below J/psi only): " << cut_signal_below_Jpsi.Data() << std::endl;
@@ -848,12 +844,6 @@ void LowMassBKGFit1D18() {
   //HERE: No need to apply cuts associated to higher mass signals above 11 GeV, such as DY cut and SAmu bkg cut
   // CR for bkg estimate and validate
   ostringstream stream_cut_control_Iso_offDiagonal_above_Jpsi;
-  /*
-  stream_cut_control_Iso_offDiagonal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 5*(0.0472738 - 0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
-  */
-  /*
-  stream_cut_control_Iso_offDiagonal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= 2*(0.003681 + 0.007583*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
-  */
   stream_cut_control_Iso_offDiagonal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
   TString cut_control_Iso_offDiagonal_above_Jpsi = stream_cut_control_Iso_offDiagonal_above_Jpsi.str();
   std::cout << "2-dimu CR selctions (low mass above J/psi only): " << cut_control_Iso_offDiagonal_above_Jpsi.Data() << std::endl;
@@ -862,12 +852,6 @@ void LowMassBKGFit1D18() {
 
   // SR for unblinding
   ostringstream stream_cut_signal_above_Jpsi;
-  /*
-  stream_cut_signal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 5*(0.0472738 - 0.00591865*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0 + 0.00113991*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 2) - 2.62048e-05*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 3) + 1.92254e-07*pow((diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0, 4) ) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
-  */
-  /*
-  stream_cut_signal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < 2*(0.003681 + 0.007583*(diMuonC_FittedVtx_m + diMuonF_FittedVtx_m)/2.0) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
-  */
   stream_cut_signal_above_Jpsi << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Jpsi_up << " && diMuonC_FittedVtx_m < " << m_max << " && diMuonF_FittedVtx_m > " << m_Jpsi_up << " && diMuonF_FittedVtx_m < " << m_max;
   TString cut_signal_above_Jpsi = stream_cut_signal_above_Jpsi.str();
   std::cout << "2-dimu SR selctions (low mass above J/psi only): " << cut_signal_above_Jpsi.Data() << std::endl;

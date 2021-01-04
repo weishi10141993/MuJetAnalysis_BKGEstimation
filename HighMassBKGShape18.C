@@ -24,6 +24,15 @@ void HighMassBKGShape18()
   //Configure inputs for year
   BKG_cfg::ConfigureInput(year);
 
+  TLegend *txtHeader1 = new TLegend(0.09, 0.905, 0.89, 0.94);
+  txtHeader1->SetFillColor(kWhite);
+  txtHeader1->SetFillStyle(0);
+  txtHeader1->SetBorderSize(0);
+  txtHeader1->SetTextFont(42);
+  txtHeader1->SetTextSize(0.045);
+  txtHeader1->SetTextAlign(22);
+  txtHeader1->SetHeader(header1);
+
   TLegend *txtHeader = new TLegend(0.09, 0.905, 0.89, 0.94);
   txtHeader->SetFillColor(kWhite);
   txtHeader->SetFillStyle(0);
@@ -139,14 +148,14 @@ void HighMassBKGShape18()
   //MC vs DATA
   CR1pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(100); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/3.5GeV");
+  MC_hs_CR_m1->Draw("HIST"); MC_hs_CR_m1->SetMaximum(60); MC_hs_CR_m1->GetYaxis()->SetTitle("Events/3.5GeV");
   //Plot MC error
   MC_CR_m1->SetLineColor(2); MC_CR_m1->SetFillColor(2); MC_CR_m1->SetFillStyle(3004); MC_CR_m1->Draw("E2 SAME");
   Double_t MC_CR_m1_error;
   Double_t MC_CR_m1_integral = MC_CR_m1->IntegralAndError(1, HM_m_bins, MC_CR_m1_error, "");
   std::cout << "MC CR m1 integral = " << MC_CR_m1_integral << " +/- " << MC_CR_m1_error << std::endl;
   //Overlay data
-  DATA_CR_m1->SetFillColor(1); DATA_CR_m1->SetLineColor(1); DATA_CR_m1->SetMarkerStyle(20); DATA_CR_m1->SetMarkerSize(0.6); DATA_CR_m1->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");//Draw Error bars
+  DATA_CR_m1->SetFillColor(1); DATA_CR_m1->SetLineColor(1); DATA_CR_m1->SetMarkerStyle(20); DATA_CR_m1->SetMarkerSize(0.6); DATA_CR_m1->Draw("E1 X0 SAME"); txtHeader1->Draw("SAME");//Draw Error bars
   Double_t DATA_CR_m1_error;
   Double_t DATA_CR_m1_integral = DATA_CR_m1->IntegralAndError(1, HM_m_bins, DATA_CR_m1_error, ""); // "": width
   std::cout << "DATA CR m1 integral = " << DATA_CR_m1_integral << " +/- " << DATA_CR_m1_error << std::endl;
@@ -203,6 +212,7 @@ void HighMassBKGShape18()
   pull_CR_m1->SetMarkerSize(0.6);
   pull_CR_m1->Draw("P");
   CR1->Write();
+  CR1->SaveAs("HighMassShape/CRm1.pdf");
 
   //===============
   //= For m2 at CR*
@@ -215,14 +225,14 @@ void HighMassBKGShape18()
   //MC vs DATA
   CR2pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(100); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/3.5GeV");
+  MC_hs_CR_m2->Draw("HIST"); MC_hs_CR_m2->SetMaximum(60); MC_hs_CR_m2->GetYaxis()->SetTitle("Events/3.5GeV");
   //Plot MC error
   MC_CR_m2->SetLineColor(2); MC_CR_m2->SetFillColor(2); MC_CR_m2->SetFillStyle(3004); MC_CR_m2->Draw("E2 SAME");
   Double_t MC_CR_m2_error;
   Double_t MC_CR_m2_integral = MC_CR_m2->IntegralAndError(1, HM_m_bins, MC_CR_m2_error, "");
   std::cout << "MC CR m2 integral = " << MC_CR_m2_integral << " +/- " << MC_CR_m2_error << std::endl;
   //Overlay data
-  DATA_CR_m2->SetFillColor(1); DATA_CR_m2->SetLineColor(1); DATA_CR_m2->SetMarkerStyle(20); DATA_CR_m2->SetMarkerSize(0.6); DATA_CR_m2->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
+  DATA_CR_m2->SetFillColor(1); DATA_CR_m2->SetLineColor(1); DATA_CR_m2->SetMarkerStyle(20); DATA_CR_m2->SetMarkerSize(0.6); DATA_CR_m2->Draw("E1 X0 SAME"); txtHeader1->Draw("SAME");
   Double_t DATA_CR_m2_error;
   Double_t DATA_CR_m2_integral = DATA_CR_m2->IntegralAndError(1, HM_m_bins, DATA_CR_m2_error, "");
   std::cout << "DATA CR m2 integral = " << DATA_CR_m2_integral << " +/- " << DATA_CR_m2_error << std::endl;
@@ -247,7 +257,7 @@ void HighMassBKGShape18()
     if (CR2pad1iEntry==8) {CR2pad1li->SetLabel("MC Error"); CR2pad1li->SetOption("f");}
     if (CR2pad1iEntry==9) {CR2pad1li->SetLabel("Data"); CR2pad1li->SetOption("ep");}
   }
-  CR2pad1->Update(); CR2pad1L->SetX1NDC(0.15); CR2pad1L->SetX2NDC(0.5); CR2pad1L->SetY1NDC(0.65); CR2pad1L->SetY2NDC(0.9); CR2pad1->Modified();
+  CR2pad1->Update(); CR2pad1L->SetX1NDC(0.15); CR2pad1L->SetX2NDC(0.5); CR2pad1L->SetY1NDC(0.5); CR2pad1L->SetY2NDC(0.9); CR2pad1->Modified();
   gPad->RedrawAxis();
   CR2->cd(); CR2->Update();
   //Plot pull distribution
@@ -278,6 +288,7 @@ void HighMassBKGShape18()
   pull_CR_m2->SetMarkerSize(0.6);
   pull_CR_m2->Draw("P");
   CR2->Write();
+  CR2->SaveAs("HighMassShape/CRm2.pdf");
 
 /*
   //==================
@@ -362,7 +373,7 @@ void HighMassBKGShape18()
   TCanvas *SR1=new TCanvas("SR1","SR m1",700,500);
   SR1->cd();
   MC_hs_SR_m1->Draw("HIST");
-  MC_hs_SR_m1->SetMaximum(10);
+  MC_hs_SR_m1->SetMaximum(9);
   MC_hs_SR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
   MC_hs_SR_m1->GetYaxis()->SetTitle("Events/3.5GeV");
   MC_SR_m1->SetLineColor(2);
@@ -395,6 +406,7 @@ void HighMassBKGShape18()
   SR1->Update(); SR1L->SetX1NDC(0.15); SR1L->SetX2NDC(0.5); SR1L->SetY1NDC(0.5); SR1L->SetY2NDC(0.9); SR1->Modified();
   gPad->RedrawAxis();
   SR1->Write();
+  SR1->SaveAs("HighMassShape/SRm1.pdf");
   //---------------------------------------------------------------------------------------------
   //- Print bin content and bin error for all bins to be used for background pdf shape variation
   //- Bin #0 contains the underflow. Normally starts from #1
@@ -457,7 +469,7 @@ void HighMassBKGShape18()
   TCanvas *SR2=new TCanvas("SR2","SR m2",700,500);
   SR2->cd();
   MC_hs_SR_m2->Draw("HIST");
-  MC_hs_SR_m2->SetMaximum(10);
+  MC_hs_SR_m2->SetMaximum(9);
   MC_hs_SR_m2->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]");
   MC_hs_SR_m2->GetYaxis()->SetTitle("Events/3.5GeV");
   MC_SR_m2->SetLineColor(2);
@@ -490,6 +502,7 @@ void HighMassBKGShape18()
   SR2->Update(); SR2L->SetX1NDC(0.15); SR2L->SetX2NDC(0.5); SR2L->SetY1NDC(0.5); SR2L->SetY2NDC(0.9); SR2->Modified();
   gPad->RedrawAxis();
   SR2->Write();
+  SR2->SaveAs("HighMassShape/SRm2.pdf");
   //Print bin content and bin error for all bins to be used for background pdf shape variation
   std::cout << "=== Print bin content and bin error: MC SR m2 ===" << std::endl;
   std::cout << "bin # * " << "bin content * " << "bin error" << std::endl;
