@@ -44,11 +44,14 @@
 #include "RooBernstein.h"
 #include "RooPolynomial.h"
 #include "RooGaussian.h"
-#include "RooPolynomial.h"
 #include "RooChebychev.h"
 #include "RooGenericPdf.h"
 #include "RooCBShape.h"
 #include "RooAddPdf.h"
+#include "RooConstVar.h"
+#include "RooKeysPdf.h"
+#include "RooNDKeysPdf.h"
+#include "TAxis.h"
 
 #include "macros/tdrStyle.C"
 #include "Constants.h"
@@ -136,9 +139,9 @@ void LowMassBKGFit1D18() {
   w->import(m1_above_Upsilon);
   w->import(m2_above_Upsilon);
 
-  //**********************************************************************************
+  //=*********************************************************************************
   //     Select events for constructing 1D templates, identify high pT muon, m1!=m2
-  //**********************************************************************************
+  //=*********************************************************************************
   //m1: Orphan associated dimu both mu have high pT mu 24GeV and |eta|<2
   ostringstream stream_cut_bg_m1_iso;
   stream_cut_bg_m1_iso << "orph_dimu_isoTk < " << iso_cut << " && ( orph_dimu_Mu0_hitpix_Phase1 == 1 || orph_dimu_Mu1_hitpix_Phase1 == 1 ) && orph_isSignalHLTFired && orph_isVertexOK && orph_passOffLineSelPtEta && orph_dimu_nSAMu <= 1 && orph_dimu_prob > 0.2*(1 - orph_dimu_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(orph_dimu_dR)) + 109.83*pow(sqrt(orph_dimu_dR), 2) - 92.7445*pow(sqrt(orph_dimu_dR), 3) + 36.8351*pow(sqrt(orph_dimu_dR), 4) )*pow(fabs(orph_dimu_Lxy/10.0), 2.0) ) && (  ( orph_PtMu0 > " << pT_cut << " && TMath::Abs(orph_EtaMu0) < " << eta_cut << " ) && ( orph_PtMu1 > " << pT_cut << " && TMath::Abs(orph_EtaMu1) < " << eta_cut << " )  ) && orph_dimu_mass > " << m_min << " && orph_dimu_mass < " << m_max;
@@ -322,9 +325,9 @@ void LowMassBKGFit1D18() {
 
   delete c1;
 
-  //****************************************************************************
+  //=***************************************************************************
   //                         Create template for m1
-  //****************************************************************************
+  //=***************************************************************************
   cout<<"-----Creating template for m1:-----"<<endl;
   //===========
   //2018 PDF m1
@@ -523,9 +526,9 @@ void LowMassBKGFit1D18() {
   float chi2_C_above_Upsilon = plotC_above_Upsilon->chiSquare(10);
   cout<<"------------------ End m1 (above Upsilon) ---------------------"<<endl;
 
-  //****************************************************************************
+  //=***************************************************************************
   //                         Create template for m2
-  //****************************************************************************
+  //=***************************************************************************
   cout<<"-----Creating template for m2:-----"<<endl;
   //===========
   //2018 PDF m2
@@ -723,9 +726,9 @@ void LowMassBKGFit1D18() {
   float chi2_F_above_Upsilon = plotF_above_Upsilon->chiSquare(10);
   cout<<"------------------ End m2 (above Upsilon) ---------------------"<<endl;
 
-  //****************************************************************************
+  //=***************************************************************************
   //                     Create 2D template = m1 x m2
-  //****************************************************************************
+  //=***************************************************************************
   cout << "-----Creating 2D template m1 * m2:-----" << endl;
   cout << "1D template m1 fit chi^2/dof: " << chi2_C << endl;
   cout << "1D template m2 fit chi^2/dof: " << chi2_F << endl;
@@ -744,9 +747,9 @@ void LowMassBKGFit1D18() {
   w->factory("PROD::template2D_above_Jpsi(template1D_m1_above_Jpsi, template1D_m2_above_Jpsi)");
   w->factory("PROD::template2D_above_Upsilon(template1D_m1_above_Upsilon, template1D_m2_above_Upsilon)");
 
-  //****************************************************************************
+  //=***************************************************************************
   //                     Extract 1D J/psi template from template m1
-  //****************************************************************************
+  //=***************************************************************************
   cout << "Create templates for J/psi from m1" << endl;
   //Get final fit parameter for the J/psi peak in rC and plot the Jpsi peak
   RooRealVar* JpsiC_mean_fitresult = (RooRealVar*) rC->floatParsFinal().find("JpsiC_mean");
@@ -775,9 +778,9 @@ void LowMassBKGFit1D18() {
   c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1.png");
   c_template1D_Jpsi_m1_RooPlot->SaveAs("figures/template1D_Jpsi_m1.root");
 
-  //****************************************************************************
+  //=***************************************************************************
   //                       Extract 1D J/psi template from template m2
-  //****************************************************************************
+  //=***************************************************************************
   cout << "Create templates for J/psi from m2" << endl;
   RooRealVar* JpsiF_mean_fitresult = (RooRealVar*) rF->floatParsFinal().find("JpsiF_mean");
   cout << "JpsiF_mean " << JpsiF_mean_fitresult->getVal() << endl;
@@ -805,15 +808,15 @@ void LowMassBKGFit1D18() {
   c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2.png");
   c_template1D_Jpsi_m2_RooPlot->SaveAs("figures/template1D_Jpsi_m2.root");
 
-  //****************************************************************************
+  //=***************************************************************************
   //                     Create 2D template (m1 x m2) for J/psi
-  //****************************************************************************
+  //=***************************************************************************
   cout << "Create 2D template (m1 * m2) for J/psi" << endl;
   w->factory("PROD::Jpsi_2D(Jpsi_m1,Jpsi_m2)");
 
-  //****************************************************************************
+  //=***************************************************************************
   //           For later use in LowMassBKGPlot2D.C: datasets of 2 dimu events
-  //****************************************************************************
+  //=***************************************************************************
   //To be used for scatter plot 2 dimu events @ CR later in LowMassBKGPlot2D.C
   cout<<"                               " <<endl;
   cout << "Create trees on signal events" << endl;
@@ -858,9 +861,9 @@ void LowMassBKGFit1D18() {
   std::cout << "                                                 " << std::endl;
   TTree* tree_dimudimu_signal_2D_above_Jpsi = chain_data_dimudimu.CopyTree(cut_signal_above_Jpsi);
 
-  //=====================
-  //= Above Upsion only =
-  //=====================
+  //===========================
+  //= Above Upsion only: data =
+  //===========================
   //HERE: Need to apply all cuts associated to higher mass signals above 11 GeV, such as DY cut and SAmu bkg cut
   //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
   //!!!   Note: the data-driven template from above is not accurate,
@@ -929,9 +932,476 @@ void LowMassBKGFit1D18() {
   w->import(*ds_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon);
   w->import(*ds_dimudimu_signal_2D_above_Upsilon);
 
-  //****************************************************************************
+  //=============================
+  //= Above Upsion only: BKG MC =
+  //=============================
+  //---------------------------------------------------------------------------------------------------------------------
+  //Below we use kernel density estimation to get smooth background shape at SR using unbinned MC event (scaled to data):
+  //Kernal choices are Gaussian and Crystal Ball functions. Use the maximum difference in the shape as systematic unc.
+  //Note:
+  //1. Contributions from each MC needs to be plotted separately using their own scale factors to data.
+  //2. Bandwidth mimics signal resolution; so increase the bandwidth at higher mass as the resolution.
+  //---------------------------------------------------------------------------------------------------------------------
+  // SR cut
+  ostringstream stream_cut_bkgmc_above_Upsilon;
+  stream_cut_bkgmc_above_Upsilon << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) && ( (dimuC_Mu0_SA==1 && muJetC_Mu0_matched_segs>=2) || (dimuC_Mu1_SA==1 && muJetC_Mu1_matched_segs>=2) || (dimuF_Mu0_SA==1 && muJetF_Mu0_matched_segs>=2) || (dimuF_Mu1_SA==1 && muJetF_Mu1_matched_segs>=2) ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) < BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Upsilon_up << " && diMuonC_FittedVtx_m < " << m_highmax << " && diMuonF_FittedVtx_m > " << m_Upsilon_up << " && diMuonF_FittedVtx_m < " << m_highmax;
+  TString cut_bkgmc_above_Upsilon = stream_cut_bkgmc_above_Upsilon.str();
+  std::cout << "MC SR 2-dimu events (high mass above Upsilon only): " << cut_bkgmc_above_Upsilon.Data() << std::endl;
+  std::cout << "                                                    " << std::endl;
+
+  //MC Ntuples input file from each SM process: // DY0J: no contribution, 0 entries, not included
+  //Include: DY1J, DY2J, qqToZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
+  TChain chain_DY1J_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream MyDY1Jfile(DY1JFile);//this is BKG MC Ntuple from Config.h
+  std::string MyDY1JLine;
+  if( !MyDY1Jfile ) std::cout<<"ERROR opening DY1J file."<<std::endl;
+  while (std::getline(MyDY1Jfile, MyDY1JLine)){
+    TString DY1JLine(MyDY1JLine);
+    if( DY1JLine.Contains("root") ) chain_DY1J_dimudimu.Add(DY1JLine.Data());
+  }
+
+  TChain chain_DY2J_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream MyDY2Jfile(DY2JFile);
+  std::string MyDY2JLine;
+  if( !MyDY2Jfile ) std::cout<<"ERROR opening DY2J file."<<std::endl;
+  while (std::getline(MyDY2Jfile, MyDY2JLine)){
+    TString DY2JLine(MyDY2JLine);
+    if( DY2JLine.Contains("root") ) chain_DY2J_dimudimu.Add(DY2JLine.Data());
+  }
+
+  TChain chain_qqToZZ_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream MyqqToZZfile(qqToZZFile);
+  std::string MyqqToZZLine;
+  if( !MyqqToZZfile ) std::cout<<"ERROR opening qqToZZ file."<<std::endl;
+  while (std::getline(MyqqToZZfile, MyqqToZZLine)){
+    TString qqToZZLine(MyqqToZZLine);
+    if( qqToZZLine.Contains("root") ) chain_qqToZZ_dimudimu.Add(qqToZZLine.Data());
+  }
+
+  TChain chain_TTJets_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream MyTTJetsfile(TTJetsFile);
+  std::string MyTTJetsLine;
+  if( !MyTTJetsfile ) std::cout<<"ERROR opening TTJets file."<<std::endl;
+  while (std::getline(MyTTJetsfile, MyTTJetsLine)){
+    TString TTJetsLine(MyTTJetsLine);
+    if( TTJetsLine.Contains("root") ) chain_TTJets_dimudimu.Add(TTJetsLine.Data());
+  }
+
+  TChain chain_ggHToZZ_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream MyggHToZZfile(ggHToZZFile);
+  std::string MyggHToZZLine;
+  if( !MyggHToZZfile ) std::cout<<"ERROR opening ggHToZZ file."<<std::endl;
+  while (std::getline(MyggHToZZfile, MyggHToZZLine)){
+    TString ggHToZZLine(MyggHToZZLine);
+    if( ggHToZZLine.Contains("root") ) chain_ggHToZZ_dimudimu.Add(ggHToZZLine.Data());
+  }
+
+  TChain chain_ggToZZ_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream MyggToZZfile(ggToZZFile);
+  std::string MyggToZZLine;
+  if( !MyggToZZfile ) std::cout<<"ERROR opening ggToZZ file."<<std::endl;
+  while (std::getline(MyggToZZfile, MyggToZZLine)){
+    TString ggToZZLine(MyggToZZLine);
+    if( ggToZZLine.Contains("root") ) chain_ggToZZ_dimudimu.Add(ggToZZLine.Data());
+  }
+
+  TTree* tree_dimudimu_DY1J_2D_above_Upsilon    = chain_DY1J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
+  TTree* tree_dimudimu_DY2J_2D_above_Upsilon    = chain_DY2J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
+  TTree* tree_dimudimu_qqToZZ_2D_above_Upsilon  = chain_qqToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
+  TTree* tree_dimudimu_TTJets_2D_above_Upsilon  = chain_TTJets_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
+  TTree* tree_dimudimu_ggHToZZ_2D_above_Upsilon = chain_ggHToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
+  TTree* tree_dimudimu_ggToZZ_2D_above_Upsilon  = chain_ggToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
+
+  tree_dimudimu_DY1J_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY1J_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_DY2J_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY2J_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_qqToZZ_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_qqToZZ_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_TTJets_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_TTJets_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_ggHToZZ_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_ggHToZZ_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_ggToZZ_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_ggToZZ_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+
+  // 1-D dataset
+  RooDataSet* ds_dimudimu_DY1J_m1_above_Upsilon    = new RooDataSet("ds_dimudimu_DY1J_m1_above_Upsilon",    "ds_dimudimu_DY1J_m1_above_Upsilon",    tree_dimudimu_DY1J_2D_above_Upsilon,    RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY1J_m2_above_Upsilon    = new RooDataSet("ds_dimudimu_DY1J_m2_above_Upsilon",    "ds_dimudimu_DY1J_m2_above_Upsilon",    tree_dimudimu_DY1J_2D_above_Upsilon,    RooArgSet(m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY2J_m1_above_Upsilon    = new RooDataSet("ds_dimudimu_DY2J_m1_above_Upsilon",    "ds_dimudimu_DY2J_m1_above_Upsilon",    tree_dimudimu_DY2J_2D_above_Upsilon,    RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY2J_m2_above_Upsilon    = new RooDataSet("ds_dimudimu_DY2J_m2_above_Upsilon",    "ds_dimudimu_DY2J_m2_above_Upsilon",    tree_dimudimu_DY2J_2D_above_Upsilon,    RooArgSet(m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_qqToZZ_m1_above_Upsilon  = new RooDataSet("ds_dimudimu_qqToZZ_m1_above_Upsilon",  "ds_dimudimu_qqToZZ_m1_above_Upsilon",  tree_dimudimu_qqToZZ_2D_above_Upsilon,  RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_qqToZZ_m2_above_Upsilon  = new RooDataSet("ds_dimudimu_qqToZZ_m2_above_Upsilon",  "ds_dimudimu_qqToZZ_m2_above_Upsilon",  tree_dimudimu_qqToZZ_2D_above_Upsilon,  RooArgSet(m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_TTJets_m1_above_Upsilon  = new RooDataSet("ds_dimudimu_TTJets_m1_above_Upsilon",  "ds_dimudimu_TTJets_m1_above_Upsilon",  tree_dimudimu_TTJets_2D_above_Upsilon,  RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_TTJets_m2_above_Upsilon  = new RooDataSet("ds_dimudimu_TTJets_m2_above_Upsilon",  "ds_dimudimu_TTJets_m2_above_Upsilon",  tree_dimudimu_TTJets_2D_above_Upsilon,  RooArgSet(m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggHToZZ_m1_above_Upsilon = new RooDataSet("ds_dimudimu_ggHToZZ_m1_above_Upsilon", "ds_dimudimu_ggHToZZ_m1_above_Upsilon", tree_dimudimu_ggHToZZ_2D_above_Upsilon, RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggHToZZ_m2_above_Upsilon = new RooDataSet("ds_dimudimu_ggHToZZ_m2_above_Upsilon", "ds_dimudimu_ggHToZZ_m2_above_Upsilon", tree_dimudimu_ggHToZZ_2D_above_Upsilon, RooArgSet(m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggToZZ_m1_above_Upsilon  = new RooDataSet("ds_dimudimu_ggToZZ_m1_above_Upsilon",  "ds_dimudimu_ggToZZ_m1_above_Upsilon",  tree_dimudimu_ggToZZ_2D_above_Upsilon,  RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggToZZ_m2_above_Upsilon  = new RooDataSet("ds_dimudimu_ggToZZ_m2_above_Upsilon",  "ds_dimudimu_ggToZZ_m2_above_Upsilon",  tree_dimudimu_ggToZZ_2D_above_Upsilon,  RooArgSet(m2_above_Upsilon));
+
+  ds_dimudimu_DY1J_m1_above_Upsilon->Print("s");
+  ds_dimudimu_DY1J_m2_above_Upsilon->Print("s");
+  ds_dimudimu_DY2J_m1_above_Upsilon->Print("s");
+  ds_dimudimu_DY2J_m2_above_Upsilon->Print("s");
+  ds_dimudimu_qqToZZ_m1_above_Upsilon->Print("s");
+  ds_dimudimu_qqToZZ_m2_above_Upsilon->Print("s");
+  ds_dimudimu_TTJets_m1_above_Upsilon->Print("s");
+  ds_dimudimu_TTJets_m2_above_Upsilon->Print("s");
+  ds_dimudimu_ggHToZZ_m1_above_Upsilon->Print("s");
+  ds_dimudimu_ggHToZZ_m2_above_Upsilon->Print("s");
+  ds_dimudimu_ggToZZ_m1_above_Upsilon->Print("s");
+  ds_dimudimu_ggToZZ_m2_above_Upsilon->Print("s");
+  w->import(*ds_dimudimu_DY1J_m1_above_Upsilon);
+  w->import(*ds_dimudimu_DY1J_m2_above_Upsilon);
+  w->import(*ds_dimudimu_DY2J_m1_above_Upsilon);
+  w->import(*ds_dimudimu_DY2J_m2_above_Upsilon);
+  w->import(*ds_dimudimu_qqToZZ_m1_above_Upsilon);
+  w->import(*ds_dimudimu_qqToZZ_m2_above_Upsilon);
+  w->import(*ds_dimudimu_TTJets_m1_above_Upsilon);
+  w->import(*ds_dimudimu_TTJets_m2_above_Upsilon);
+  w->import(*ds_dimudimu_ggHToZZ_m1_above_Upsilon);
+  w->import(*ds_dimudimu_ggHToZZ_m2_above_Upsilon);
+  w->import(*ds_dimudimu_ggToZZ_m1_above_Upsilon);
+  w->import(*ds_dimudimu_ggToZZ_m2_above_Upsilon);
+
+  //===========
+  // 1-D pdf m1
+  //===========
+  //ROOT example on kernel estimation: https://root.cern.ch/doc/v608/rf707__kernelestimation_8C_source.html
+  RooKeysPdf DY1J_pdf_m1("DY1J_pdf_m1",       "DY1J_pdf_m1",    m1_above_Upsilon, *ds_dimudimu_DY1J_m1_above_Upsilon, RooKeysPdf::NoMirror);//Adaptive Gaussian kernel
+  RooKeysPdf DY1J_pdf_m1_dn("DY1J_pdf_m1_dn", "DY1J_pdf_m1_dn", m1_above_Upsilon, *ds_dimudimu_DY1J_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);// narrow width
+  RooKeysPdf DY1J_pdf_m1_up("DY1J_pdf_m1_up", "DY1J_pdf_m1_up", m1_above_Upsilon, *ds_dimudimu_DY1J_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);// wider width
+
+  RooKeysPdf DY2J_pdf_m1("DY2J_pdf_m1",       "DY2J_pdf_m1",    m1_above_Upsilon, *ds_dimudimu_DY2J_m1_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf DY2J_pdf_m1_dn("DY2J_pdf_m1_dn", "DY2J_pdf_m1_dn", m1_above_Upsilon, *ds_dimudimu_DY2J_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf DY2J_pdf_m1_up("DY2J_pdf_m1_up", "DY2J_pdf_m1_up", m1_above_Upsilon, *ds_dimudimu_DY2J_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf qqToZZ_pdf_m1("qqToZZ_pdf_m1",       "qqToZZ_pdf_m1",    m1_above_Upsilon, *ds_dimudimu_qqToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf qqToZZ_pdf_m1_dn("qqToZZ_pdf_m1_dn", "qqToZZ_pdf_m1_dn", m1_above_Upsilon, *ds_dimudimu_qqToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf qqToZZ_pdf_m1_up("qqToZZ_pdf_m1_up", "qqToZZ_pdf_m1_up", m1_above_Upsilon, *ds_dimudimu_qqToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf TTJets_pdf_m1("TTJets_pdf_m1",       "TTJets_pdf_m1",    m1_above_Upsilon, *ds_dimudimu_TTJets_m1_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf TTJets_pdf_m1_dn("TTJets_pdf_m1_dn", "TTJets_pdf_m1_dn", m1_above_Upsilon, *ds_dimudimu_TTJets_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf TTJets_pdf_m1_up("TTJets_pdf_m1_up", "TTJets_pdf_m1_up", m1_above_Upsilon, *ds_dimudimu_TTJets_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggHToZZ_pdf_m1("ggHToZZ_pdf_m1",       "ggHToZZ_pdf_m1",    m1_above_Upsilon, *ds_dimudimu_ggHToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf ggHToZZ_pdf_m1_dn("ggHToZZ_pdf_m1_dn", "ggHToZZ_pdf_m1_dn", m1_above_Upsilon, *ds_dimudimu_ggHToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggHToZZ_pdf_m1_up("ggHToZZ_pdf_m1_up", "ggHToZZ_pdf_m1_up", m1_above_Upsilon, *ds_dimudimu_ggHToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggToZZ_pdf_m1("ggToZZ_pdf_m1",       "ggToZZ_pdf_m1",    m1_above_Upsilon, *ds_dimudimu_ggToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf ggToZZ_pdf_m1_dn("ggToZZ_pdf_m1_dn", "ggToZZ_pdf_m1_dn", m1_above_Upsilon, *ds_dimudimu_ggToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggToZZ_pdf_m1_up("ggToZZ_pdf_m1_up", "ggToZZ_pdf_m1_up", m1_above_Upsilon, *ds_dimudimu_ggToZZ_m1_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  w->import(DY1J_pdf_m1);
+  w->import(DY1J_pdf_m1_dn);
+  w->import(DY1J_pdf_m1_up);
+  w->import(DY2J_pdf_m1);
+  w->import(DY2J_pdf_m1_dn);
+  w->import(DY2J_pdf_m1_up);
+  w->import(qqToZZ_pdf_m1);
+  w->import(qqToZZ_pdf_m1_dn);
+  w->import(qqToZZ_pdf_m1_up);
+  w->import(TTJets_pdf_m1);
+  w->import(TTJets_pdf_m1_dn);
+  w->import(TTJets_pdf_m1_up);
+  w->import(ggHToZZ_pdf_m1);
+  w->import(ggHToZZ_pdf_m1_dn);
+  w->import(ggHToZZ_pdf_m1_up);
+  w->import(ggToZZ_pdf_m1);
+  w->import(ggToZZ_pdf_m1_dn);
+  w->import(ggToZZ_pdf_m1_up);
+
+  // Overlay pdf on MC events (NOT DATA!) in binned frame
+  RooPlot* DY1Jframe1    = m1_above_Upsilon.frame(Title("DY1J MC + PDF: SR m1 binned"),    Bins(HM_m_bins));//same binning as MC template for reference
+  RooPlot* DY2Jframe1    = m1_above_Upsilon.frame(Title("DY2J MC + PDF: SR m1 binned"),    Bins(HM_m_bins));
+  RooPlot* qqToZZframe1  = m1_above_Upsilon.frame(Title("qqToZZ MC + PDF: SR m1 binned"),  Bins(HM_m_bins));
+  RooPlot* TTJetsframe1  = m1_above_Upsilon.frame(Title("TTJets MC + PDF: SR m1 binned"),  Bins(HM_m_bins));
+  RooPlot* ggHToZZframe1 = m1_above_Upsilon.frame(Title("ggHToZZ MC + PDF: SR m1 binned"), Bins(HM_m_bins));
+  RooPlot* ggToZZframe1  = m1_above_Upsilon.frame(Title("ggToZZ MC + PDF: SR m1 binned"),  Bins(HM_m_bins));
+
+  ds_dimudimu_DY1J_m1_above_Upsilon->plotOn(DY1Jframe1);       DY1J_pdf_m1.plotOn(DY1Jframe1);       DY1J_pdf_m1_dn.plotOn(DY1Jframe1, LineStyle(kDashed), LineColor(kRed));       DY1J_pdf_m1_up.plotOn(DY1Jframe1, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_DY2J_m1_above_Upsilon->plotOn(DY2Jframe1);       DY2J_pdf_m1.plotOn(DY2Jframe1);       DY2J_pdf_m1_dn.plotOn(DY2Jframe1, LineStyle(kDashed), LineColor(kRed));       DY2J_pdf_m1_up.plotOn(DY2Jframe1, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_qqToZZ_m1_above_Upsilon->plotOn(qqToZZframe1);   qqToZZ_pdf_m1.plotOn(qqToZZframe1);   qqToZZ_pdf_m1_dn.plotOn(qqToZZframe1, LineStyle(kDashed), LineColor(kRed));   qqToZZ_pdf_m1_up.plotOn(qqToZZframe1, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_TTJets_m1_above_Upsilon->plotOn(TTJetsframe1);   TTJets_pdf_m1.plotOn(TTJetsframe1);   TTJets_pdf_m1_dn.plotOn(TTJetsframe1, LineStyle(kDashed), LineColor(kRed));   TTJets_pdf_m1_up.plotOn(TTJetsframe1, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_ggHToZZ_m1_above_Upsilon->plotOn(ggHToZZframe1); ggHToZZ_pdf_m1.plotOn(ggHToZZframe1); ggHToZZ_pdf_m1_dn.plotOn(ggHToZZframe1, LineStyle(kDashed), LineColor(kRed)); ggHToZZ_pdf_m1_up.plotOn(ggHToZZframe1, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_ggToZZ_m1_above_Upsilon->plotOn(ggToZZframe1);   ggToZZ_pdf_m1.plotOn(ggToZZframe1);   ggToZZ_pdf_m1_dn.plotOn(ggToZZframe1, LineStyle(kDashed), LineColor(kRed));   ggToZZ_pdf_m1_up.plotOn(ggToZZframe1, LineStyle(kDashed), LineColor(kMagenta));
+
+  // unbinned, smooth pdf
+  RooPlot* DY1Jframe1nobin    = m1_above_Upsilon.frame(Title("DY1J PDF: SR m1 unbinned"));
+  RooPlot* DY2Jframe1nobin    = m1_above_Upsilon.frame(Title("DY2J PDF: SR m1 unbinned"));
+  RooPlot* qqToZZframe1nobin  = m1_above_Upsilon.frame(Title("qqToZZ PDF: SR m1 unbinned"));
+  RooPlot* TTJetsframe1nobin  = m1_above_Upsilon.frame(Title("TTJets PDF: SR m1 unbinned"));
+  RooPlot* ggHToZZframe1nobin = m1_above_Upsilon.frame(Title("ggHToZZ PDF: SR m1 unbinned"));
+  RooPlot* ggToZZframe1nobin  = m1_above_Upsilon.frame(Title("ggToZZ PDF: SR m1 unbinned"));
+
+  DY1J_pdf_m1.plotOn(DY1Jframe1nobin);       DY1J_pdf_m1_dn.plotOn(DY1Jframe1nobin, LineStyle(kDashed), LineColor(kRed));       DY1J_pdf_m1_up.plotOn(DY1Jframe1nobin, LineStyle(kDashed), LineColor(kMagenta));
+  DY2J_pdf_m1.plotOn(DY2Jframe1nobin);       DY2J_pdf_m1_dn.plotOn(DY2Jframe1nobin, LineStyle(kDashed), LineColor(kRed));       DY2J_pdf_m1_up.plotOn(DY2Jframe1nobin, LineStyle(kDashed), LineColor(kMagenta));
+  qqToZZ_pdf_m1.plotOn(qqToZZframe1nobin);   qqToZZ_pdf_m1_dn.plotOn(qqToZZframe1nobin, LineStyle(kDashed), LineColor(kRed));   qqToZZ_pdf_m1_up.plotOn(qqToZZframe1nobin, LineStyle(kDashed), LineColor(kMagenta));
+  TTJets_pdf_m1.plotOn(TTJetsframe1nobin);   TTJets_pdf_m1_dn.plotOn(TTJetsframe1nobin, LineStyle(kDashed), LineColor(kRed));   TTJets_pdf_m1_up.plotOn(TTJetsframe1nobin, LineStyle(kDashed), LineColor(kMagenta));
+  ggHToZZ_pdf_m1.plotOn(ggHToZZframe1nobin); ggHToZZ_pdf_m1_dn.plotOn(ggHToZZframe1nobin, LineStyle(kDashed), LineColor(kRed)); ggHToZZ_pdf_m1_up.plotOn(ggHToZZframe1nobin, LineStyle(kDashed), LineColor(kMagenta));
+  ggToZZ_pdf_m1.plotOn(ggToZZframe1nobin);   ggToZZ_pdf_m1_dn.plotOn(ggToZZframe1nobin, LineStyle(kDashed), LineColor(kRed));   ggToZZ_pdf_m1_up.plotOn(ggToZZframe1nobin, LineStyle(kDashed), LineColor(kMagenta));
+
+  //===========
+  // 1-D pdf m2
+  //===========
+  RooKeysPdf DY1J_pdf_m2("DY1J_pdf_m2", "DY1J_pdf_m2",          m2_above_Upsilon, *ds_dimudimu_DY1J_m2_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf DY1J_pdf_m2_dn("DY1J_pdf_m2_dn", "DY1J_pdf_m2_dn", m2_above_Upsilon, *ds_dimudimu_DY1J_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf DY1J_pdf_m2_up("DY1J_pdf_m2_up", "DY1J_pdf_m2_up", m2_above_Upsilon, *ds_dimudimu_DY1J_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf DY2J_pdf_m2("DY2J_pdf_m2",       "DY2J_pdf_m2",    m2_above_Upsilon, *ds_dimudimu_DY2J_m2_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf DY2J_pdf_m2_dn("DY2J_pdf_m2_dn", "DY2J_pdf_m2_dn", m2_above_Upsilon, *ds_dimudimu_DY2J_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf DY2J_pdf_m2_up("DY2J_pdf_m2_up", "DY2J_pdf_m2_up", m2_above_Upsilon, *ds_dimudimu_DY2J_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf qqToZZ_pdf_m2("qqToZZ_pdf_m2",       "qqToZZ_pdf_m2",    m2_above_Upsilon, *ds_dimudimu_qqToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf qqToZZ_pdf_m2_dn("qqToZZ_pdf_m2_dn", "qqToZZ_pdf_m2_dn", m2_above_Upsilon, *ds_dimudimu_qqToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf qqToZZ_pdf_m2_up("qqToZZ_pdf_m2_up", "qqToZZ_pdf_m2_up", m2_above_Upsilon, *ds_dimudimu_qqToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf TTJets_pdf_m2("TTJets_pdf_m2",       "TTJets_pdf_m2",    m2_above_Upsilon, *ds_dimudimu_TTJets_m2_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf TTJets_pdf_m2_dn("TTJets_pdf_m2_dn", "TTJets_pdf_m2_dn", m2_above_Upsilon, *ds_dimudimu_TTJets_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf TTJets_pdf_m2_up("TTJets_pdf_m2_up", "TTJets_pdf_m2_up", m2_above_Upsilon, *ds_dimudimu_TTJets_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggHToZZ_pdf_m2("ggHToZZ_pdf_m2",       "ggHToZZ_pdf_m2",    m2_above_Upsilon, *ds_dimudimu_ggHToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf ggHToZZ_pdf_m2_dn("ggHToZZ_pdf_m2_dn", "ggHToZZ_pdf_m2_dn", m2_above_Upsilon, *ds_dimudimu_ggHToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggHToZZ_pdf_m2_up("ggHToZZ_pdf_m2_up", "ggHToZZ_pdf_m2_up", m2_above_Upsilon, *ds_dimudimu_ggHToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggToZZ_pdf_m2("ggToZZ_pdf_m2",       "ggToZZ_pdf_m2",    m2_above_Upsilon, *ds_dimudimu_ggToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror);
+  RooKeysPdf ggToZZ_pdf_m2_dn("ggToZZ_pdf_m2_dn", "ggToZZ_pdf_m2_dn", m2_above_Upsilon, *ds_dimudimu_ggToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggToZZ_pdf_m2_up("ggToZZ_pdf_m2_up", "ggToZZ_pdf_m2_up", m2_above_Upsilon, *ds_dimudimu_ggToZZ_m2_above_Upsilon, RooKeysPdf::NoMirror, width_scale_up);
+
+  w->import(DY1J_pdf_m2);
+  w->import(DY1J_pdf_m2_dn);
+  w->import(DY1J_pdf_m2_up);
+  w->import(DY2J_pdf_m2);
+  w->import(DY2J_pdf_m2_dn);
+  w->import(DY2J_pdf_m2_up);
+  w->import(qqToZZ_pdf_m2);
+  w->import(qqToZZ_pdf_m2_dn);
+  w->import(qqToZZ_pdf_m2_up);
+  w->import(TTJets_pdf_m2);
+  w->import(TTJets_pdf_m2_dn);
+  w->import(TTJets_pdf_m2_up);
+  w->import(ggHToZZ_pdf_m2);
+  w->import(ggHToZZ_pdf_m2_dn);
+  w->import(ggHToZZ_pdf_m2_up);
+  w->import(ggToZZ_pdf_m2);
+  w->import(ggToZZ_pdf_m2_dn);
+  w->import(ggToZZ_pdf_m2_up);
+
+  // Overlay pdf on MC events (NOT DATA!) in binned frame
+  RooPlot* DY1Jframe2    = m2_above_Upsilon.frame(Title("DY1J MC + PDF: SR m2 binned"), Bins(HM_m_bins));
+  RooPlot* DY2Jframe2    = m2_above_Upsilon.frame(Title("DY2J MC + PDF: SR m2 binned"),    Bins(HM_m_bins));
+  RooPlot* qqToZZframe2  = m2_above_Upsilon.frame(Title("qqToZZ MC + PDF: SR m2 binned"),  Bins(HM_m_bins));
+  RooPlot* TTJetsframe2  = m2_above_Upsilon.frame(Title("TTJets MC + PDF: SR m2 binned"),  Bins(HM_m_bins));
+  RooPlot* ggHToZZframe2 = m2_above_Upsilon.frame(Title("ggHToZZ MC + PDF: SR m2 binned"), Bins(HM_m_bins));
+  RooPlot* ggToZZframe2  = m2_above_Upsilon.frame(Title("ggToZZ MC + PDF: SR m2 binned"),  Bins(HM_m_bins));
+
+  ds_dimudimu_DY1J_m2_above_Upsilon->plotOn(DY1Jframe2);       DY1J_pdf_m2.plotOn(DY1Jframe2);       DY1J_pdf_m2_dn.plotOn(DY1Jframe2, LineStyle(kDashed), LineColor(kRed));       DY1J_pdf_m2_up.plotOn(DY1Jframe2, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_DY2J_m2_above_Upsilon->plotOn(DY2Jframe2);       DY2J_pdf_m2.plotOn(DY2Jframe2);       DY2J_pdf_m2_dn.plotOn(DY2Jframe2, LineStyle(kDashed), LineColor(kRed));       DY2J_pdf_m2_up.plotOn(DY2Jframe2, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_qqToZZ_m2_above_Upsilon->plotOn(qqToZZframe2);   qqToZZ_pdf_m2.plotOn(qqToZZframe2);   qqToZZ_pdf_m2_dn.plotOn(qqToZZframe2, LineStyle(kDashed), LineColor(kRed));   qqToZZ_pdf_m2_up.plotOn(qqToZZframe2, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_TTJets_m2_above_Upsilon->plotOn(TTJetsframe2);   TTJets_pdf_m2.plotOn(TTJetsframe2);   TTJets_pdf_m2_dn.plotOn(TTJetsframe2, LineStyle(kDashed), LineColor(kRed));   TTJets_pdf_m2_up.plotOn(TTJetsframe2, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_ggHToZZ_m2_above_Upsilon->plotOn(ggHToZZframe2); ggHToZZ_pdf_m2.plotOn(ggHToZZframe2); ggHToZZ_pdf_m2_dn.plotOn(ggHToZZframe2, LineStyle(kDashed), LineColor(kRed)); ggHToZZ_pdf_m2_up.plotOn(ggHToZZframe2, LineStyle(kDashed), LineColor(kMagenta));
+  ds_dimudimu_ggToZZ_m2_above_Upsilon->plotOn(ggToZZframe2);   ggToZZ_pdf_m2.plotOn(ggToZZframe2);   ggToZZ_pdf_m2_dn.plotOn(ggToZZframe2, LineStyle(kDashed), LineColor(kRed));   ggToZZ_pdf_m2_up.plotOn(ggToZZframe2, LineStyle(kDashed), LineColor(kMagenta));
+
+  // unbinned, smooth pdf
+  RooPlot* DY1Jframe2nobin    = m2_above_Upsilon.frame(Title("DY1J PDF: SR m2 unbinned"));
+  RooPlot* DY2Jframe2nobin    = m2_above_Upsilon.frame(Title("DY2J PDF: SR m2 unbinned"));
+  RooPlot* qqToZZframe2nobin  = m2_above_Upsilon.frame(Title("qqToZZ PDF: SR m2 unbinned"));
+  RooPlot* TTJetsframe2nobin  = m2_above_Upsilon.frame(Title("TTJets PDF: SR m2 unbinned"));
+  RooPlot* ggHToZZframe2nobin = m2_above_Upsilon.frame(Title("ggHToZZ PDF: SR m2 unbinned"));
+  RooPlot* ggToZZframe2nobin  = m2_above_Upsilon.frame(Title("ggToZZ PDF: SR m2 unbinned"));
+
+  DY1J_pdf_m2.plotOn(DY1Jframe2nobin);       DY1J_pdf_m2_dn.plotOn(DY1Jframe2nobin, LineStyle(kDashed), LineColor(kRed));       DY1J_pdf_m2_up.plotOn(DY1Jframe2nobin, LineStyle(kDashed), LineColor(kMagenta));
+  DY2J_pdf_m2.plotOn(DY2Jframe2nobin);       DY2J_pdf_m2_dn.plotOn(DY2Jframe2nobin, LineStyle(kDashed), LineColor(kRed));       DY2J_pdf_m2_up.plotOn(DY2Jframe2nobin, LineStyle(kDashed), LineColor(kMagenta));
+  qqToZZ_pdf_m2.plotOn(qqToZZframe2nobin);   qqToZZ_pdf_m2_dn.plotOn(qqToZZframe2nobin, LineStyle(kDashed), LineColor(kRed));   qqToZZ_pdf_m2_up.plotOn(qqToZZframe2nobin, LineStyle(kDashed), LineColor(kMagenta));
+  TTJets_pdf_m2.plotOn(TTJetsframe2nobin);   TTJets_pdf_m2_dn.plotOn(TTJetsframe2nobin, LineStyle(kDashed), LineColor(kRed));   TTJets_pdf_m2_up.plotOn(TTJetsframe2nobin, LineStyle(kDashed), LineColor(kMagenta));
+  ggHToZZ_pdf_m2.plotOn(ggHToZZframe2nobin); ggHToZZ_pdf_m2_dn.plotOn(ggHToZZframe2nobin, LineStyle(kDashed), LineColor(kRed)); ggHToZZ_pdf_m2_up.plotOn(ggHToZZframe2nobin, LineStyle(kDashed), LineColor(kMagenta));
+  ggToZZ_pdf_m2.plotOn(ggToZZframe2nobin);   ggToZZ_pdf_m2_dn.plotOn(ggToZZframe2nobin, LineStyle(kDashed), LineColor(kRed));   ggToZZ_pdf_m2_up.plotOn(ggToZZframe2nobin, LineStyle(kDashed), LineColor(kMagenta));
+
+  //Draw
+  TCanvas* DY1JPDF = new TCanvas("DY1JPDF", "DY1JPDF", 800, 800);
+  DY1JPDF->Divide(2, 2);
+  DY1JPDF->cd(1); gPad->SetLeftMargin(0.15); DY1Jframe1->GetYaxis()->SetTitleOffset(1.2);      DY1Jframe1->Draw();
+  DY1JPDF->cd(2); gPad->SetLeftMargin(0.2);  DY1Jframe1nobin->GetYaxis()->SetTitleOffset(1.5); DY1Jframe1nobin->Draw();
+  DY1JPDF->cd(3); gPad->SetLeftMargin(0.15); DY1Jframe2->GetYaxis()->SetTitleOffset(1.2);      DY1Jframe2->Draw();
+  DY1JPDF->cd(4); gPad->SetLeftMargin(0.2);  DY1Jframe2nobin->GetYaxis()->SetTitleOffset(1.5); DY1Jframe2nobin->Draw();
+  DY1JPDF->SaveAs("HighMassShape/DY1JPDF.pdf");
+  DY1JPDF->SaveAs("HighMassShape/DY1JPDF.root");
+
+  TCanvas* DY2JPDF = new TCanvas("DY2JPDF", "DY2JPDF", 800, 800);
+  DY2JPDF->Divide(2, 2);
+  DY2JPDF->cd(1); gPad->SetLeftMargin(0.15); DY2Jframe1->GetYaxis()->SetTitleOffset(1.2);      DY2Jframe1->Draw();
+  DY2JPDF->cd(2); gPad->SetLeftMargin(0.2);  DY2Jframe1nobin->GetYaxis()->SetTitleOffset(1.5); DY2Jframe1nobin->Draw();
+  DY2JPDF->cd(3); gPad->SetLeftMargin(0.15); DY2Jframe2->GetYaxis()->SetTitleOffset(1.2);      DY2Jframe2->Draw();
+  DY2JPDF->cd(4); gPad->SetLeftMargin(0.2);  DY2Jframe2nobin->GetYaxis()->SetTitleOffset(1.5); DY2Jframe2nobin->Draw();
+  DY2JPDF->SaveAs("HighMassShape/DY2JPDF.pdf");
+  DY2JPDF->SaveAs("HighMassShape/DY2JPDF.root");
+
+  TCanvas* qqToZZPDF = new TCanvas("qqToZZPDF", "qqToZZPDF", 800, 800);
+  qqToZZPDF->Divide(2, 2);
+  qqToZZPDF->cd(1); gPad->SetLeftMargin(0.15); qqToZZframe1->GetYaxis()->SetTitleOffset(1.2);      qqToZZframe1->Draw();
+  qqToZZPDF->cd(2); gPad->SetLeftMargin(0.2);  qqToZZframe1nobin->GetYaxis()->SetTitleOffset(1.5); qqToZZframe1nobin->Draw();
+  qqToZZPDF->cd(3); gPad->SetLeftMargin(0.15); qqToZZframe2->GetYaxis()->SetTitleOffset(1.2);      qqToZZframe2->Draw();
+  qqToZZPDF->cd(4); gPad->SetLeftMargin(0.2);  qqToZZframe2nobin->GetYaxis()->SetTitleOffset(1.5); qqToZZframe2nobin->Draw();
+  qqToZZPDF->SaveAs("HighMassShape/qqToZZPDF.pdf");
+  qqToZZPDF->SaveAs("HighMassShape/qqToZZPDF.root");
+
+  TCanvas* TTJetsPDF = new TCanvas("TTJetsPDF", "TTJetsPDF", 800, 800);
+  TTJetsPDF->Divide(2, 2);
+  TTJetsPDF->cd(1); gPad->SetLeftMargin(0.15); TTJetsframe1->GetYaxis()->SetTitleOffset(1.2);      TTJetsframe1->Draw();
+  TTJetsPDF->cd(2); gPad->SetLeftMargin(0.2);  TTJetsframe1nobin->GetYaxis()->SetTitleOffset(1.5); TTJetsframe1nobin->Draw();
+  TTJetsPDF->cd(3); gPad->SetLeftMargin(0.15); TTJetsframe2->GetYaxis()->SetTitleOffset(1.2);      TTJetsframe2->Draw();
+  TTJetsPDF->cd(4); gPad->SetLeftMargin(0.2);  TTJetsframe2nobin->GetYaxis()->SetTitleOffset(1.5); TTJetsframe2nobin->Draw();
+  TTJetsPDF->SaveAs("HighMassShape/TTJetsPDF.pdf");
+  TTJetsPDF->SaveAs("HighMassShape/TTJetsPDF.root");
+
+  TCanvas* ggHToZZPDF = new TCanvas("ggHToZZPDF", "ggHToZZPDF", 800, 800);
+  ggHToZZPDF->Divide(2, 2);
+  ggHToZZPDF->cd(1); gPad->SetLeftMargin(0.15); ggHToZZframe1->GetYaxis()->SetTitleOffset(1.2);      ggHToZZframe1->Draw();
+  ggHToZZPDF->cd(2); gPad->SetLeftMargin(0.2);  ggHToZZframe1nobin->GetYaxis()->SetTitleOffset(1.5); ggHToZZframe1nobin->Draw();
+  ggHToZZPDF->cd(3); gPad->SetLeftMargin(0.15); ggHToZZframe2->GetYaxis()->SetTitleOffset(1.2);      ggHToZZframe2->Draw();
+  ggHToZZPDF->cd(4); gPad->SetLeftMargin(0.2);  ggHToZZframe2nobin->GetYaxis()->SetTitleOffset(1.5); ggHToZZframe2nobin->Draw();
+  ggHToZZPDF->SaveAs("HighMassShape/ggHToZZPDF.pdf");
+  ggHToZZPDF->SaveAs("HighMassShape/ggHToZZPDF.root");
+
+  TCanvas* ggToZZPDF = new TCanvas("ggToZZPDF", "ggToZZPDF", 800, 800);
+  ggToZZPDF->Divide(2, 2);
+  ggToZZPDF->cd(1); gPad->SetLeftMargin(0.15); ggToZZframe1->GetYaxis()->SetTitleOffset(1.2);      ggToZZframe1->Draw();
+  ggToZZPDF->cd(2); gPad->SetLeftMargin(0.2);  ggToZZframe1nobin->GetYaxis()->SetTitleOffset(1.5); ggToZZframe1nobin->Draw();
+  ggToZZPDF->cd(3); gPad->SetLeftMargin(0.15); ggToZZframe2->GetYaxis()->SetTitleOffset(1.2);      ggToZZframe2->Draw();
+  ggToZZPDF->cd(4); gPad->SetLeftMargin(0.2);  ggToZZframe2nobin->GetYaxis()->SetTitleOffset(1.5); ggToZZframe2nobin->Draw();
+  ggToZZPDF->SaveAs("HighMassShape/ggToZZPDF.pdf");
+  ggToZZPDF->SaveAs("HighMassShape/ggToZZPDF.root");
+
+  //==============================================================================================
+  //Sum PDF based on Entries * scale factor: // DY0J: no contribution, 0 entries, not included
+  //Include: DY1J, DY2J, qqToZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
+  //          Entries   *   Scale factor     =   PDF nomalize factor
+  // DY1J       2           6.2974242E-01        1.2594848
+  // DY2J       6           3.5720940E-01        2.1432564
+  // qqToZZ     1006        4.1624890E-03        4.1874639
+  // TTJets     25          1.0998854E-01        2.7497135
+  // ggHToZZ    1331        7.6245783E-04        1.0148314
+  // ggToZZ     3053        1.1110732E-04        0.3392106
+  //==============================================================================================
+  // nom
+  w->factory("SUM::HighMassFit2018_m1(1.2594848*DY1J_pdf_m1, 2.1432564*DY2J_pdf_m1, 4.1874639*qqToZZ_pdf_m1, 2.7497135*TTJets_pdf_m1, 1.0148314*ggHToZZ_pdf_m1, 0.3392106*ggToZZ_pdf_m1)");
+  w->factory("SUM::HighMassFit2018_m2(1.2594848*DY1J_pdf_m2, 2.1432564*DY2J_pdf_m2, 4.1874639*qqToZZ_pdf_m2, 2.7497135*TTJets_pdf_m2, 1.0148314*ggHToZZ_pdf_m2, 0.3392106*ggToZZ_pdf_m2)");
+  // dn
+  w->factory("SUM::HighMassFit2018_m1_dn(1.2594848*DY1J_pdf_m1_dn, 2.1432564*DY2J_pdf_m1_dn, 4.1874639*qqToZZ_pdf_m1_dn, 2.7497135*TTJets_pdf_m1_dn, 1.0148314*ggHToZZ_pdf_m1_dn, 0.3392106*ggToZZ_pdf_m1_dn)");
+  w->factory("SUM::HighMassFit2018_m2_dn(1.2594848*DY1J_pdf_m2_dn, 2.1432564*DY2J_pdf_m2_dn, 4.1874639*qqToZZ_pdf_m2_dn, 2.7497135*TTJets_pdf_m2_dn, 1.0148314*ggHToZZ_pdf_m2_dn, 0.3392106*ggToZZ_pdf_m2_dn)");
+  // up
+  w->factory("SUM::HighMassFit2018_m1_up(1.2594848*DY1J_pdf_m1_up, 2.1432564*DY2J_pdf_m1_up, 4.1874639*qqToZZ_pdf_m1_up, 2.7497135*TTJets_pdf_m1_up, 1.0148314*ggHToZZ_pdf_m1_up, 0.3392106*ggToZZ_pdf_m1_up)");
+  w->factory("SUM::HighMassFit2018_m2_up(1.2594848*DY1J_pdf_m2_up, 2.1432564*DY2J_pdf_m2_up, 4.1874639*qqToZZ_pdf_m2_up, 2.7497135*TTJets_pdf_m2_up, 1.0148314*ggHToZZ_pdf_m2_up, 0.3392106*ggToZZ_pdf_m2_up)");
+
+  RooPlot* plotShapem1 = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1)"));
+  RooPlot* plotShapem2 = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2)"));
+  RooPlot* plotShapem1dn = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1 dn)"));
+  RooPlot* plotShapem2dn = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2 dn)"));
+  RooPlot* plotShapem1up = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1 up)"));
+  RooPlot* plotShapem2up = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2 up)"));
+  RooPlot* plotShapem1All = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1 dn + up)"));
+  RooPlot* plotShapem2All = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2 dn + up)"));
+
+  w->pdf("HighMassFit2018_m1")->plotOn(plotShapem1, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1"));
+  w->pdf("HighMassFit2018_m2")->plotOn(plotShapem2, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2"));
+  w->pdf("HighMassFit2018_m1_dn")->plotOn(plotShapem1dn, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1_dn"));
+  w->pdf("HighMassFit2018_m2_dn")->plotOn(plotShapem2dn, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2_dn"));
+  w->pdf("HighMassFit2018_m1_up")->plotOn(plotShapem1up, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1_up"));
+  w->pdf("HighMassFit2018_m2_up")->plotOn(plotShapem2up, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2_up"));
+
+  //overlay
+  w->pdf("HighMassFit2018_m1")->plotOn(plotShapem1All, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1"));
+  w->pdf("HighMassFit2018_m1_dn")->plotOn(plotShapem1All, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_dn"));
+  w->pdf("HighMassFit2018_m1_up")->plotOn(plotShapem1All, LineColor(kMagenta), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_up"));
+
+  w->pdf("HighMassFit2018_m2")->plotOn(plotShapem2All, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2"));
+  w->pdf("HighMassFit2018_m2_dn")->plotOn(plotShapem2All, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_dn"));
+  w->pdf("HighMassFit2018_m2_up")->plotOn(plotShapem2All, LineColor(kMagenta), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_up"));
+
+  TCanvas * c_shape1D_above_Upsilon = new TCanvas("c_shape1D_above_Upsilon", "c_shape1D_above_Upsilon", 800, 800);
+  c_shape1D_above_Upsilon->cd();
+  plotShapem1->Draw();   plotShapem1->GetYaxis()->SetTitle("p.d.f.");   c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon.pdf");
+  plotShapem2->Draw();   plotShapem2->GetYaxis()->SetTitle("p.d.f.");   c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon.pdf");
+  plotShapem1dn->Draw(); plotShapem1dn->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_dn.pdf");
+  plotShapem2dn->Draw(); plotShapem2dn->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_dn.pdf");
+  plotShapem1up->Draw(); plotShapem1up->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_up.pdf");
+  plotShapem2up->Draw(); plotShapem2up->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_up.pdf");
+  plotShapem1All->Draw(); plotShapem1All->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_All.pdf");
+  plotShapem2All->Draw(); plotShapem2All->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_All.pdf");
+
+  //Draw systematic unc. for m1
+  TCanvas * c_m1_above_Upsilon_sys = new TCanvas("c_m1_above_Upsilon_sys", "c_m1_above_Upsilon_sys", 800, 800);
+  c_m1_above_Upsilon_sys->Clear();
+  // Upper pad: pdfs: nom, up, dn
+  TPad *padup_m1_above_Upsilon_sys = new TPad("padup_m1_above_Upsilon_sys", "padup_m1_above_Upsilon_sys", 0, 0.3, 1, 1.0);
+  padup_m1_above_Upsilon_sys->SetBottomMargin(0); padup_m1_above_Upsilon_sys->Draw(); padup_m1_above_Upsilon_sys->cd();
+  plotShapem1All->Draw(); plotShapem1All->GetYaxis()->SetTitle("Background PDF");
+  c_m1_above_Upsilon_sys->cd(); c_m1_above_Upsilon_sys->Update();
+  // Lower pad: (up/dn-nom)/nom; quote largest abs as sys. unc.
+  TPad *paddn_m1_above_Upsilon_sys = new TPad("paddn_m1_above_Upsilon_sys", "paddn_m1_above_Upsilon_sys", 0, 0.0, 1, 0.29);
+  paddn_m1_above_Upsilon_sys->SetTopMargin(0); paddn_m1_above_Upsilon_sys->SetBottomMargin(0.35); paddn_m1_above_Upsilon_sys->SetGridy(); paddn_m1_above_Upsilon_sys->Draw(); paddn_m1_above_Upsilon_sys->cd();
+  TH1F *h_sys_m1_above_Upsilon_dn = new TH1F("h_sys_m1_above_Upsilon_dn", "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m1_above_Upsilon_up = new TH1F("h_sys_m1_above_Upsilon_up", "", 500, m_Upsilon_up, m_highmax);
+  h_sys_m1_above_Upsilon_up->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]"); h_sys_m1_above_Upsilon_up->GetXaxis()->SetTitleSize(20); h_sys_m1_above_Upsilon_up->GetXaxis()->SetTitleFont(43); h_sys_m1_above_Upsilon_up->GetXaxis()->SetTitleOffset(3.0); h_sys_m1_above_Upsilon_up->GetXaxis()->SetLabelSize(15); h_sys_m1_above_Upsilon_up->GetXaxis()->SetLabelFont(43);
+  h_sys_m1_above_Upsilon_up->GetYaxis()->SetTitle("Sys. unc."); h_sys_m1_above_Upsilon_up->GetYaxis()->SetNdivisions(505); h_sys_m1_above_Upsilon_up->GetYaxis()->CenterTitle(); h_sys_m1_above_Upsilon_up->GetYaxis()->SetTitleSize(20); h_sys_m1_above_Upsilon_up->GetYaxis()->SetTitleFont(43); h_sys_m1_above_Upsilon_up->GetYaxis()->SetTitleOffset(1.4); h_sys_m1_above_Upsilon_up->GetYaxis()->SetLabelSize(15); h_sys_m1_above_Upsilon_up->GetYaxis()->SetLabelFont(43);
+  //histogram pdf: nom, dn, up
+  TH1F* h_m1_above_Upsilon = new TH1F("h_m1_above_Upsilon", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m1_above_Upsilon_dn = new TH1F("h_m1_above_Upsilon_dn", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m1_above_Upsilon_up = new TH1F("h_m1_above_Upsilon_up", "", 500, m_Upsilon_up, m_highmax);
+  w->pdf("HighMassFit2018_m1")->fillHistogram(h_m1_above_Upsilon, m1_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m1_dn")->fillHistogram(h_m1_above_Upsilon_dn, m1_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m1_up")->fillHistogram(h_m1_above_Upsilon_up, m1_above_Upsilon, 5000000);
+  for (unsigned int iB=1; iB < 500; iB++) {
+    float unc_dn = ( h_m1_above_Upsilon_dn->GetBinContent(iB) - h_m1_above_Upsilon->GetBinContent(iB) )*1.0/h_m1_above_Upsilon->GetBinContent(iB);
+    float unc_up = ( h_m1_above_Upsilon_up->GetBinContent(iB) - h_m1_above_Upsilon->GetBinContent(iB) )*1.0/h_m1_above_Upsilon->GetBinContent(iB);
+    h_sys_m1_above_Upsilon_dn->SetBinContent(iB, unc_dn );
+    h_sys_m1_above_Upsilon_up->SetBinContent(iB, unc_up );
+  }
+  h_sys_m1_above_Upsilon_up->SetMinimum(-0.45); h_sys_m1_above_Upsilon_up->SetMaximum(0.45); h_sys_m1_above_Upsilon_up->SetMarkerStyle(21); h_sys_m1_above_Upsilon_up->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_up->SetMarkerColor(kMagenta); h_sys_m1_above_Upsilon_up->SetStats(0); h_sys_m1_above_Upsilon_up->Draw("p");
+  h_sys_m1_above_Upsilon_dn->SetMinimum(-0.45); h_sys_m1_above_Upsilon_dn->SetMaximum(0.45); h_sys_m1_above_Upsilon_dn->SetMarkerStyle(21); h_sys_m1_above_Upsilon_dn->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_dn->SetMarkerColor(kRed); h_sys_m1_above_Upsilon_dn->SetStats(0); h_sys_m1_above_Upsilon_dn->Draw("p same");
+  c_m1_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_All_and_SysUnc.pdf");
+  c_m1_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_All_and_SysUnc.root");
+
+  //Draw systematic unc. for m2
+  TCanvas * c_m2_above_Upsilon_sys = new TCanvas("c_m2_above_Upsilon_sys", "c_m2_above_Upsilon_sys", 800, 800);
+  c_m2_above_Upsilon_sys->Clear();
+  // Upper pad: pdfs: nom, up, dn
+  TPad *padup_m2_above_Upsilon_sys = new TPad("padup_m2_above_Upsilon_sys", "padup_m2_above_Upsilon_sys", 0, 0.3, 1, 1.0);
+  padup_m2_above_Upsilon_sys->SetBottomMargin(0); padup_m2_above_Upsilon_sys->Draw(); padup_m2_above_Upsilon_sys->cd();
+  plotShapem2All->Draw(); plotShapem2All->GetYaxis()->SetTitle("Background PDF");
+  c_m2_above_Upsilon_sys->cd(); c_m2_above_Upsilon_sys->Update();
+  // Lower pad: (up/dn-nom)/nom; quote largest abs as sys. unc.
+  TPad *paddn_m2_above_Upsilon_sys = new TPad("paddn_m2_above_Upsilon_sys", "paddn_m2_above_Upsilon_sys", 0, 0.0, 1, 0.29);
+  paddn_m2_above_Upsilon_sys->SetTopMargin(0); paddn_m2_above_Upsilon_sys->SetBottomMargin(0.35); paddn_m2_above_Upsilon_sys->SetGridy(); paddn_m2_above_Upsilon_sys->Draw(); paddn_m2_above_Upsilon_sys->cd();
+  TH1F *h_sys_m2_above_Upsilon_dn = new TH1F("h_sys_m2_above_Upsilon_dn", "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m2_above_Upsilon_up = new TH1F("h_sys_m2_above_Upsilon_up", "", 500, m_Upsilon_up, m_highmax);
+  h_sys_m2_above_Upsilon_up->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]"); h_sys_m2_above_Upsilon_up->GetXaxis()->SetTitleSize(20); h_sys_m2_above_Upsilon_up->GetXaxis()->SetTitleFont(43); h_sys_m2_above_Upsilon_up->GetXaxis()->SetTitleOffset(3.0); h_sys_m2_above_Upsilon_up->GetXaxis()->SetLabelSize(15); h_sys_m2_above_Upsilon_up->GetXaxis()->SetLabelFont(43);
+  h_sys_m2_above_Upsilon_up->GetYaxis()->SetTitle("Sys. unc."); h_sys_m2_above_Upsilon_up->GetYaxis()->SetNdivisions(505); h_sys_m2_above_Upsilon_up->GetYaxis()->CenterTitle(); h_sys_m2_above_Upsilon_up->GetYaxis()->SetTitleSize(20); h_sys_m2_above_Upsilon_up->GetYaxis()->SetTitleFont(43); h_sys_m2_above_Upsilon_up->GetYaxis()->SetTitleOffset(1.4); h_sys_m2_above_Upsilon_up->GetYaxis()->SetLabelSize(15); h_sys_m2_above_Upsilon_up->GetYaxis()->SetLabelFont(43);
+  //histogram pdf: nom, dn, up
+  TH1F* h_m2_above_Upsilon = new TH1F("h_m2_above_Upsilon","", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m2_above_Upsilon_dn = new TH1F("h_m2_above_Upsilon_dn", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m2_above_Upsilon_up = new TH1F("h_m2_above_Upsilon_up", "", 500, m_Upsilon_up, m_highmax);
+  w->pdf("HighMassFit2018_m2")->fillHistogram(h_m2_above_Upsilon, m2_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m2_dn")->fillHistogram(h_m2_above_Upsilon_dn, m2_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m2_up")->fillHistogram(h_m2_above_Upsilon_up, m2_above_Upsilon, 5000000);
+  for (unsigned int iB=1; iB < 500; iB++) {
+    float unc_dn = ( h_m2_above_Upsilon_dn->GetBinContent(iB) - h_m2_above_Upsilon->GetBinContent(iB) )*1.0/h_m2_above_Upsilon->GetBinContent(iB);
+    float unc_up = ( h_m2_above_Upsilon_up->GetBinContent(iB) - h_m2_above_Upsilon->GetBinContent(iB) )*1.0/h_m2_above_Upsilon->GetBinContent(iB);
+    h_sys_m2_above_Upsilon_dn->SetBinContent(iB, unc_dn );
+    h_sys_m2_above_Upsilon_up->SetBinContent(iB, unc_up );
+  }
+  h_sys_m2_above_Upsilon_up->SetMinimum(-0.45); h_sys_m2_above_Upsilon_up->SetMaximum(0.45); h_sys_m2_above_Upsilon_up->SetMarkerStyle(21); h_sys_m2_above_Upsilon_up->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_up->SetMarkerColor(kMagenta); h_sys_m2_above_Upsilon_up->SetStats(0); h_sys_m2_above_Upsilon_up->Draw("p");
+  h_sys_m2_above_Upsilon_dn->SetMinimum(-0.45); h_sys_m2_above_Upsilon_dn->SetMaximum(0.45); h_sys_m2_above_Upsilon_dn->SetMarkerStyle(21); h_sys_m2_above_Upsilon_dn->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_dn->SetMarkerColor(kRed); h_sys_m2_above_Upsilon_dn->SetStats(0); h_sys_m2_above_Upsilon_dn->Draw("p same");
+  c_m2_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_All_and_SysUnc.pdf");
+  c_m2_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_All_and_SysUnc.root");
+
+  w->factory("PROD::HighMassBKG(HighMassFit2018_m1, HighMassFit2018_m2)");
+  w->factory("PROD::HighMassBKG_dn(HighMassFit2018_m1_dn, HighMassFit2018_m2_dn)");
+  w->factory("PROD::HighMassBKG_up(HighMassFit2018_m1_up, HighMassFit2018_m2_up)");
+
+  //=***************************************************************************
   //                           Save to Workspace
-  //****************************************************************************
+  //=***************************************************************************
   cout<<"Save to workspace"<<endl;
   w->writeToFile(outFileLM);
 }

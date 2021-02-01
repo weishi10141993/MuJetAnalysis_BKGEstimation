@@ -25,6 +25,9 @@ const unsigned int m_bins_below_Jpsi = 63;//bin size is ~0.04GeV, as above
 const unsigned int m_bins_above_Jpsi = 144;
 const unsigned int m_bins_above_Upsilon = 98;//bin size is 0.5GeV
 
+//Used for smooth pdf with kernel density
+const double       width_scale_dn  = 0.9;
+const double       width_scale_up  = 1.1;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in LowMassBKGPlot2D !
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!

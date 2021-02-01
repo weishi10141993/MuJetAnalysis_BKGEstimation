@@ -53,6 +53,15 @@ TString header = "";//header of SR plots without pulls
 TString inputFile1;//Run 2 data Ntuples used for HighMassBKGABCD and LowMassBKGFit1D
 TString outFileLM = "";//output file of LowMassBKGFit1D, will also be used in limit calculation
 TString inputFile2;//input workSpace file to LowMassBKGPlot2D, that's also the output file of LowMassBKGFit1D
+
+//Run 2 BKG Ntuples used for kernel density estimation in LowMassBKGFit1D
+TString DY1JFile;
+TString DY2JFile;
+TString qqToZZFile;
+TString TTJetsFile;
+TString ggHToZZFile;
+TString ggToZZFile;
+
 Float_t validate_m1_iso_Ymax;//Max y in validation plots
 Float_t validate_m2_iso_Ymax;
 
@@ -99,6 +108,12 @@ namespace BKG_cfg {
       for(int j = 0; j < 1; j++){
         DATA_files[j] = DATA_files_2018[j];
       }
+      DY1JFile    = "Input_2018_DY1J_MC.txt";
+      DY2JFile    = "Input_2018_DY2J_MC.txt";
+      qqToZZFile  = "Input_2018_qqToZZ_MC.txt";
+      TTJetsFile  = "Input_2018_TTJets_MC.txt";
+      ggHToZZFile = "Input_2018_ggHToZZ_MC.txt";
+      ggToZZFile  = "Input_2018_ggToZZ_MC.txt";
     }//end 2018
     else{
       std::cout << "*** User input year is unknown! Please check. ***" << std::endl;

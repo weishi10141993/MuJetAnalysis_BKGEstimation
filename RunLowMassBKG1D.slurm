@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name=LowMassBKG1D18
-#SBATCH --time=00:30:00
+#SBATCH --time=00:40:00
 #SBATCH --ntasks=1
 #SBATCH --mem=2000M
 #SBATCH --output=LowMassBKG1D.out.%j
