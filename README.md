@@ -15,7 +15,7 @@ Edit Config.h to change the year (default is 2018) you want to do the estimation
 A data driven method is used to estimate the SM yield.
 ```
 root -l -b -q LowMassBKGFit1D18.C #For plot and fit 1D template and save to work space
-root -l -b -q LowMassBKGPlot2D18.C  #For 2D template and draw 2D data points
+root -l -b -q LowMassBKGPlot2D18.C #For 2D template and draw 2D data points
 ```
 
 ## High mass

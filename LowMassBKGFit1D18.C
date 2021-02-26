@@ -1274,24 +1274,49 @@ void LowMassBKGFit1D18() {
 
   //==============================================================================================
   //Sum PDF based on Entries * scale factor: // DY0J: no contribution, 0 entries, not included
-  //Include: DY1J, DY2J, qqToZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
-  //          Entries   *   Scale factor     =   PDF nomalize factor
+  //see worksheet "Bootstrapping":
+  //  https://docs.google.com/spreadsheets/d/10qXKHSw9QLrpPm2s0pASCbB27k6kVyEtTEwYi_oTra0/edit?usp=sharing
+  //Include 6 processes: DY1J, DY2J, qqToZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
+  //          Entries   *   Scale factor     =   PDF weight
   // DY1J       2           6.2974242E-01        1.2594848
   // DY2J       6           3.5720940E-01        2.1432564
   // qqToZZ     1006        4.1624890E-03        4.1874639
   // TTJets     25          1.0998854E-01        2.7497135
   // ggHToZZ    1331        7.6245783E-04        1.0148314
   // ggToZZ     3053        1.1110732E-04        0.3392106
+  //
+  // The entries are also varied +/-1 sigma and then propagate to PDF weight to estimate unc.
+  // Four different weights are used to evaluate the unc:
+  //   PDF nominal weight +1 sigma
+  //   PDF nominal weight -1 sigma
+  //   Braid I  (nominal wgt +/- 1 sigma, start from +)
+  //   Braid II (nominal wgt -/+ 1 sigma, start from -)
+  // For each set, m1 and m2 use the same set
   //==============================================================================================
-  // nom
+
+  // default nominal
   w->factory("SUM::HighMassFit2018_m1(1.2594848*DY1J_pdf_m1, 2.1432564*DY2J_pdf_m1, 4.1874639*qqToZZ_pdf_m1, 2.7497135*TTJets_pdf_m1, 1.0148314*ggHToZZ_pdf_m1, 0.3392106*ggToZZ_pdf_m1)");
   w->factory("SUM::HighMassFit2018_m2(1.2594848*DY1J_pdf_m2, 2.1432564*DY2J_pdf_m2, 4.1874639*qqToZZ_pdf_m2, 2.7497135*TTJets_pdf_m2, 1.0148314*ggHToZZ_pdf_m2, 0.3392106*ggToZZ_pdf_m2)");
-  // dn
+
+  // bandwidth vary dn
   w->factory("SUM::HighMassFit2018_m1_dn(1.2594848*DY1J_pdf_m1_dn, 2.1432564*DY2J_pdf_m1_dn, 4.1874639*qqToZZ_pdf_m1_dn, 2.7497135*TTJets_pdf_m1_dn, 1.0148314*ggHToZZ_pdf_m1_dn, 0.3392106*ggToZZ_pdf_m1_dn)");
   w->factory("SUM::HighMassFit2018_m2_dn(1.2594848*DY1J_pdf_m2_dn, 2.1432564*DY2J_pdf_m2_dn, 4.1874639*qqToZZ_pdf_m2_dn, 2.7497135*TTJets_pdf_m2_dn, 1.0148314*ggHToZZ_pdf_m2_dn, 0.3392106*ggToZZ_pdf_m2_dn)");
-  // up
+  // bandwidth vary up
   w->factory("SUM::HighMassFit2018_m1_up(1.2594848*DY1J_pdf_m1_up, 2.1432564*DY2J_pdf_m1_up, 4.1874639*qqToZZ_pdf_m1_up, 2.7497135*TTJets_pdf_m1_up, 1.0148314*ggHToZZ_pdf_m1_up, 0.3392106*ggToZZ_pdf_m1_up)");
   w->factory("SUM::HighMassFit2018_m2_up(1.2594848*DY1J_pdf_m2_up, 2.1432564*DY2J_pdf_m2_up, 4.1874639*qqToZZ_pdf_m2_up, 2.7497135*TTJets_pdf_m2_up, 1.0148314*ggHToZZ_pdf_m2_up, 0.3392106*ggToZZ_pdf_m2_up)");
+
+  // PDF nominal weight + 1 sigma
+  w->factory("SUM::HighMassFit2018_m1_weight_up(2.1500751*DY1J_pdf_m1, 3.0182371*DY2J_pdf_m1, 4.3194877*qqToZZ_pdf_m1, 3.2996563*TTJets_pdf_m1, 1.0426480*ggHToZZ_pdf_m1, 0.3453498*ggToZZ_pdf_m1)");
+  w->factory("SUM::HighMassFit2018_m2_weight_up(2.1500751*DY1J_pdf_m2, 3.0182371*DY2J_pdf_m2, 4.3194877*qqToZZ_pdf_m2, 3.2996563*TTJets_pdf_m2, 1.0426480*ggHToZZ_pdf_m2, 0.3453498*ggToZZ_pdf_m2)");
+  // PDF nominal weight - 1 sigma
+  w->factory("SUM::HighMassFit2018_m1_weight_dn(0.3688946*DY1J_pdf_m1, 1.2682756*DY2J_pdf_m1, 4.0554402*qqToZZ_pdf_m1, 2.1997709*TTJets_pdf_m1, 0.9870147*ggHToZZ_pdf_m1, 0.3330715*ggToZZ_pdf_m1)");
+  w->factory("SUM::HighMassFit2018_m2_weight_dn(0.3688946*DY1J_pdf_m2, 1.2682756*DY2J_pdf_m2, 4.0554402*qqToZZ_pdf_m2, 2.1997709*TTJets_pdf_m2, 0.9870147*ggHToZZ_pdf_m2, 0.3330715*ggToZZ_pdf_m2)");
+  // PDF Braid I (nominal wgt +/- 1 sigma, start from +)
+  w->factory("SUM::HighMassFit2018_m1_weight_braidI(2.1500751*DY1J_pdf_m1, 1.2682756*DY2J_pdf_m1, 4.3194877*qqToZZ_pdf_m1, 2.1997709*TTJets_pdf_m1, 1.0426480*ggHToZZ_pdf_m1, 0.3330715*ggToZZ_pdf_m1)");
+  w->factory("SUM::HighMassFit2018_m2_weight_braidI(2.1500751*DY1J_pdf_m2, 1.2682756*DY2J_pdf_m2, 4.3194877*qqToZZ_pdf_m2, 2.1997709*TTJets_pdf_m2, 1.0426480*ggHToZZ_pdf_m2, 0.3330715*ggToZZ_pdf_m2)");
+  // PDF Braid II (nominal wgt -/+ 1 sigma, start from -)
+  w->factory("SUM::HighMassFit2018_m1_weight_braidII(0.3688946*DY1J_pdf_m1, 3.0182371*DY2J_pdf_m1, 4.0554402*qqToZZ_pdf_m1, 3.2996563*TTJets_pdf_m1, 0.9870147*ggHToZZ_pdf_m1, 0.3453498*ggToZZ_pdf_m1)");
+  w->factory("SUM::HighMassFit2018_m2_weight_braidII(0.3688946*DY1J_pdf_m2, 3.0182371*DY2J_pdf_m2, 4.0554402*qqToZZ_pdf_m2, 3.2996563*TTJets_pdf_m2, 0.9870147*ggHToZZ_pdf_m2, 0.3453498*ggToZZ_pdf_m2)");
 
   RooPlot* plotShapem1 = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1)"));
   RooPlot* plotShapem2 = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2)"));
@@ -1301,7 +1326,10 @@ void LowMassBKGFit1D18() {
   RooPlot* plotShapem2up = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2 up)"));
   RooPlot* plotShapem1All = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1 dn + up)"));
   RooPlot* plotShapem2All = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2 dn + up)"));
+  RooPlot* plotShapem1PDFWeight = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1 PDF weight)"));
+  RooPlot* plotShapem2PDFWeight = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2 PDF weight)"));
 
+  // plot individually
   w->pdf("HighMassFit2018_m1")->plotOn(plotShapem1, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1"));
   w->pdf("HighMassFit2018_m2")->plotOn(plotShapem2, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2"));
   w->pdf("HighMassFit2018_m1_dn")->plotOn(plotShapem1dn, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1_dn"));
@@ -1318,6 +1346,18 @@ void LowMassBKGFit1D18() {
   w->pdf("HighMassFit2018_m2_dn")->plotOn(plotShapem2All, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_dn"));
   w->pdf("HighMassFit2018_m2_up")->plotOn(plotShapem2All, LineColor(kMagenta), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_up"));
 
+  w->pdf("HighMassFit2018_m1")->plotOn(plotShapem1PDFWeight, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1"));
+  w->pdf("HighMassFit2018_m1_weight_up")->plotOn(plotShapem1PDFWeight, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_weight_up"));
+  w->pdf("HighMassFit2018_m1_weight_dn")->plotOn(plotShapem1PDFWeight, LineColor(kMagenta), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_weight_dn"));
+  w->pdf("HighMassFit2018_m1_weight_braidI")->plotOn(plotShapem1PDFWeight, LineColor(kGreen), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_weight_braidI"));
+  w->pdf("HighMassFit2018_m1_weight_braidII")->plotOn(plotShapem1PDFWeight, LineColor(kCyan), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_weight_braidII"));
+
+  w->pdf("HighMassFit2018_m2")->plotOn(plotShapem2PDFWeight, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2"));
+  w->pdf("HighMassFit2018_m2_weight_up")->plotOn(plotShapem2PDFWeight, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_weight_up"));
+  w->pdf("HighMassFit2018_m2_weight_dn")->plotOn(plotShapem2PDFWeight, LineColor(kMagenta), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_weight_dn"));
+  w->pdf("HighMassFit2018_m2_weight_braidI")->plotOn(plotShapem2PDFWeight, LineColor(kGreen), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_weight_braidI"));
+  w->pdf("HighMassFit2018_m2_weight_braidII")->plotOn(plotShapem2PDFWeight, LineColor(kCyan), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_weight_braidII"));
+
   TCanvas * c_shape1D_above_Upsilon = new TCanvas("c_shape1D_above_Upsilon", "c_shape1D_above_Upsilon", 800, 800);
   c_shape1D_above_Upsilon->cd();
   plotShapem1->Draw();   plotShapem1->GetYaxis()->SetTitle("p.d.f.");   c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon.pdf");
@@ -1328,8 +1368,10 @@ void LowMassBKGFit1D18() {
   plotShapem2up->Draw(); plotShapem2up->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_up.pdf");
   plotShapem1All->Draw(); plotShapem1All->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_All.pdf");
   plotShapem2All->Draw(); plotShapem2All->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_All.pdf");
+  plotShapem1PDFWeight->Draw(); plotShapem1PDFWeight->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_PDFWeight.pdf");
+  plotShapem2PDFWeight->Draw(); plotShapem2PDFWeight->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_PDFWeight.pdf");
 
-  //Draw systematic unc. for m1
+  // Draw systematic unc. for m1: nom + scale bandwidth up/dn
   TCanvas * c_m1_above_Upsilon_sys = new TCanvas("c_m1_above_Upsilon_sys", "c_m1_above_Upsilon_sys", 800, 800);
   c_m1_above_Upsilon_sys->Clear();
   // Upper pad: pdfs: nom, up, dn
@@ -1357,12 +1399,12 @@ void LowMassBKGFit1D18() {
     h_sys_m1_above_Upsilon_dn->SetBinContent(iB, unc_dn );
     h_sys_m1_above_Upsilon_up->SetBinContent(iB, unc_up );
   }
-  h_sys_m1_above_Upsilon_up->SetMinimum(-0.45); h_sys_m1_above_Upsilon_up->SetMaximum(0.45); h_sys_m1_above_Upsilon_up->SetMarkerStyle(21); h_sys_m1_above_Upsilon_up->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_up->SetMarkerColor(kMagenta); h_sys_m1_above_Upsilon_up->SetStats(0); h_sys_m1_above_Upsilon_up->Draw("p");
-  h_sys_m1_above_Upsilon_dn->SetMinimum(-0.45); h_sys_m1_above_Upsilon_dn->SetMaximum(0.45); h_sys_m1_above_Upsilon_dn->SetMarkerStyle(21); h_sys_m1_above_Upsilon_dn->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_dn->SetMarkerColor(kRed); h_sys_m1_above_Upsilon_dn->SetStats(0); h_sys_m1_above_Upsilon_dn->Draw("p same");
+  h_sys_m1_above_Upsilon_up->SetMinimum(shape_unc_plot_min); h_sys_m1_above_Upsilon_up->SetMaximum(shape_unc_plot_max); h_sys_m1_above_Upsilon_up->SetMarkerStyle(21); h_sys_m1_above_Upsilon_up->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_up->SetMarkerColor(kMagenta); h_sys_m1_above_Upsilon_up->SetStats(0); h_sys_m1_above_Upsilon_up->Draw("p");
+  h_sys_m1_above_Upsilon_dn->SetMinimum(shape_unc_plot_min); h_sys_m1_above_Upsilon_dn->SetMaximum(shape_unc_plot_max); h_sys_m1_above_Upsilon_dn->SetMarkerStyle(21); h_sys_m1_above_Upsilon_dn->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_dn->SetMarkerColor(kRed); h_sys_m1_above_Upsilon_dn->SetStats(0); h_sys_m1_above_Upsilon_dn->Draw("p same");
   c_m1_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_All_and_SysUnc.pdf");
   c_m1_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_All_and_SysUnc.root");
 
-  //Draw systematic unc. for m2
+  // Draw systematic unc. for m2: nom + scale bandwidth up/dn
   TCanvas * c_m2_above_Upsilon_sys = new TCanvas("c_m2_above_Upsilon_sys", "c_m2_above_Upsilon_sys", 800, 800);
   c_m2_above_Upsilon_sys->Clear();
   // Upper pad: pdfs: nom, up, dn
@@ -1390,14 +1432,110 @@ void LowMassBKGFit1D18() {
     h_sys_m2_above_Upsilon_dn->SetBinContent(iB, unc_dn );
     h_sys_m2_above_Upsilon_up->SetBinContent(iB, unc_up );
   }
-  h_sys_m2_above_Upsilon_up->SetMinimum(-0.45); h_sys_m2_above_Upsilon_up->SetMaximum(0.45); h_sys_m2_above_Upsilon_up->SetMarkerStyle(21); h_sys_m2_above_Upsilon_up->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_up->SetMarkerColor(kMagenta); h_sys_m2_above_Upsilon_up->SetStats(0); h_sys_m2_above_Upsilon_up->Draw("p");
-  h_sys_m2_above_Upsilon_dn->SetMinimum(-0.45); h_sys_m2_above_Upsilon_dn->SetMaximum(0.45); h_sys_m2_above_Upsilon_dn->SetMarkerStyle(21); h_sys_m2_above_Upsilon_dn->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_dn->SetMarkerColor(kRed); h_sys_m2_above_Upsilon_dn->SetStats(0); h_sys_m2_above_Upsilon_dn->Draw("p same");
+  h_sys_m2_above_Upsilon_up->SetMinimum(shape_unc_plot_min); h_sys_m2_above_Upsilon_up->SetMaximum(shape_unc_plot_max); h_sys_m2_above_Upsilon_up->SetMarkerStyle(21); h_sys_m2_above_Upsilon_up->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_up->SetMarkerColor(kMagenta); h_sys_m2_above_Upsilon_up->SetStats(0); h_sys_m2_above_Upsilon_up->Draw("p");
+  h_sys_m2_above_Upsilon_dn->SetMinimum(shape_unc_plot_min); h_sys_m2_above_Upsilon_dn->SetMaximum(shape_unc_plot_max); h_sys_m2_above_Upsilon_dn->SetMarkerStyle(21); h_sys_m2_above_Upsilon_dn->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_dn->SetMarkerColor(kRed); h_sys_m2_above_Upsilon_dn->SetStats(0); h_sys_m2_above_Upsilon_dn->Draw("p same");
   c_m2_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_All_and_SysUnc.pdf");
   c_m2_above_Upsilon_sys->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_All_and_SysUnc.root");
 
+  // Draw systematic unc. for m1: MC PDF weight vary within +/-1sigma
+  TCanvas * c_m1_above_Upsilon_sys_PDFWeight = new TCanvas("c_m1_above_Upsilon_sys_PDFWeight", "c_m1_above_Upsilon_sys_PDFWeight", 800, 800);
+  c_m1_above_Upsilon_sys_PDFWeight->Clear();
+  // Upper pad: pdfs with nom + 4 categories weight
+  TPad *padup_m1_above_Upsilon_sys_PDFWeight = new TPad("padup_m1_above_Upsilon_sys_PDFWeight", "padup_m1_above_Upsilon_sys_PDFWeight", 0, 0.3, 1, 1.0);
+  padup_m1_above_Upsilon_sys_PDFWeight->SetBottomMargin(0); padup_m1_above_Upsilon_sys_PDFWeight->Draw(); padup_m1_above_Upsilon_sys_PDFWeight->cd();
+  plotShapem1PDFWeight->Draw(); plotShapem1PDFWeight->GetYaxis()->SetTitle("Background PDF");
+  c_m1_above_Upsilon_sys_PDFWeight->cd(); c_m1_above_Upsilon_sys_PDFWeight->Update();
+  // Lower pad: (pdf weight varied-nom)/nom; quote largest abs as sys. unc.
+  TPad *paddn_m1_above_Upsilon_sys_PDFWeight = new TPad("paddn_m1_above_Upsilon_sys_PDFWeight", "paddn_m1_above_Upsilon_sys_PDFWeight", 0, 0.0, 1, 0.29);
+  paddn_m1_above_Upsilon_sys_PDFWeight->SetTopMargin(0); paddn_m1_above_Upsilon_sys_PDFWeight->SetBottomMargin(0.35); paddn_m1_above_Upsilon_sys_PDFWeight->SetGridy(); paddn_m1_above_Upsilon_sys_PDFWeight->Draw(); paddn_m1_above_Upsilon_sys_PDFWeight->cd();
+  TH1F *h_sys_m1_above_Upsilon_weight_up      = new TH1F("h_sys_m1_above_Upsilon_weight_up",      "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m1_above_Upsilon_weight_dn      = new TH1F("h_sys_m1_above_Upsilon_weight_dn",      "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m1_above_Upsilon_weight_braidI  = new TH1F("h_sys_m1_above_Upsilon_weight_braidI",  "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m1_above_Upsilon_weight_braidII = new TH1F("h_sys_m1_above_Upsilon_weight_braidII", "", 500, m_Upsilon_up, m_highmax);
+  h_sys_m1_above_Upsilon_weight_up->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]"); h_sys_m1_above_Upsilon_weight_up->GetXaxis()->SetTitleSize(20); h_sys_m1_above_Upsilon_weight_up->GetXaxis()->SetTitleFont(43); h_sys_m1_above_Upsilon_weight_up->GetXaxis()->SetTitleOffset(3.0); h_sys_m1_above_Upsilon_weight_up->GetXaxis()->SetLabelSize(15); h_sys_m1_above_Upsilon_weight_up->GetXaxis()->SetLabelFont(43);
+  h_sys_m1_above_Upsilon_weight_up->GetYaxis()->SetTitle("Sys. unc."); h_sys_m1_above_Upsilon_weight_up->GetYaxis()->SetNdivisions(505); h_sys_m1_above_Upsilon_weight_up->GetYaxis()->CenterTitle(); h_sys_m1_above_Upsilon_weight_up->GetYaxis()->SetTitleSize(20); h_sys_m1_above_Upsilon_weight_up->GetYaxis()->SetTitleFont(43); h_sys_m1_above_Upsilon_weight_up->GetYaxis()->SetTitleOffset(1.4); h_sys_m1_above_Upsilon_weight_up->GetYaxis()->SetLabelSize(15); h_sys_m1_above_Upsilon_weight_up->GetYaxis()->SetLabelFont(43);
+  //histogram pdf: nom + four weights varied
+  TH1F* h_m1_above_Upsilon_wgt = new TH1F("h_m1_above_Upsilon_wgt", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m1_above_Upsilon_wgt_up = new TH1F("h_m1_above_Upsilon_wgt_up", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m1_above_Upsilon_wgt_dn = new TH1F("h_m1_above_Upsilon_wgt_dn", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m1_above_Upsilon_wgt_braidi = new TH1F("h_m1_above_Upsilon_wgt_braidi", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m1_above_Upsilon_wgt_braidii = new TH1F("h_m1_above_Upsilon_wgt_braidii", "", 500, m_Upsilon_up, m_highmax);
+  w->pdf("HighMassFit2018_m1")->fillHistogram(h_m1_above_Upsilon_wgt, m1_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m1_weight_up")->fillHistogram(h_m1_above_Upsilon_wgt_up, m1_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m1_weight_dn")->fillHistogram(h_m1_above_Upsilon_wgt_dn, m1_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m1_weight_braidI")->fillHistogram(h_m1_above_Upsilon_wgt_braidi, m1_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m1_weight_braidII")->fillHistogram(h_m1_above_Upsilon_wgt_braidii, m1_above_Upsilon, 5000000);
+  for (unsigned int iB=1; iB < 500; iB++) {
+    float unc_wgt_up = ( h_m1_above_Upsilon_wgt_up->GetBinContent(iB) - h_m1_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m1_above_Upsilon_wgt->GetBinContent(iB);
+    float unc_wgt_dn = ( h_m1_above_Upsilon_wgt_dn->GetBinContent(iB) - h_m1_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m1_above_Upsilon_wgt->GetBinContent(iB);
+    float unc_wgt_braidi = ( h_m1_above_Upsilon_wgt_braidi->GetBinContent(iB) - h_m1_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m1_above_Upsilon_wgt->GetBinContent(iB);
+    float unc_wgt_braidii = ( h_m1_above_Upsilon_wgt_braidii->GetBinContent(iB) - h_m1_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m1_above_Upsilon_wgt->GetBinContent(iB);
+    h_sys_m1_above_Upsilon_weight_up->SetBinContent(iB, unc_wgt_up );
+    h_sys_m1_above_Upsilon_weight_dn->SetBinContent(iB, unc_wgt_dn );
+    h_sys_m1_above_Upsilon_weight_braidI->SetBinContent(iB, unc_wgt_braidi );
+    h_sys_m1_above_Upsilon_weight_braidII->SetBinContent(iB, unc_wgt_braidii );
+  }
+  h_sys_m1_above_Upsilon_weight_up->SetMinimum(shape_unc_plot_min); h_sys_m1_above_Upsilon_weight_up->SetMaximum(shape_unc_plot_max); h_sys_m1_above_Upsilon_weight_up->SetMarkerStyle(21); h_sys_m1_above_Upsilon_weight_up->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_weight_up->SetMarkerColor(kRed); h_sys_m1_above_Upsilon_weight_up->SetStats(0); h_sys_m1_above_Upsilon_weight_up->Draw("p");
+  h_sys_m1_above_Upsilon_weight_dn->SetMinimum(shape_unc_plot_min); h_sys_m1_above_Upsilon_weight_dn->SetMaximum(shape_unc_plot_max); h_sys_m1_above_Upsilon_weight_dn->SetMarkerStyle(21); h_sys_m1_above_Upsilon_weight_dn->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_weight_dn->SetMarkerColor(kMagenta); h_sys_m1_above_Upsilon_weight_dn->SetStats(0); h_sys_m1_above_Upsilon_weight_dn->Draw("p same");
+  h_sys_m1_above_Upsilon_weight_braidI->SetMinimum(shape_unc_plot_min); h_sys_m1_above_Upsilon_weight_braidI->SetMaximum(shape_unc_plot_max); h_sys_m1_above_Upsilon_weight_braidI->SetMarkerStyle(21); h_sys_m1_above_Upsilon_weight_braidI->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_weight_braidI->SetMarkerColor(kGreen); h_sys_m1_above_Upsilon_weight_braidI->SetStats(0); h_sys_m1_above_Upsilon_weight_braidI->Draw("p same");
+  h_sys_m1_above_Upsilon_weight_braidII->SetMinimum(shape_unc_plot_min); h_sys_m1_above_Upsilon_weight_braidII->SetMaximum(shape_unc_plot_max); h_sys_m1_above_Upsilon_weight_braidII->SetMarkerStyle(21); h_sys_m1_above_Upsilon_weight_braidII->SetMarkerSize(0.2); h_sys_m1_above_Upsilon_weight_braidII->SetMarkerColor(kCyan); h_sys_m1_above_Upsilon_weight_braidII->SetStats(0); h_sys_m1_above_Upsilon_weight_braidII->Draw("p same");
+  c_m1_above_Upsilon_sys_PDFWeight->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_PDFWeight_and_SysUnc.pdf");
+  c_m1_above_Upsilon_sys_PDFWeight->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_PDFWeight_and_SysUnc.root");
+
+  // Draw systematic unc. for m2: MC PDF weight vary within +/-1sigma
+  TCanvas * c_m2_above_Upsilon_sys_PDFWeight = new TCanvas("c_m2_above_Upsilon_sys_PDFWeight", "c_m2_above_Upsilon_sys_PDFWeight", 800, 800);
+  c_m2_above_Upsilon_sys_PDFWeight->Clear();
+  // Upper pad: pdfs with nom + 4 categories weight
+  TPad *padup_m2_above_Upsilon_sys_PDFWeight = new TPad("padup_m2_above_Upsilon_sys_PDFWeight", "padup_m2_above_Upsilon_sys_PDFWeight", 0, 0.3, 1, 1.0);
+  padup_m2_above_Upsilon_sys_PDFWeight->SetBottomMargin(0); padup_m2_above_Upsilon_sys_PDFWeight->Draw(); padup_m2_above_Upsilon_sys_PDFWeight->cd();
+  plotShapem2PDFWeight->Draw(); plotShapem2PDFWeight->GetYaxis()->SetTitle("Background PDF");
+  c_m2_above_Upsilon_sys_PDFWeight->cd(); c_m2_above_Upsilon_sys_PDFWeight->Update();
+  // Lower pad: (pdf weight varied-nom)/nom; quote largest abs as sys. unc.
+  TPad *paddn_m2_above_Upsilon_sys_PDFWeight = new TPad("paddn_m2_above_Upsilon_sys_PDFWeight", "paddn_m2_above_Upsilon_sys_PDFWeight", 0, 0.0, 1, 0.29);
+  paddn_m2_above_Upsilon_sys_PDFWeight->SetTopMargin(0); paddn_m2_above_Upsilon_sys_PDFWeight->SetBottomMargin(0.35); paddn_m2_above_Upsilon_sys_PDFWeight->SetGridy(); paddn_m2_above_Upsilon_sys_PDFWeight->Draw(); paddn_m2_above_Upsilon_sys_PDFWeight->cd();
+  TH1F *h_sys_m2_above_Upsilon_weight_up      = new TH1F("h_sys_m2_above_Upsilon_weight_up",      "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m2_above_Upsilon_weight_dn      = new TH1F("h_sys_m2_above_Upsilon_weight_dn",      "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m2_above_Upsilon_weight_braidI  = new TH1F("h_sys_m2_above_Upsilon_weight_braidI",  "", 500, m_Upsilon_up, m_highmax);
+  TH1F *h_sys_m2_above_Upsilon_weight_braidII = new TH1F("h_sys_m2_above_Upsilon_weight_braidII", "", 500, m_Upsilon_up, m_highmax);
+  h_sys_m2_above_Upsilon_weight_up->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]"); h_sys_m2_above_Upsilon_weight_up->GetXaxis()->SetTitleSize(20); h_sys_m2_above_Upsilon_weight_up->GetXaxis()->SetTitleFont(43); h_sys_m2_above_Upsilon_weight_up->GetXaxis()->SetTitleOffset(3.0); h_sys_m2_above_Upsilon_weight_up->GetXaxis()->SetLabelSize(15); h_sys_m2_above_Upsilon_weight_up->GetXaxis()->SetLabelFont(43);
+  h_sys_m2_above_Upsilon_weight_up->GetYaxis()->SetTitle("Sys. unc."); h_sys_m2_above_Upsilon_weight_up->GetYaxis()->SetNdivisions(505); h_sys_m2_above_Upsilon_weight_up->GetYaxis()->CenterTitle(); h_sys_m2_above_Upsilon_weight_up->GetYaxis()->SetTitleSize(20); h_sys_m2_above_Upsilon_weight_up->GetYaxis()->SetTitleFont(43); h_sys_m2_above_Upsilon_weight_up->GetYaxis()->SetTitleOffset(1.4); h_sys_m2_above_Upsilon_weight_up->GetYaxis()->SetLabelSize(15); h_sys_m2_above_Upsilon_weight_up->GetYaxis()->SetLabelFont(43);
+  //histogram pdf: nom + four weights varied
+  TH1F* h_m2_above_Upsilon_wgt = new TH1F("h_m2_above_Upsilon_wgt", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m2_above_Upsilon_wgt_up = new TH1F("h_m2_above_Upsilon_wgt_up", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m2_above_Upsilon_wgt_dn = new TH1F("h_m2_above_Upsilon_wgt_dn", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m2_above_Upsilon_wgt_braidi = new TH1F("h_m2_above_Upsilon_wgt_braidi", "", 500, m_Upsilon_up, m_highmax);
+  TH1F* h_m2_above_Upsilon_wgt_braidii = new TH1F("h_m2_above_Upsilon_wgt_braidii", "", 500, m_Upsilon_up, m_highmax);
+  w->pdf("HighMassFit2018_m2")->fillHistogram(h_m2_above_Upsilon_wgt, m2_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m2_weight_up")->fillHistogram(h_m2_above_Upsilon_wgt_up, m2_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m2_weight_dn")->fillHistogram(h_m2_above_Upsilon_wgt_dn, m2_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m2_weight_braidI")->fillHistogram(h_m2_above_Upsilon_wgt_braidi, m2_above_Upsilon, 5000000);
+  w->pdf("HighMassFit2018_m2_weight_braidII")->fillHistogram(h_m2_above_Upsilon_wgt_braidii, m2_above_Upsilon, 5000000);
+  for (unsigned int iB=1; iB < 500; iB++) {
+    float unc_wgt_up = ( h_m2_above_Upsilon_wgt_up->GetBinContent(iB) - h_m2_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m2_above_Upsilon_wgt->GetBinContent(iB);
+    float unc_wgt_dn = ( h_m2_above_Upsilon_wgt_dn->GetBinContent(iB) - h_m2_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m2_above_Upsilon_wgt->GetBinContent(iB);
+    float unc_wgt_braidi = ( h_m2_above_Upsilon_wgt_braidi->GetBinContent(iB) - h_m2_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m2_above_Upsilon_wgt->GetBinContent(iB);
+    float unc_wgt_braidii = ( h_m2_above_Upsilon_wgt_braidii->GetBinContent(iB) - h_m2_above_Upsilon_wgt->GetBinContent(iB) )*1.0/h_m2_above_Upsilon_wgt->GetBinContent(iB);
+    h_sys_m2_above_Upsilon_weight_up->SetBinContent(iB, unc_wgt_up );
+    h_sys_m2_above_Upsilon_weight_dn->SetBinContent(iB, unc_wgt_dn );
+    h_sys_m2_above_Upsilon_weight_braidI->SetBinContent(iB, unc_wgt_braidi );
+    h_sys_m2_above_Upsilon_weight_braidII->SetBinContent(iB, unc_wgt_braidii );
+  }
+  h_sys_m2_above_Upsilon_weight_up->SetMinimum(shape_unc_plot_min); h_sys_m2_above_Upsilon_weight_up->SetMaximum(shape_unc_plot_max); h_sys_m2_above_Upsilon_weight_up->SetMarkerStyle(21); h_sys_m2_above_Upsilon_weight_up->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_weight_up->SetMarkerColor(kRed); h_sys_m2_above_Upsilon_weight_up->SetStats(0); h_sys_m2_above_Upsilon_weight_up->Draw("p");
+  h_sys_m2_above_Upsilon_weight_dn->SetMinimum(shape_unc_plot_min); h_sys_m2_above_Upsilon_weight_dn->SetMaximum(shape_unc_plot_max); h_sys_m2_above_Upsilon_weight_dn->SetMarkerStyle(21); h_sys_m2_above_Upsilon_weight_dn->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_weight_dn->SetMarkerColor(kMagenta); h_sys_m2_above_Upsilon_weight_dn->SetStats(0); h_sys_m2_above_Upsilon_weight_dn->Draw("p same");
+  h_sys_m2_above_Upsilon_weight_braidI->SetMinimum(shape_unc_plot_min); h_sys_m2_above_Upsilon_weight_braidI->SetMaximum(shape_unc_plot_max); h_sys_m2_above_Upsilon_weight_braidI->SetMarkerStyle(21); h_sys_m2_above_Upsilon_weight_braidI->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_weight_braidI->SetMarkerColor(kGreen); h_sys_m2_above_Upsilon_weight_braidI->SetStats(0); h_sys_m2_above_Upsilon_weight_braidI->Draw("p same");
+  h_sys_m2_above_Upsilon_weight_braidII->SetMinimum(shape_unc_plot_min); h_sys_m2_above_Upsilon_weight_braidII->SetMaximum(shape_unc_plot_max); h_sys_m2_above_Upsilon_weight_braidII->SetMarkerStyle(21); h_sys_m2_above_Upsilon_weight_braidII->SetMarkerSize(0.2); h_sys_m2_above_Upsilon_weight_braidII->SetMarkerColor(kCyan); h_sys_m2_above_Upsilon_weight_braidII->SetStats(0); h_sys_m2_above_Upsilon_weight_braidII->Draw("p same");
+  c_m2_above_Upsilon_sys_PDFWeight->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_PDFWeight_and_SysUnc.pdf");
+  c_m2_above_Upsilon_sys_PDFWeight->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_PDFWeight_and_SysUnc.root");
+
   w->factory("PROD::HighMassBKG(HighMassFit2018_m1, HighMassFit2018_m2)");
+  // scale bandwidth up and down
   w->factory("PROD::HighMassBKG_dn(HighMassFit2018_m1_dn, HighMassFit2018_m2_dn)");
   w->factory("PROD::HighMassBKG_up(HighMassFit2018_m1_up, HighMassFit2018_m2_up)");
+  // vary PDF weight +/1 sigma
+  w->factory("PROD::HighMassBKG_weight_up(HighMassFit2018_m1_weight_up, HighMassFit2018_m2_weight_up)");
+  w->factory("PROD::HighMassBKG_weight_dn(HighMassFit2018_m1_weight_dn, HighMassFit2018_m2_weight_dn)");
+  w->factory("PROD::HighMassBKG_weight_braidI(HighMassFit2018_m1_weight_braidI, HighMassFit2018_m2_weight_braidI)");
+  w->factory("PROD::HighMassBKG_weight_braidII(HighMassFit2018_m1_weight_braidII, HighMassFit2018_m2_weight_braidII)");
 
   //=***************************************************************************
   //                           Save to Workspace

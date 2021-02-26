@@ -3,7 +3,7 @@
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //Luminosity each year: unit: fb^-1
 const double lumi_2017 = 36.734;
-const double lumi_2018 = 59.97;
+const double lumi_2018 = 59.7;
 
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in LowMassBKGFit1D  !
@@ -25,9 +25,13 @@ const unsigned int m_bins_below_Jpsi = 63;//bin size is ~0.04GeV, as above
 const unsigned int m_bins_above_Jpsi = 144;
 const unsigned int m_bins_above_Upsilon = 98;//bin size is 0.5GeV
 
-//Used for smooth pdf with kernel density
+// Used for smooth pdf with kernel density:
+// for width, AN v4 uses 0.9 (down) and 1.1 (up)
+// for sys plot range, AN v4 uses -0.45 (min) and 0.45 (max)
 const double       width_scale_dn  = 0.9;
 const double       width_scale_up  = 1.1;
+const double       shape_unc_plot_min  = -0.45;
+const double       shape_unc_plot_max  = 0.45;
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //!  Constants used exclusively in LowMassBKGPlot2D !
 //!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
@@ -40,13 +44,17 @@ const double validate_m2_iso_Ymax_2017    = 10.;
 const double validate_m1_iso_Ymax_2018    = 25.;
 const double validate_m2_iso_Ymax_2018    = 20.;
 
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-//!  Constants used exclusively in HighMassBKGShape  !
-//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+//!  Constants used exclusively in HighMassBKGShape.C  !
+//!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 //Mass range and bin size at high mass
 const double       HM_m_min  = 11.0;
 const double       HM_m_max  = 60.0;
-const unsigned int HM_m_bins = 14;//bin size 3.5GeV
+const unsigned int HM_m_bins = 14; // bin size 3.5 GeV
+
+const double       HM_Lxy_min  = 0.0;
+const double       HM_Lxy_max  = 16.0;
+const unsigned int HM_Lxy_bins = 16; // bin size 1 cm
 
 //Directory of histograms
 TString store_2017 = "/scratch/user/ws13/SMBKGatHighMass/2017";
@@ -61,32 +69,32 @@ Float_t MC_ScaleFactors_2018[7] = {3.4145686E+00, 6.2974242E-01, 3.5720940E-01, 
 Color_t MC_Colors[7] = {20, 30, 40, 9, 8, 7, 6};
 
 //The input files below contain histograms from running the cut-flow script (with ModelBKGShape flag on) over each background ntuples
-//script: MuJetAnalysis/CutFlowAnalyzer/scripts/cutflow_macros/foo_modified.C
-//run command: echo 'gROOT->ProcessLine(".L foo_modified.C++"); analysis("SignalsList2017.txt" )' | root -l -b
+//script: MuJetAnalysis/CutFlowAnalyzer/scripts/cutflow_macros/CutFlow_2018L2Mu23.C
+//run command: echo 'gROOT->ProcessLine(".L CutFlow_2018L2Mu23.C++"); analysis("BKGsList*.txt" )' | root -l -b
 //Same order as MC_ScaleFactors above
 TString MC_files_2017[7] = {
-  "HighMassBKGShape_2017_DYToLL_0J.root",
-  "HighMassBKGShape_2017_DYToLL_1J.root",
-  "HighMassBKGShape_2017_DYToLL_2J.root",
-  "HighMassBKGShape_2017_ZZTo4L.root",
-  "HighMassBKGShape_2017_TTJets_DiLept.root",
-  "HighMassBKGShape_2017_ggHToZZTo4L.root",
-  "HighMassBKGShape_2017_ggToZZTo4mu.root"
+  "CutFlowPlots_2017_DYToLL_0J.root",
+  "CutFlowPlots_2017_DYToLL_1J.root",
+  "CutFlowPlots_2017_DYToLL_2J.root",
+  "CutFlowPlots_2017_ZZTo4L.root",
+  "CutFlowPlots_2017_TTJets_DiLept.root",
+  "CutFlowPlots_2017_ggHToZZTo4L.root",
+  "CutFlowPlots_2017_ggToZZTo4mu.root"
 };
 TString DATA_files_2017[1] = {
-  "HighMassBKGShape_2017DoubleMuon_ABCD.root"
+  "CutFlowPlots_2017DoubleMuon_ABCD.root"
 };
 
 TString MC_files_2018[7] = {
-  "HighMassBKGShape_2018_DYToLL_0J.root",
-  "HighMassBKGShape_2018_DYToLL_1J.root",
-  "HighMassBKGShape_2018_DYToLL_2J.root",
-  "HighMassBKGShape_2018_ZZTo4L.root",
-  "HighMassBKGShape_2018_TTJets_DiLept.root",
-  "HighMassBKGShape_2018_ggHToZZTo4L.root",
-  "HighMassBKGShape_2018_ggToZZTo4mu.root"
+  "CutFlowPlots_2018_DYToLL_0J.root",
+  "CutFlowPlots_2018_DYToLL_1J.root",
+  "CutFlowPlots_2018_DYToLL_2J.root",
+  "CutFlowPlots_2018_ZZTo4L.root",
+  "CutFlowPlots_2018_TTJets_DiLept.root",
+  "CutFlowPlots_2018_ggHToZZTo4L.root",
+  "CutFlowPlots_2018_ggToZZTo4mu.root"
 };
 //DoubleMuon dataset
 TString DATA_files_2018[1] = {
-  "HighMassBKGShape_2018DoubleMuon_ABCD.root"
+  "CutFlowPlots_2018DoubleMuon_ABCD.root"
 };

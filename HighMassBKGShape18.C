@@ -46,13 +46,16 @@ void HighMassBKGShape18()
   TFile *file_tmp(0);
   THStack *MC_hs_CR_m1 = new THStack("MC_hs_CR_m1", "");
   THStack *MC_hs_CR_m2 = new THStack("MC_hs_CR_m2", "");
-  //THStack *MC_hs_CR_orphdimumass = new THStack("MC_hs_CR_orphdimumass", "");
+  THStack *MC_hs_CR_Lxy1 = new THStack("MC_hs_CR_Lxy1", "");
+  THStack *MC_hs_CR_Lxy2 = new THStack("MC_hs_CR_Lxy2", "");
   THStack *MC_hs_SR_m1 = new THStack("MC_hs_SR_m1", "");
   THStack *MC_hs_SR_m2 = new THStack("MC_hs_SR_m2", "");
+
   //For plotting summed error for above stacked plots
   TH1F *MC_CR_m1 = new TH1F("MC_CR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *MC_CR_m2 = new TH1F("MC_CR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
-  //TH1F *MC_CR_orphdimumass = new TH1F("MC_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *MC_CR_Lxy1 = new TH1F("MC_CR_Lxy1", "", HM_Lxy_bins, HM_Lxy_min, HM_Lxy_max);
+  TH1F *MC_CR_Lxy2 = new TH1F("MC_CR_Lxy2", "", HM_Lxy_bins, HM_Lxy_min, HM_Lxy_max);
 
   //used for plot error
   TH1F *MC_SR_m1 = new TH1F("MC_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
@@ -85,13 +88,21 @@ void HighMassBKGShape18()
     MC_hs_CR_m2->Add(MCBKGShapeCRmassF);
     MC_CR_m2->Add(MCBKGShapeCRmassF);
 
-    /*TH1F *MCBKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("MCBKGShapeOrphDimumass");
-    MCBKGShapeOrphDimumass->Scale(MC_ScaleFactors[i]);
-    MCBKGShapeOrphDimumass->SetLineColor(MC_Colors[i]);
-    MCBKGShapeOrphDimumass->SetFillColor(MC_Colors[i]);
-    MCBKGShapeOrphDimumass->SetMarkerColor(MC_Colors[i]);
-    MC_hs_CR_orphdimumass->Add(MCBKGShapeOrphDimumass);
-    MC_CR_orphdimumass->Add(MCBKGShapeOrphDimumass);*/
+    TH1F *MCBKGShapeCRLxyC = (TH1F*)file_tmp->Get("BKGShapeCRLxyC")->Clone("MCBKGShapeCRLxyC");
+    MCBKGShapeCRLxyC->Scale(MC_ScaleFactors[i]);
+    MCBKGShapeCRLxyC->SetLineColor(MC_Colors[i]);
+    MCBKGShapeCRLxyC->SetFillColor(MC_Colors[i]);
+    MCBKGShapeCRLxyC->SetMarkerColor(MC_Colors[i]);
+    MC_hs_CR_Lxy1->Add(MCBKGShapeCRLxyC);
+    MC_CR_Lxy1->Add(MCBKGShapeCRLxyC);
+
+    TH1F *MCBKGShapeCRLxyF = (TH1F*)file_tmp->Get("BKGShapeCRLxyF")->Clone("MCBKGShapeCRLxyF");
+    MCBKGShapeCRLxyF->Scale(MC_ScaleFactors[i]);
+    MCBKGShapeCRLxyF->SetLineColor(MC_Colors[i]);
+    MCBKGShapeCRLxyF->SetFillColor(MC_Colors[i]);
+    MCBKGShapeCRLxyF->SetMarkerColor(MC_Colors[i]);
+    MC_hs_CR_Lxy2->Add(MCBKGShapeCRLxyF);
+    MC_CR_Lxy2->Add(MCBKGShapeCRLxyF);
 
     TH1F *MCBKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("MCBKGShapeSRmassC");
     MCBKGShapeSRmassC->Scale(MC_ScaleFactors[i]);
@@ -114,7 +125,8 @@ void HighMassBKGShape18()
   TString DATA_file_name;
   TH1F *DATA_CR_m1 = new TH1F("DATA_CR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *DATA_CR_m2 = new TH1F("DATA_CR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
-  //TH1F *DATA_CR_orphdimumass = new TH1F("DATA_CR_orphdimumass", "", HM_m_bins, HM_m_min, HM_m_max);
+  TH1F *DATA_CR_Lxy1 = new TH1F("DATA_CR_Lxy1", "", HM_Lxy_bins, HM_Lxy_min, HM_Lxy_max);
+  TH1F *DATA_CR_Lxy2 = new TH1F("DATA_CR_Lxy2", "", HM_Lxy_bins, HM_Lxy_min, HM_Lxy_max);
   TH1F *DATA_SR_m1 = new TH1F("DATA_SR_m1", "", HM_m_bins, HM_m_min, HM_m_max);
   TH1F *DATA_SR_m2 = new TH1F("DATA_SR_m2", "", HM_m_bins, HM_m_min, HM_m_max);
 
@@ -129,7 +141,8 @@ void HighMassBKGShape18()
 
     TH1F *DATABKGShapeCRmassC = (TH1F*)file_tmp->Get("BKGShapeCRmassC")->Clone("DATABKGShapeCRmassC"); DATA_CR_m1->Add(DATABKGShapeCRmassC);
     TH1F *DATABKGShapeCRmassF = (TH1F*)file_tmp->Get("BKGShapeCRmassF")->Clone("DATABKGShapeCRmassF"); DATA_CR_m2->Add(DATABKGShapeCRmassF);
-    //TH1F *DATABKGShapeOrphDimumass = (TH1F*)file_tmp->Get("BKGShapeOrphDimumass")->Clone("DATABKGShapeOrphDimumass"); DATA_CR_orphdimumass->Add(DATABKGShapeOrphDimumass);
+    TH1F *DATABKGShapeCRLxyC = (TH1F*)file_tmp->Get("BKGShapeCRLxyC")->Clone("DATABKGShapeCRLxyC"); DATA_CR_Lxy1->Add(DATABKGShapeCRLxyC);
+    TH1F *DATABKGShapeCRLxyF = (TH1F*)file_tmp->Get("BKGShapeCRLxyF")->Clone("DATABKGShapeCRLxyF"); DATA_CR_Lxy2->Add(DATABKGShapeCRLxyF);
     TH1F *DATABKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("DATABKGShapeSRmassC"); DATA_SR_m1->Add(DATABKGShapeSRmassC);
     TH1F *DATABKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("DATABKGShapeSRmassF"); DATA_SR_m2->Add(DATABKGShapeSRmassF);
   }
@@ -138,9 +151,9 @@ void HighMassBKGShape18()
   TFile myPlot(outFileHMShape, "RECREATE");
 
   //===============
-  //= For m1 at CR*
+  //=   m1 at CR
   //===============
-  TCanvas *CR1=new TCanvas("CR1", "CR m1",700,500); CR1->Clear();
+  TCanvas *CR1=new TCanvas("CR1", "CR m1", 700, 500); CR1->Clear();
   TPad *CR1pad1 = new TPad("CR1pad1", "CR1pad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
   CR1pad1->SetBottomMargin(0); CR1pad1->Draw();
   TPad *CR1pad2 = new TPad("CR1pad2", "CR1pad2", 0, 0.0, 1, 0.29);
@@ -215,9 +228,9 @@ void HighMassBKGShape18()
   CR1->SaveAs("HighMassShape/CRm1.pdf");
 
   //===============
-  //= For m2 at CR*
+  //=   m2 at CR  =
   //===============
-  TCanvas *CR2=new TCanvas("CR2","CR m2",700,500); CR2->Clear();
+  TCanvas *CR2=new TCanvas("CR2", "CR m2", 700, 500); CR2->Clear();
   TPad *CR2pad1 = new TPad("CR2pad1", "CR2pad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
   CR2pad1->SetBottomMargin(0); CR2pad1->Draw();
   TPad *CR2pad2 = new TPad("CR2pad2", "CR2pad2", 0, 0.0, 1, 0.29);
@@ -290,87 +303,178 @@ void HighMassBKGShape18()
   CR2->Write();
   CR2->SaveAs("HighMassShape/CRm2.pdf");
 
-/*
-  //==================
-  //= For orphan dimu*
-  //==================
-  TCanvas *CROrphDimuM=new TCanvas("CROrphDimuM","CR Orphan Dimu Mass",700,500); CROrphDimuM->Clear();
-  TPad *CROrphDimuMpad1 = new TPad("CROrphDimuMpad1", "CROrphDimuMpad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
-  CROrphDimuMpad1->SetBottomMargin(0); CROrphDimuMpad1->Draw();
-  TPad *CROrphDimuMpad2 = new TPad("CROrphDimuMpad2", "CROrphDimuMpad2", 0, 0.0, 1, 0.29);
-  CROrphDimuMpad2->SetTopMargin(0); CROrphDimuMpad2->SetBottomMargin(0.3); CROrphDimuMpad2->SetGridy(); CROrphDimuMpad2->Draw();
+  //++++++++++++++++++++++++++++++++++++++++++++
+  //+ Cross check data-MC agreement in Lxy at CR
+  //++++++++++++++++++++++++++++++++++++++++++++
+
+  //=========================
+  //=  Lxy for mumu1 at CR  =
+  //=========================
+  TCanvas *CRLxy1=new TCanvas("CRLxy1", "CR Lxy1", 700, 500); CRLxy1->Clear();
+  TPad *CRLxy1pad1 = new TPad("CRLxy1pad1", "CRLxy1pad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
+  CRLxy1pad1->SetBottomMargin(0); CRLxy1pad1->Draw();
+  TPad *CRLxy1pad2 = new TPad("CRLxy1pad2", "CRLxy1pad2", 0, 0.0, 1, 0.29);
+  CRLxy1pad2->SetTopMargin(0); CRLxy1pad2->SetBottomMargin(0.3); CRLxy1pad2->SetGridy(); CRLxy1pad2->Draw();
   //MC vs DATA
-  CROrphDimuMpad1->cd();
+  CRLxy1pad1->cd();
   //Plot stacked histogram from MC
-  MC_hs_CR_orphdimumass->Draw("HIST"); MC_hs_CR_orphdimumass->SetMaximum(10000); MC_hs_CR_orphdimumass->GetYaxis()->SetTitle("Events/4GeV");
+  MC_hs_CR_Lxy1->Draw("HIST"); MC_hs_CR_Lxy1->SetMaximum(150); MC_hs_CR_Lxy1->GetYaxis()->SetTitle("Events/cm");
   //Plot MC error
-  MC_CR_orphdimumass->SetLineColor(2); MC_CR_orphdimumass->SetFillColor(2); MC_CR_orphdimumass->SetFillStyle(3004); MC_CR_orphdimumass->Draw("E2 SAME");
-  Double_t MC_CR_orphdimumass_error;
-  Double_t MC_CR_orphdimumass_integral = MC_CR_orphdimumass->IntegralAndError(1, HM_m_bins, MC_CR_orphdimumass_error, "");
-  std::cout << "MC CR orphan dimu mass integral = " << MC_CR_orphdimumass_integral << " +/- " << MC_CR_orphdimumass_error << std::endl;
+  MC_CR_Lxy1->SetLineColor(2); MC_CR_Lxy1->SetFillColor(2); MC_CR_Lxy1->SetFillStyle(3004); MC_CR_Lxy1->Draw("E2 SAME");
+  Double_t MC_CR_Lxy1_error;
+  Double_t MC_CR_Lxy1_integral = MC_CR_Lxy1->IntegralAndError(1, HM_Lxy_bins, MC_CR_Lxy1_error, "");
+  std::cout << "MC CR Lxy1 integral = " << MC_CR_Lxy1_integral << " +/- " << MC_CR_Lxy1_error << std::endl;
   //Overlay data
-  DATA_CR_orphdimumass->SetFillColor(1); DATA_CR_orphdimumass->SetLineColor(1); DATA_CR_orphdimumass->SetMarkerStyle(20); DATA_CR_orphdimumass->SetMarkerSize(0.6); DATA_CR_orphdimumass->Draw("E1 X0 SAME"); txtHeader->Draw("SAME");
-  Double_t DATA_CR_orphdimumass_error;
-  Double_t DATA_CR_orphdimumass_integral = DATA_CR_orphdimumass->IntegralAndError(1, HM_m_bins, DATA_CR_orphdimumass_error, "");
-  std::cout << "DATA CR orphan dimu mass integral = " << DATA_CR_orphdimumass_integral << " +/- " << DATA_CR_orphdimumass_error << std::endl;
+  DATA_CR_Lxy1->SetFillColor(1); DATA_CR_Lxy1->SetLineColor(1); DATA_CR_Lxy1->SetMarkerStyle(20); DATA_CR_Lxy1->SetMarkerSize(0.6); DATA_CR_Lxy1->Draw("E1 X0 SAME"); txtHeader1->Draw("SAME");//Draw Error bars
+  Double_t DATA_CR_Lxy1_error;
+  Double_t DATA_CR_Lxy1_integral = DATA_CR_Lxy1->IntegralAndError(1, HM_Lxy_bins, DATA_CR_Lxy1_error, "");
+  std::cout << "DATA CR Lxy1 integral = " << DATA_CR_Lxy1_integral << " +/- " << DATA_CR_Lxy1_error << std::endl;
   //Build Legend
-  TLegend* CROrphDimuMpad1L = CROrphDimuMpad1->BuildLegend();
-  CROrphDimuMpad1L->SetBorderSize(0); CROrphDimuMpad1L->SetFillStyle(0); CROrphDimuMpad1L->SetNColumns(2);
-  TList *CROrphDimuMpad1P = CROrphDimuMpad1L->GetListOfPrimitives();
-  TIter CROrphDimuMpad1next(CROrphDimuMpad1P);
-  TObject *CROrphDimuMpad1obj;
-  TLegendEntry *CROrphDimuMpad1li;
-  int CROrphDimuMpad1iEntry = 0;
-  while ((CROrphDimuMpad1obj = CROrphDimuMpad1next())) {
-    CROrphDimuMpad1li = (TLegendEntry*)CROrphDimuMpad1obj;
-    CROrphDimuMpad1iEntry++;
-    if (CROrphDimuMpad1iEntry==1) CROrphDimuMpad1li->SetLabel("DYToLL (0J)");
-    if (CROrphDimuMpad1iEntry==2) CROrphDimuMpad1li->SetLabel("DYToLL (1J)");
-    if (CROrphDimuMpad1iEntry==3) CROrphDimuMpad1li->SetLabel("DYToLL (2J)");
-    if (CROrphDimuMpad1iEntry==4) CROrphDimuMpad1li->SetLabel("qqToZZTo4L");
-    if (CROrphDimuMpad1iEntry==5) CROrphDimuMpad1li->SetLabel("TTJetsToLL");
-    if (CROrphDimuMpad1iEntry==6) CROrphDimuMpad1li->SetLabel("ggHToZZTo4L");
-    if (CROrphDimuMpad1iEntry==7) CROrphDimuMpad1li->SetLabel("ggToZZTo4mu");
-    if (CROrphDimuMpad1iEntry==8) {CROrphDimuMpad1li->SetLabel("MC Error"); CROrphDimuMpad1li->SetOption("f");}
-    if (CROrphDimuMpad1iEntry==9) {CROrphDimuMpad1li->SetLabel("Data"); CROrphDimuMpad1li->SetOption("ep");}
+  TLegend* CRLxy1pad1L = CRLxy1pad1->BuildLegend();
+  CRLxy1pad1L->SetBorderSize(0); CRLxy1pad1L->SetFillStyle(0); CRLxy1pad1L->SetNColumns(2);
+  TList *CRLxy1pad1P = CRLxy1pad1L->GetListOfPrimitives();
+  TIter CRLxy1pad1next(CRLxy1pad1P);
+  TObject *CRLxy1pad1obj;
+  TLegendEntry *CRLxy1pad1li;
+  int CRLxy1pad1iEntry = 0;
+  while ((CRLxy1pad1obj = CRLxy1pad1next())) {
+    CRLxy1pad1li = (TLegendEntry*)CRLxy1pad1obj;
+    CRLxy1pad1iEntry++;
+    if (CRLxy1pad1iEntry==1) CRLxy1pad1li->SetLabel("DYToLL (0J)");
+    if (CRLxy1pad1iEntry==2) CRLxy1pad1li->SetLabel("DYToLL (1J)");
+    if (CRLxy1pad1iEntry==3) CRLxy1pad1li->SetLabel("DYToLL (2J)");
+    if (CRLxy1pad1iEntry==4) CRLxy1pad1li->SetLabel("qqToZZTo4L");
+    if (CRLxy1pad1iEntry==5) CRLxy1pad1li->SetLabel("TTJetsToLL");
+    if (CRLxy1pad1iEntry==6) CRLxy1pad1li->SetLabel("ggHToZZTo4L");
+    if (CRLxy1pad1iEntry==7) CRLxy1pad1li->SetLabel("ggToZZTo4mu");
+    if (CRLxy1pad1iEntry==8) {CRLxy1pad1li->SetLabel("MC Error"); CRLxy1pad1li->SetOption("f");}
+    if (CRLxy1pad1iEntry==9) {CRLxy1pad1li->SetLabel("Data"); CRLxy1pad1li->SetOption("ep");}
   }
-  CROrphDimuMpad1->Update(); CROrphDimuMpad1L->SetX1NDC(0.15); CROrphDimuMpad1L->SetX2NDC(0.5); CROrphDimuMpad1L->SetY1NDC(0.65); CROrphDimuMpad1L->SetY2NDC(0.9); CROrphDimuMpad1->Modified();
+  CRLxy1pad1->Update(); CRLxy1pad1L->SetX1NDC(0.5); CRLxy1pad1L->SetX2NDC(0.9); CRLxy1pad1L->SetY1NDC(0.5); CRLxy1pad1L->SetY2NDC(0.9); CRLxy1pad1->Modified();
   gPad->RedrawAxis();
-  CROrphDimuM->cd(); CROrphDimuM->Update();
+  CRLxy1->cd(); CRLxy1->Update();
   //Plot pull distribution
-  CROrphDimuMpad2->cd();
+  CRLxy1pad2->cd();
   //fill pull histogram
-  TH1F *pull_CR_orphdimumass = new TH1F("pull_CR_orphdimumass","", HM_m_bins, HM_m_min, HM_m_max);
-  for(unsigned int iB=1; iB<=HM_m_bins; iB++){
-    float pull_CR_orphdimumass_iB = ( DATA_CR_orphdimumass->GetBinContent(iB) - MC_CR_orphdimumass->GetBinContent(iB) ) / sqrt( pow(DATA_CR_orphdimumass->GetBinError(iB), 2) + pow(MC_CR_orphdimumass->GetBinError(iB), 2) );
-    pull_CR_orphdimumass->SetBinContent(iB, pull_CR_orphdimumass_iB );
+  TH1F *pull_CR_Lxy1 = new TH1F("pull_CR_Lxy1", "", HM_Lxy_bins, HM_Lxy_min, HM_Lxy_max);
+  for(unsigned int iB=1; iB<=HM_Lxy_bins; iB++){
+    //pull definition: considering data and MC error
+    //check if error is zero
+    if ( DATA_CR_Lxy1->GetBinContent(iB) != 0 && MC_CR_Lxy1->GetBinContent(iB) != 0 ){
+      float pull_CR_Lxy1_iB = ( DATA_CR_Lxy1->GetBinContent(iB) - MC_CR_Lxy1->GetBinContent(iB) ) / sqrt( pow(DATA_CR_Lxy1->GetBinError(iB), 2) + pow(MC_CR_Lxy1->GetBinError(iB), 2) );
+      pull_CR_Lxy1->SetBinContent(iB, pull_CR_Lxy1_iB );//iB starts from #1
+    }
   }
-  pull_CR_orphdimumass->GetXaxis()->SetTitle("m_{orphan di-#mu} [GeV]");
-  pull_CR_orphdimumass->GetXaxis()->SetTitleSize(15);
-  pull_CR_orphdimumass->GetXaxis()->SetTitleFont(43);
-  pull_CR_orphdimumass->GetXaxis()->SetTitleOffset(3.0);
-  pull_CR_orphdimumass->GetXaxis()->SetLabelSize(15);
-  pull_CR_orphdimumass->GetXaxis()->SetLabelFont(43);//text size in unit of pixel, not the size of the pad
-  pull_CR_orphdimumass->GetYaxis()->SetTitle("Pull");
-  pull_CR_orphdimumass->GetYaxis()->CenterTitle();
-  pull_CR_orphdimumass->GetYaxis()->SetTitleSize(15);
-  pull_CR_orphdimumass->GetYaxis()->SetTitleFont(43);
-  pull_CR_orphdimumass->GetYaxis()->SetTitleOffset(.9);
-  pull_CR_orphdimumass->GetYaxis()->SetLabelSize(15);
-  pull_CR_orphdimumass->GetYaxis()->SetLabelFont(43);
-  pull_CR_orphdimumass->SetMinimum(-50);
-  pull_CR_orphdimumass->SetMaximum(50);
-  pull_CR_orphdimumass->SetStats(0);
-  pull_CR_orphdimumass->SetMarkerStyle(20);
-  pull_CR_orphdimumass->SetMarkerSize(0.6);
-  pull_CR_orphdimumass->Draw("P");
-  CROrphDimuM->Write();*/
+  pull_CR_Lxy1->GetXaxis()->SetTitle("L_{xy} of #mu#mu1 [cm]");
+  pull_CR_Lxy1->GetXaxis()->SetTitleSize(15);
+  pull_CR_Lxy1->GetXaxis()->SetTitleFont(43);
+  pull_CR_Lxy1->GetXaxis()->SetTitleOffset(3.0);
+  pull_CR_Lxy1->GetXaxis()->SetLabelSize(15);// labels will be 15 pixels
+  pull_CR_Lxy1->GetXaxis()->SetLabelFont(43);// Absolute font size in pixel (precision 3)
+  pull_CR_Lxy1->GetYaxis()->SetTitle("Pull");
+  pull_CR_Lxy1->GetYaxis()->CenterTitle();
+  pull_CR_Lxy1->GetYaxis()->SetTitleSize(15);
+  pull_CR_Lxy1->GetYaxis()->SetTitleFont(43);
+  pull_CR_Lxy1->GetYaxis()->SetTitleOffset(.9);
+  pull_CR_Lxy1->GetYaxis()->SetLabelSize(15);
+  pull_CR_Lxy1->GetYaxis()->SetLabelFont(43);
+  pull_CR_Lxy1->SetMinimum(-3.5);
+  pull_CR_Lxy1->SetMaximum(3.5);
+  pull_CR_Lxy1->SetStats(0);
+  pull_CR_Lxy1->SetMarkerStyle(20);
+  pull_CR_Lxy1->SetMarkerSize(0.6);
+  pull_CR_Lxy1->Draw("P");
+  CRLxy1->Write();
+  CRLxy1->SaveAs("HighMassShape/CRLxy1.pdf");
+
+  //=========================
+  //=  Lxy for mumu2 at CR  =
+  //=========================
+  TCanvas *CRLxy2=new TCanvas("CRLxy2", "CR Lxy2", 700, 500); CRLxy2->Clear();
+  TPad *CRLxy2pad1 = new TPad("CRLxy2pad1", "CRLxy2pad1", 0, 0.3, 1, 1.0);//xlow, ylow, xup, yup
+  CRLxy2pad1->SetBottomMargin(0); CRLxy2pad1->Draw();
+  TPad *CRLxy2pad2 = new TPad("CRLxy2pad2", "CRLxy2pad2", 0, 0.0, 1, 0.29);
+  CRLxy2pad2->SetTopMargin(0); CRLxy2pad2->SetBottomMargin(0.3); CRLxy2pad2->SetGridy(); CRLxy2pad2->Draw();
+  //MC vs DATA
+  CRLxy2pad1->cd();
+  //Plot stacked histogram from MC
+  MC_hs_CR_Lxy2->Draw("HIST"); MC_hs_CR_Lxy2->SetMaximum(150); MC_hs_CR_Lxy2->GetYaxis()->SetTitle("Events/cm");
+  //Plot MC error
+  MC_CR_Lxy2->SetLineColor(2); MC_CR_Lxy2->SetFillColor(2); MC_CR_Lxy2->SetFillStyle(3004); MC_CR_Lxy2->Draw("E2 SAME");
+  Double_t MC_CR_Lxy2_error;
+  Double_t MC_CR_Lxy2_integral = MC_CR_Lxy2->IntegralAndError(1, HM_Lxy_bins, MC_CR_Lxy2_error, "");
+  std::cout << "MC CR Lxy2 integral = " << MC_CR_Lxy2_integral << " +/- " << MC_CR_Lxy2_error << std::endl;
+  //Overlay data
+  DATA_CR_Lxy2->SetFillColor(1); DATA_CR_Lxy2->SetLineColor(1); DATA_CR_Lxy2->SetMarkerStyle(20); DATA_CR_Lxy2->SetMarkerSize(0.6); DATA_CR_Lxy2->Draw("E1 X0 SAME"); txtHeader1->Draw("SAME");//Draw Error bars
+  Double_t DATA_CR_Lxy2_error;
+  Double_t DATA_CR_Lxy2_integral = DATA_CR_Lxy2->IntegralAndError(1, HM_Lxy_bins, DATA_CR_Lxy2_error, ""); // "": width
+  std::cout << "DATA CR Lxy2 integral = " << DATA_CR_Lxy2_integral << " +/- " << DATA_CR_Lxy2_error << std::endl;
+  //Build Legend
+  TLegend* CRLxy2pad1L = CRLxy2pad1->BuildLegend();
+  CRLxy2pad1L->SetBorderSize(0); CRLxy2pad1L->SetFillStyle(0); CRLxy2pad1L->SetNColumns(2);
+  TList *CRLxy2pad1P = CRLxy2pad1L->GetListOfPrimitives();
+  TIter CRLxy2pad1next(CRLxy2pad1P);
+  TObject *CRLxy2pad1obj;
+  TLegendEntry *CRLxy2pad1li;
+  int CRLxy2pad1iEntry = 0;
+  while ((CRLxy2pad1obj = CRLxy2pad1next())) {
+    CRLxy2pad1li = (TLegendEntry*)CRLxy2pad1obj;
+    CRLxy2pad1iEntry++;
+    if (CRLxy2pad1iEntry==1) CRLxy2pad1li->SetLabel("DYToLL (0J)");
+    if (CRLxy2pad1iEntry==2) CRLxy2pad1li->SetLabel("DYToLL (1J)");
+    if (CRLxy2pad1iEntry==3) CRLxy2pad1li->SetLabel("DYToLL (2J)");
+    if (CRLxy2pad1iEntry==4) CRLxy2pad1li->SetLabel("qqToZZTo4L");
+    if (CRLxy2pad1iEntry==5) CRLxy2pad1li->SetLabel("TTJetsToLL");
+    if (CRLxy2pad1iEntry==6) CRLxy2pad1li->SetLabel("ggHToZZTo4L");
+    if (CRLxy2pad1iEntry==7) CRLxy2pad1li->SetLabel("ggToZZTo4mu");
+    if (CRLxy2pad1iEntry==8) {CRLxy2pad1li->SetLabel("MC Error"); CRLxy2pad1li->SetOption("f");}
+    if (CRLxy2pad1iEntry==9) {CRLxy2pad1li->SetLabel("Data"); CRLxy2pad1li->SetOption("ep");}
+  }
+  CRLxy2pad1->Update(); CRLxy2pad1L->SetX1NDC(0.5); CRLxy2pad1L->SetX2NDC(0.9); CRLxy2pad1L->SetY1NDC(0.5); CRLxy2pad1L->SetY2NDC(0.9); CRLxy2pad1->Modified();
+  gPad->RedrawAxis();
+  CRLxy2->cd(); CRLxy2->Update();
+  //Plot pull distribution
+  CRLxy2pad2->cd();
+  //fill pull histogram
+  TH1F *pull_CR_Lxy2 = new TH1F("pull_CR_Lxy2", "", HM_Lxy_bins, HM_Lxy_min, HM_Lxy_max);
+  for(unsigned int iB=1; iB<=HM_Lxy_bins; iB++){
+    //pull definition: considering data and MC error
+    if ( DATA_CR_Lxy2->GetBinContent(iB) != 0 && MC_CR_Lxy2->GetBinContent(iB) != 0 ){
+      float pull_CR_Lxy2_iB = ( DATA_CR_Lxy2->GetBinContent(iB) - MC_CR_Lxy2->GetBinContent(iB) ) / sqrt( pow(DATA_CR_Lxy2->GetBinError(iB), 2) + pow(MC_CR_Lxy2->GetBinError(iB), 2) );
+      pull_CR_Lxy2->SetBinContent(iB, pull_CR_Lxy2_iB );//iB starts from #1
+    }
+  }
+  pull_CR_Lxy2->GetXaxis()->SetTitle("L_{xy} of #mu#mu2 [cm]");
+  pull_CR_Lxy2->GetXaxis()->SetTitleSize(15);
+  pull_CR_Lxy2->GetXaxis()->SetTitleFont(43);
+  pull_CR_Lxy2->GetXaxis()->SetTitleOffset(3.0);
+  pull_CR_Lxy2->GetXaxis()->SetLabelSize(15);// labels will be 15 pixels
+  pull_CR_Lxy2->GetXaxis()->SetLabelFont(43);// Absolute font size in pixel (precision 3)
+  pull_CR_Lxy2->GetYaxis()->SetTitle("Pull");
+  pull_CR_Lxy2->GetYaxis()->CenterTitle();
+  pull_CR_Lxy2->GetYaxis()->SetTitleSize(15);
+  pull_CR_Lxy2->GetYaxis()->SetTitleFont(43);
+  pull_CR_Lxy2->GetYaxis()->SetTitleOffset(.9);
+  pull_CR_Lxy2->GetYaxis()->SetLabelSize(15);
+  pull_CR_Lxy2->GetYaxis()->SetLabelFont(43);
+  pull_CR_Lxy2->SetMinimum(-3.5);
+  pull_CR_Lxy2->SetMaximum(3.5);
+  pull_CR_Lxy2->SetStats(0);
+  pull_CR_Lxy2->SetMarkerStyle(20);
+  pull_CR_Lxy2->SetMarkerSize(0.6);
+  pull_CR_Lxy2->Draw("P");
+  CRLxy2->Write();
+  CRLxy2->SaveAs("HighMassShape/CRLxy2.pdf");
+
+  //++++++++++++++++++++++++++++++++++++++++++++
+  //+ End cross check in Lxy at CR
+  //++++++++++++++++++++++++++++++++++++++++++++
 
   //================
-  //= For m1 at SR =
+  //=  m1 at SR    =
   //================
   //Data blinded until approval
-  TCanvas *SR1=new TCanvas("SR1","SR m1",700,500);
+  TCanvas *SR1=new TCanvas("SR1", "SR m1", 700, 500);
   SR1->cd();
   MC_hs_SR_m1->Draw("HIST");
   MC_hs_SR_m1->SetMaximum(9);
@@ -466,7 +570,7 @@ void HighMassBKGShape18()
   //================
   //= For m2 at SR =
   //================
-  TCanvas *SR2=new TCanvas("SR2","SR m2",700,500);
+  TCanvas *SR2=new TCanvas("SR2", "SR m2", 700, 500);
   SR2->cd();
   MC_hs_SR_m2->Draw("HIST");
   MC_hs_SR_m2->SetMaximum(9);

@@ -120,17 +120,17 @@ namespace BKG_cfg {
     }
 
     //for low mass data 1D template
-    headertpl      = headertpl + "#bf{CMS} #it{Preliminary}             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    headertpl      = headertpl + "#bf{CMS} #it{Preliminary}             " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
     //for low mass fit overlay data
-    headerfit      = headerfit + "#bf{CMS} #it{Preliminary}                                             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    headerfit      = headerfit + "#bf{CMS} #it{Preliminary}                                             " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
     //for low mass data 2D template
-    headertpl2     = headertpl2 + "#bf{CMS} #it{Preliminary}              " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    headertpl2     = headertpl2 + "#bf{CMS} #it{Preliminary}              " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
     //for low mass data 2D template validation
-    headervld      = headervld + "#bf{CMS} #it{Preliminary}             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    headervld      = headervld + "#bf{CMS} #it{Preliminary}             " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
     //For high mass CR with lower panel
-    header1        = header1 + "#bf{CMS} #it{Preliminary}                                                                                       " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    header1        = header1 + "#bf{CMS} #it{Preliminary}                                                                                       " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
     //For high mass SR without lower panel
-    header         = header +    "#bf{CMS} #it{Preliminary}                                             " + Form("%.2f", luminosity) + "fb^{-1} (13 TeV)";
+    header         = header +    "#bf{CMS} #it{Preliminary}                                             " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
     outFileLM      = outFileLM + "ws_" + Form("%d", year) + "_FINAL.root";
     outFileHMABCD  = outFileHMABCD + "ABCD_" + Form("%d", year) + "_FINAL.root";
     outFileHMShape = outFileHMShape + "HighMassBKGShape_" + Form("%d", year) + "_FINAL.root";
