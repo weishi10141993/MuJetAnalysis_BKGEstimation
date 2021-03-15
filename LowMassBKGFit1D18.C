@@ -1277,21 +1277,21 @@ void LowMassBKGFit1D18() {
   //see worksheet "Bootstrapping":
   //  https://docs.google.com/spreadsheets/d/10qXKHSw9QLrpPm2s0pASCbB27k6kVyEtTEwYi_oTra0/edit?usp=sharing
   //Include 6 processes: DY1J, DY2J, qqToZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
-  //          Entries   *   Scale factor     =   PDF weight
-  // DY1J       2           6.2974242E-01        1.2594848
-  // DY2J       6           3.5720940E-01        2.1432564
-  // qqToZZ     1006        4.1624890E-03        4.1874639
-  // TTJets     25          1.0998854E-01        2.7497135
-  // ggHToZZ    1331        7.6245783E-04        1.0148314
-  // ggToZZ     3053        1.1110732E-04        0.3392106
+  //          Entries   *   Scale factor     =   PDF weight +/- 1sigma error
+  // DY1J       2           6.2974242E-01        1.2594848      0.8905902711
+  // DY2J       6           3.5720940E-01        2.1432564      0.8749807577
+  // qqToZZ     1006        4.1624890E-03        4.1874639      0.1320237575
+  // TTJets     25          1.0998854E-01        2.7497135      0.5499427205
+  // ggHToZZ    1331        7.6245783E-04        1.0148314      0.0278166519
+  // ggToZZ     3053        1.1110732E-04        0.3392106      0.006139119188
   //
-  // The entries are also varied +/-1 sigma and then propagate to PDF weight to estimate unc.
+  // The entries are also varied +/-1 sigma and then propagate to PDF weight error in the end column
   // Four different weights are used to evaluate the unc:
   //   PDF nominal weight +1 sigma
   //   PDF nominal weight -1 sigma
   //   Braid I  (nominal wgt +/- 1 sigma, start from +)
   //   Braid II (nominal wgt -/+ 1 sigma, start from -)
-  // For each set, m1 and m2 use the same set
+  // m1 and m2 use the same weight set
   //==============================================================================================
 
   // default nominal
