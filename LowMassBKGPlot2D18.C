@@ -107,64 +107,6 @@ void LowMassBKGPlot2D18() {
   corridorDn->SetLineColor(1); corridorDn->SetLineStyle(9); corridorDn->SetLineWidth(2);
   corridorUp->SetLineColor(1); corridorUp->SetLineStyle(9); corridorUp->SetLineWidth(2);
 
-  /*
-  //Const*CB fit sigma: fabs(m_1 - m_2) < Constant*(0.003681 + 0.007583*(m_1 + m_2)/2.0)
-  const double Constant = 2.0;
-  const double kA = 0.003681*Constant;
-  const double kB = 0.007583*Constant;
-
-  //Diagonal lines below J/psi
-  double diagonal_x1 = ( (1.0 + kB/2.0)*m_min + kA )/( 1.0 - kB/2.0 );
-  double diagonal_x2 = ( (1.0 - kB/2.0)*m_Jpsi_dn - kA )/( 1.0 + kB/2.0 );
-  TLine *line1 = new TLine(m_min, diagonal_x1, diagonal_x2, m_Jpsi_dn); line1->SetLineColor(1); line1->SetLineStyle(9); line1->SetLineWidth(2);
-  TLine *line2 = new TLine(diagonal_x1, m_min, m_Jpsi_dn, diagonal_x2); line2->SetLineColor(1); line2->SetLineStyle(9); line2->SetLineWidth(2);
-
-  //Diagonal lines above J/psi and below Upsilon
-  double diagonal_x3 = ( (1.0 + kB/2.0)*m_Jpsi_up + kA )/( 1.0 - kB/2.0 );
-  double diagonal_x4 = ( (1.0 - kB/2.0)*m_max - kA )/( 1.0 + kB/2.0 );
-  TLine *line3 = new TLine(m_Jpsi_up, diagonal_x3, diagonal_x4, m_max); line3->SetLineColor(1); line3->SetLineStyle(9); line3->SetLineWidth(2);
-  TLine *line4 = new TLine(diagonal_x3, m_Jpsi_up, m_max, diagonal_x4); line4->SetLineColor(1); line4->SetLineStyle(9); line4->SetLineWidth(2);
-
-  //Diagonal lines above Upsilon
-  double diagonal_x5 = ( (1.0 + kB/2.0)*m_Upsilon_up + kA )/( 1.0 - kB/2.0 );
-  double diagonal_x6 = ( (1.0 - kB/2.0)*m_highmax - kA )/( 1.0 + kB/2.0 );
-  TLine *line5 = new TLine(m_Upsilon_up, diagonal_x5, diagonal_x6, m_highmax); line5->SetLineColor(1); line5->SetLineStyle(9); line5->SetLineWidth(2);
-  TLine *line6 = new TLine(diagonal_x5, m_Upsilon_up, m_highmax, diagonal_x6); line6->SetLineColor(1); line6->SetLineStyle(9); line6->SetLineWidth(2);
-  //Note: Above only works for poly-1 fit
-  */
-
-  //-----------------
-  //2018 below J/psi
-  //-----------------
-  //Poly3: fabs(m_1 - m_2) < 5*(0.00849813 + 0.00475107*(m_1 + m_2)/2.0 - 0.00665393*pow((m_1 + m_2)/2.0, 2) + 0.00337777*pow((m_1 + m_2)/2.0, 3) )
-  /*
-  double m1BelowJpsiInput[6] = {0.25,   0.40,   0.70,   1.00,   2.00,   2.72};
-  double m2BelowJpsiSmall[6] = {0.2036, 0.3524, 0.6514, 0.9503, 1.9120, 2.5381};
-  double m2BelowJpsiLarge[6] = {0.2968, 0.4479, 0.7487, 1.0500, 2.0967, 2.9469};
-  TGraph* corridorDnBelowJpsi = new TGraph(6, m1BelowJpsiInput, m2BelowJpsiSmall);
-  TGraph* corridorUpBelowJpsi = new TGraph(6, m1BelowJpsiInput, m2BelowJpsiLarge);
-  corridorDnBelowJpsi->SetLineColor(1); corridorDnBelowJpsi->SetLineStyle(9); corridorDnBelowJpsi->SetLineWidth(2);
-  corridorUpBelowJpsi->SetLineColor(1); corridorUpBelowJpsi->SetLineStyle(9); corridorUpBelowJpsi->SetLineWidth(2);
-  */
-
-  //-----------------
-  //2018 above J/psi
-  //-----------------
-  //Poly4: fabs(m_1 - m_2) < 5*(0.0472738 - 0.00591865*(m_1 + m_2)/2.0 + 0.00113991*pow((m_1 + m_2)/2.0, 2) - 2.62048e-05*pow((m_1 + m_2)/2.0, 3) + 1.92254e-07*pow((m_1 + m_2)/2.0, 4) )
-  /*
-  double m1AboveJpsiInput[7] = {3.24,   4.00,   5.00,   6.00,   7.00,   8.00,   9.00};
-  double m2AboveJpsiSmall[7] = {3.0443, 3.8000, 4.7868, 5.7660, 6.7383, 7.7044, 8.6648};
-  double m2AboveJpsiLarge[7] = {3.4363, 4.2021, 5.2171, 6.2401, 7.2703, 8.3072, 9.3503};
-  TGraph* corridorDnAboveJpsi = new TGraph(7, m1AboveJpsiInput, m2AboveJpsiSmall);
-  TGraph* corridorUpAboveJpsi = new TGraph(7, m1AboveJpsiInput, m2AboveJpsiLarge);
-  corridorDnAboveJpsi->SetLineColor(1); corridorDnAboveJpsi->SetLineStyle(9); corridorDnAboveJpsi->SetLineWidth(2);
-  corridorUpAboveJpsi->SetLineColor(1); corridorUpAboveJpsi->SetLineStyle(9); corridorUpAboveJpsi->SetLineWidth(2);
-  */
-
-  //---------------------------------------
-  //2018 above Upsilon (use with CAUTION!)
-  //---------------------------------------
-
   //==================================================================================
   //                                  Use pdf from workspace:
   //           template2D_below_Jpsi, template2D_above_Jpsi, template2D_above_Upsilon
@@ -188,8 +130,6 @@ void LowMassBKGPlot2D18() {
       //===========================
       //2018 mass window below Jpsi
       //===========================
-      //if ( fabs(m_1 - m_2) < 5*(0.00849813 + 0.00475107*(m_1 + m_2)/2.0 - 0.00665393*pow((m_1 + m_2)/2.0, 2) + 0.00337777*pow((m_1 + m_2)/2.0, 3) ) ) {
-      //if ( fabs(m_1 - m_2) < (kA + kB*(m_1 + m_2)/2.) ) {
       if ( fabs(m_1 - m_2) < BKG_cfg::My_MassWindow(m_1, m_2) ) {
         h2D_template2D_below_Jpsi_offDiagonal->SetBinContent(i, j, 0.);
       }
@@ -199,19 +139,19 @@ void LowMassBKGPlot2D18() {
     }
   }
 
-  //Fractions of area for diagonal and offdiagonal in 2D template (below Jpsi)
+  // Fractions of area for diagonal and offdiagonal in 2D template (below Jpsi)
   double Template2D_below_Jpsi_diagonal_integral  = h2D_template2D_below_Jpsi_diagonal->Integral();
   double Template2D_below_Jpsi_offDiagonal_integral  = h2D_template2D_below_Jpsi_offDiagonal->Integral();
   cout<<" -> Template2D (Below J/Psi) diagonal integral:    "<< Template2D_below_Jpsi_diagonal_integral <<endl;
   cout<<" -> Template2D (Below J/Psi) offDiagonal integral: "<< Template2D_below_Jpsi_offDiagonal_integral <<endl;
 
-  //count 2-dimu data events at CR
+  // Count 2-dimu data events at CR
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);
   double Signal_CR_Data_below_Jpsi_integral  = h2_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi->Integral();
   cout<<"2 dimuon events in DATA at CR (Below J/Psi ONLY): " << Signal_CR_Data_below_Jpsi_integral <<endl;
   cout<<"Expected 2 dimuon events in DATA at SR (Below J/Psi ONLY): " << Signal_CR_Data_below_Jpsi_integral*Template2D_below_Jpsi_diagonal_integral/Template2D_below_Jpsi_offDiagonal_integral << std::endl;
 
-  //Scale to actual DATA
+  // Scale to actual DATA
   h2D_template2D_below_Jpsi->Scale(Signal_CR_Data_below_Jpsi_integral*(1. + Template2D_below_Jpsi_diagonal_integral/Template2D_below_Jpsi_offDiagonal_integral));
   cout<<" h2D_template2D_below_Jpsi integral (after scale to actual data): "<< h2D_template2D_below_Jpsi->Integral() <<endl;
   TH2D * h2D_background_below_Jpsi = new TH2D( *h2D_template2D_below_Jpsi );
@@ -245,7 +185,7 @@ void LowMassBKGPlot2D18() {
   //**************************************************************************************
   //        Draw scatter plot at CR from data (SR blinded) Below Jpsi version
   //**************************************************************************************
-  //Create pad to draw scatter plot without Logz
+  // Create pad to draw scatter plot without Logz
   TPad* pad_below_Jpsi = new TPad("pad_below_Jpsi", "pad_below_Jpsi", 0, 0, 1, 1);
   pad_below_Jpsi->Draw();
   pad_below_Jpsi->cd();
@@ -277,15 +217,15 @@ void LowMassBKGPlot2D18() {
   h2_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi_tmp->SetMarkerSize(1.0);
   h2_dimudimu_control_Iso_offDiagonal_2D_below_Jpsi_tmp->Draw("same");
 
-  //**************************************************************************************************
-  //    !!!BEGIN: Placeholder for unblinding signal (below Jpsi), after green light from pre-approval
-  //**************************************************************************************************
-  /*
+  //=========================================================
+  //    !!!BEGIN: unblinding signal (below Jpsi)
+  //=========================================================
+
   TH2D* h2D_dimudimu_signal_2D_below_Jpsi = (TH2D*)w->data("ds_dimudimu_signal_2D_below_Jpsi")->createHistogram("m1_below_Jpsi,m2_below_Jpsi", m_bins_below_Jpsi, m_bins_below_Jpsi);
   h2D_dimudimu_signal_2D_below_Jpsi->SetMarkerColor(kBlack);
   h2D_dimudimu_signal_2D_below_Jpsi->SetMarkerStyle(22);
   h2D_dimudimu_signal_2D_below_Jpsi->SetMarkerSize(1.5);
-  //Don't draw titles inheritted from dataset
+  // Don't draw titles inheritted from dataset
   h2D_dimudimu_signal_2D_below_Jpsi->SetXTitle("");
   h2D_dimudimu_signal_2D_below_Jpsi->SetYTitle("");
   h2D_dimudimu_signal_2D_below_Jpsi->Draw("same");
@@ -295,13 +235,11 @@ void LowMassBKGPlot2D18() {
   h2D_dimudimu_signal_2D_below_Jpsi_tmp->SetMarkerStyle(22);
   h2D_dimudimu_signal_2D_below_Jpsi_tmp->SetMarkerSize(1.0);
   h2D_dimudimu_signal_2D_below_Jpsi_tmp->Draw("same");
-  */
-  //**************************************************************************************************
-  //    !!!END: Placeholder for unblinding signal (below Jpsi), after green light from pre-approval
-  //**************************************************************************************************
 
-  //corridorDnBelowJpsi->Draw("L"); corridorUpBelowJpsi->Draw("L"); txtHeader->Draw();
-  //line1->Draw(); line2->Draw(); txtHeader->Draw();
+  //=========================================================
+  //    !!!END: unblinding signal (below Jpsi)
+  //=========================================================
+
   corridorDn->Draw("L"); corridorUp->Draw("L"); txtHeader->Draw();
   c_template2D_m1_vs_m2_below_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_below_Jpsi.pdf");
   c_template2D_m1_vs_m2_below_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_below_Jpsi.png");
@@ -454,8 +392,6 @@ void LowMassBKGPlot2D18() {
       //===========================
       //2018 mass window above Jpsi
       //===========================
-      //if ( fabs(m_1 - m_2) < 5*(0.0472738 - 0.00591865*(m_1 + m_2)/2.0 + 0.00113991*pow((m_1 + m_2)/2.0, 2) - 2.62048e-05*pow((m_1 + m_2)/2.0, 3) + 1.92254e-07*pow((m_1 + m_2)/2.0, 4) ) ) {
-      //if ( fabs(m_1 - m_2) < (kA + kB*(m_1 + m_2)/2.) ) {
       if ( fabs(m_1 - m_2) < BKG_cfg::My_MassWindow(m_1, m_2) ) {
         h2D_template2D_above_Jpsi_offDiagonal->SetBinContent(i, j, 0.);
       }
@@ -465,19 +401,19 @@ void LowMassBKGPlot2D18() {
     }
   }
 
-  //Fractions of area for diagonal and offdiagonal in 2D template (above Jpsi)
+  // Fractions of area for diagonal and offdiagonal in 2D template (above Jpsi)
   double Template2D_above_Jpsi_diagonal_integral  = h2D_template2D_above_Jpsi_diagonal->Integral();
   double Template2D_above_Jpsi_offDiagonal_integral  = h2D_template2D_above_Jpsi_offDiagonal->Integral();
   cout<<" -> Template2D (Above J/Psi) diagonal integral:    "<< Template2D_above_Jpsi_diagonal_integral <<endl;
   cout<<" -> Template2D (Above J/Psi) offDiagonal integral: "<< Template2D_above_Jpsi_offDiagonal_integral <<endl;
 
-  //count 2-dimu data events at CR
+  // Count 2-dimu data events at CR
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);
   double Signal_CR_Data_above_Jpsi_integral  = h2_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi->Integral();
   cout<<"2 dimuon events in DATA at CR (Above J/Psi ONLY): " << Signal_CR_Data_above_Jpsi_integral <<endl;
   cout<<"Expected 2 dimuon events in DATA at SR (Above J/Psi ONLY): " << Signal_CR_Data_above_Jpsi_integral*Template2D_above_Jpsi_diagonal_integral/Template2D_above_Jpsi_offDiagonal_integral << std::endl;
 
-  //Scale to actual DATA
+  // Scale to actual DATA
   h2D_template2D_above_Jpsi->Scale(Signal_CR_Data_above_Jpsi_integral*(1. + Template2D_above_Jpsi_diagonal_integral/Template2D_above_Jpsi_offDiagonal_integral));
   cout<<" h2D_template2D_above_Jpsi integral (after scale to actual data): "<< h2D_template2D_above_Jpsi->Integral() <<endl;
   TH2D * h2D_background_above_Jpsi = new TH2D( *h2D_template2D_above_Jpsi );
@@ -511,7 +447,7 @@ void LowMassBKGPlot2D18() {
   //**************************************************************************************
   //        Draw scatter plot at CR from data (SR blinded) Above Jpsi version
   //**************************************************************************************
-  //Create pad to draw scatter plot without Logz
+  // Create pad to draw scatter plot without Logz
   TPad* pad_above_Jpsi = new TPad("pad_above_Jpsi", "pad_above_Jpsi", 0, 0, 1, 1);
   pad_above_Jpsi->Draw();
   pad_above_Jpsi->cd();
@@ -543,10 +479,10 @@ void LowMassBKGPlot2D18() {
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi_tmp->SetMarkerSize(1.0);
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Jpsi_tmp->Draw("same");
 
-  //**************************************************************************************************
-  //    !!!BEGIN: Placeholder for unblinding signal (above Jpsi), after green light from pre-approval
-  //**************************************************************************************************
-  /*
+  //=========================================================
+  //    !!!BEGIN: unblinding signal (above Jpsi)
+  //=========================================================
+
   TH2D* h2D_dimudimu_signal_2D_above_Jpsi = (TH2D*)w->data("ds_dimudimu_signal_2D_above_Jpsi")->createHistogram("m1_above_Jpsi,m2_above_Jpsi", m_bins_above_Jpsi, m_bins_above_Jpsi);
   h2D_dimudimu_signal_2D_above_Jpsi->SetMarkerColor(kBlack);
   h2D_dimudimu_signal_2D_above_Jpsi->SetMarkerStyle(22);
@@ -561,13 +497,11 @@ void LowMassBKGPlot2D18() {
   h2D_dimudimu_signal_2D_above_Jpsi_tmp->SetMarkerStyle(22);
   h2D_dimudimu_signal_2D_above_Jpsi_tmp->SetMarkerSize(1.0);
   h2D_dimudimu_signal_2D_above_Jpsi_tmp->Draw("same");
-  */
-  //**************************************************************************************************
-  //    !!!END: Placeholder for unblinding signal (above Jpsi), after green light from pre-approval
-  //**************************************************************************************************
 
-  //corridorDnAboveJpsi->Draw("L"); corridorUpAboveJpsi->Draw("L"); txtHeader->Draw();
-  //line3->Draw(); line4->Draw(); txtHeader->Draw();
+  //=========================================================
+  //    !!!END: unblinding signal (above Jpsi)
+  //=========================================================
+
   corridorDn->Draw("L"); corridorUp->Draw("L"); txtHeader->Draw();
   c_template2D_m1_vs_m2_above_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_above_Jpsi.pdf");
   c_template2D_m1_vs_m2_above_Jpsi->SaveAs("figures/DATA_and_Expected_2D_background_above_Jpsi.png");
@@ -725,8 +659,6 @@ void LowMassBKGPlot2D18() {
       //==============================
       //2018 mass window above Upsilon
       //==============================
-      //if ( fabs(m_1 - m_2) < 5*(0.0472738 - 0.00591865*(m_1 + m_2)/2.0 + 0.00113991*pow((m_1 + m_2)/2.0, 2) - 2.62048e-05*pow((m_1 + m_2)/2.0, 3) + 1.92254e-07*pow((m_1 + m_2)/2.0, 4) ) ) {
-      //if ( fabs(m_1 - m_2) < (kA + kB*(m_1 + m_2)/2.) ) {
       if ( fabs(m_1 - m_2) < BKG_cfg::My_MassWindow(m_1, m_2) ) {
         h2D_template2D_above_Upsilon_offDiagonal->SetBinContent(i, j, 0.);
       }
@@ -736,19 +668,19 @@ void LowMassBKGPlot2D18() {
     }
   }
 
-  //Fractions of area for diagonal and offdiagonal in 2D template (above Upsilon)
+  // Fractions of area for diagonal and offdiagonal in 2D template (above Upsilon)
   double Template2D_above_Upsilon_diagonal_integral  = h2D_template2D_above_Upsilon_diagonal->Integral();
   double Template2D_above_Upsilon_offDiagonal_integral  = h2D_template2D_above_Upsilon_offDiagonal->Integral();
   cout<<" -> Template2D (Above Upsilon ONLY) diagonal integral:    "<< Template2D_above_Upsilon_diagonal_integral <<endl;
   cout<<" -> Template2D (Above Upsilon ONLY) offDiagonal integral: "<< Template2D_above_Upsilon_offDiagonal_integral <<endl;
 
-  //count 2-dimu data events at CR
+  // Count 2-dimu data events at CR
   TH2D* h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon = (TH2D*)w->data("ds_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
   double Signal_CR_Data_above_Upsilon_integral  = h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->Integral();
   cout<<"2 dimuon events in DATA at CR (Above Upsilon ONLY): " << Signal_CR_Data_above_Upsilon_integral <<endl;
   cout<<"Expected 2 dimuon events in DATA at SR (Above Upsilon ONLY): " << Signal_CR_Data_above_Upsilon_integral*Template2D_above_Upsilon_diagonal_integral/Template2D_above_Upsilon_offDiagonal_integral << std::endl;
 
-  //Scale to actual DATA
+  // Scale to actual DATA
   h2D_template2D_above_Upsilon->Scale(Signal_CR_Data_above_Upsilon_integral*(1. + Template2D_above_Upsilon_diagonal_integral/Template2D_above_Upsilon_offDiagonal_integral));
   cout<<" h2D_template2D_above_Upsilon integral (after scale to actual data): "<< h2D_template2D_above_Upsilon->Integral() <<endl;
   TH2D * h2D_background_above_Upsilon = new TH2D( *h2D_template2D_above_Upsilon );
@@ -779,10 +711,10 @@ void LowMassBKGPlot2D18() {
   c_template2D_m1_vs_m2_above_Upsilon->SaveAs("figures/Expected_2D_background_above_Upsilon.png");
   c_template2D_m1_vs_m2_above_Upsilon->SaveAs("figures/Expected_2D_background_above_Upsilon.root");
 
-  //**************************************************************************************
+  //======================================================================================
   //        Draw scatter plot at CR from data (SR blinded) Above Upsilon version
-  //**************************************************************************************
-  //Create pad to draw scatter plot without Logz
+  //======================================================================================
+  // Create pad to draw scatter plot without Logz
   TPad* pad_above_Upsilon = new TPad("pad_above_Upsilon", "pad_above_Upsilon", 0, 0, 1, 1);
   pad_above_Upsilon->Draw();
   pad_above_Upsilon->cd();
@@ -803,7 +735,7 @@ void LowMassBKGPlot2D18() {
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->SetMarkerColor(kBlack);
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->SetMarkerStyle(20);
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->SetMarkerSize(1.5);
-  //Don't draw titles inheritted from dataset
+  // Don't draw titles inheritted from dataset
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->SetXTitle("");
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->SetYTitle("");
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->Draw("same");
@@ -814,31 +746,6 @@ void LowMassBKGPlot2D18() {
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon_tmp->SetMarkerSize(1.0);
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon_tmp->Draw("same");
 
-  //**************************************************************************************************
-  //    !!!BEGIN: Placeholder for unblinding signal (above Upsilon), after green light from pre-approval
-  //**************************************************************************************************
-  /*
-  TH2D* h2D_dimudimu_signal_2D_above_Upsilon = (TH2D*)w->data("ds_dimudimu_signal_2D_above_Upsilon")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
-  h2D_dimudimu_signal_2D_above_Upsilon->SetMarkerColor(kBlack);
-  h2D_dimudimu_signal_2D_above_Upsilon->SetMarkerStyle(22);
-  h2D_dimudimu_signal_2D_above_Upsilon->SetMarkerSize(1.5);
-  //Don't draw titles inheritted from dataset
-  h2D_dimudimu_signal_2D_above_Upsilon->SetXTitle("");
-  h2D_dimudimu_signal_2D_above_Upsilon->SetYTitle("");
-  h2D_dimudimu_signal_2D_above_Upsilon->Draw("same");
-
-  TH2D * h2D_dimudimu_signal_2D_above_Upsilon_tmp = new TH2D( *h2D_dimudimu_signal_2D_above_Upsilon);
-  h2D_dimudimu_signal_2D_above_Upsilon_tmp->SetMarkerColor(kYellow);
-  h2D_dimudimu_signal_2D_above_Upsilon_tmp->SetMarkerStyle(22);
-  h2D_dimudimu_signal_2D_above_Upsilon_tmp->SetMarkerSize(1.0);
-  h2D_dimudimu_signal_2D_above_Upsilon_tmp->Draw("same");
-  */
-  //**************************************************************************************************
-  //    !!!END: Placeholder for unblinding signal (above Upsilon), after green light from pre-approval
-  //**************************************************************************************************
-
-  //corridorDnAboveUpsilon->Draw("L"); corridorUpAboveUpsilon->Draw("L"); txtHeader->Draw();
-  //line5->Draw(); line6->Draw(); txtHeader->Draw();
   corridorDn->Draw("L"); corridorUp->Draw("L"); txtHeader->Draw();
   c_template2D_m1_vs_m2_above_Upsilon->SaveAs("figures/DATA_and_Expected_2D_background_above_Upsilon.pdf");
   c_template2D_m1_vs_m2_above_Upsilon->SaveAs("figures/DATA_and_Expected_2D_background_above_Upsilon.png");
@@ -880,8 +787,29 @@ void LowMassBKGPlot2D18() {
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon->Draw();
   h2_dimudimu_control_Iso_offDiagonal_2D_above_Upsilon_tmp->Draw("same");
 
-  //corridorDnAboveUpsilon->Draw("L"); corridorUpAboveUpsilon->Draw("L"); txtHeader->Draw();
-  //line5->Draw(); line6->Draw(); txtHeader->Draw();
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_signal_2D_above_Upsilon = (TH2D*)w->data("ds_dimudimu_signal_2D_above_Upsilon")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_signal_2D_above_Upsilon->SetMarkerColor(kBlack);
+  h2D_dimudimu_signal_2D_above_Upsilon->SetMarkerStyle(22);
+  h2D_dimudimu_signal_2D_above_Upsilon->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_signal_2D_above_Upsilon->SetXTitle("");
+  h2D_dimudimu_signal_2D_above_Upsilon->SetYTitle("");
+  h2D_dimudimu_signal_2D_above_Upsilon->Draw("same");
+
+  TH2D * h2D_dimudimu_signal_2D_above_Upsilon_tmp = new TH2D( *h2D_dimudimu_signal_2D_above_Upsilon);
+  h2D_dimudimu_signal_2D_above_Upsilon_tmp->SetMarkerColor(kYellow);
+  h2D_dimudimu_signal_2D_above_Upsilon_tmp->SetMarkerStyle(22);
+  h2D_dimudimu_signal_2D_above_Upsilon_tmp->SetMarkerSize(1.0);
+  h2D_dimudimu_signal_2D_above_Upsilon_tmp->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+
   corridorDn->Draw("L"); corridorUp->Draw("L"); txtHeader->Draw();
   c_data_m1_vs_m2_above_Upsilon->SaveAs("figures/DATA_above_Upsilon.pdf");
   c_data_m1_vs_m2_above_Upsilon->SaveAs("figures/DATA_above_Upsilon.png");
