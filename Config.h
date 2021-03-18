@@ -64,6 +64,7 @@ TString ggToZZFile;
 
 Float_t validate_m1_iso_Ymax;//Max y in validation plots
 Float_t validate_m2_iso_Ymax;
+Float_t CR_Data_MC_SF; // data-MC scale factor from CR, need to apply to SR MC
 
 TString store;//Input directory for HighMassBKGShape
 TString outFileHMShape = "";//output file of HighMassBKGShape
@@ -101,6 +102,7 @@ namespace BKG_cfg {
       store      = store_2018;
       validate_m1_iso_Ymax    = validate_m1_iso_Ymax_2018;
       validate_m2_iso_Ymax    = validate_m2_iso_Ymax_2018;
+      CR_Data_MC_SF = CR_Data_MC_SF_2018;
       for(int i = 0; i < 7; i++){
         MC_ScaleFactors[i] = MC_ScaleFactors_2018[i];
         MC_files[i]        = MC_files_2018[i];

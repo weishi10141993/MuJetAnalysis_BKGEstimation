@@ -65,6 +65,8 @@ TString store_2018 = "/scratch/user/ws13/SMBKGatHighMass/2018/Cut2Segs_FINAL";
 Float_t MC_ScaleFactors_2017[7] = {2.2149318E+00, 3.7806072E-01, 2.5133039E-01, 3.0278414E-03, 7.0425976E-02, 4.6355268E-04, 6.3245328E-05};
 Float_t MC_ScaleFactors_2018[7] = {3.4145686E+00, 6.2974242E-01, 3.5720940E-01, 4.1624890E-03, 1.0998854E-01, 7.6245783E-04, 1.1110732E-04};
 
+Float_t CR_Data_MC_SF_2018 = 1.05; // 1.05+/-0.12
+
 //Color in final legend for each bkg process, same order as above
 Color_t MC_Colors[7] = {20, 30, 40, 9, 8, 7, 6};
 

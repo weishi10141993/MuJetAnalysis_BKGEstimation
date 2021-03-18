@@ -105,7 +105,7 @@ void HighMassBKGShape18()
     MC_CR_Lxy2->Add(MCBKGShapeCRLxyF);
 
     TH1F *MCBKGShapeSRmassC = (TH1F*)file_tmp->Get("BKGShapeSRmassC")->Clone("MCBKGShapeSRmassC");
-    MCBKGShapeSRmassC->Scale(MC_ScaleFactors[i]);
+    MCBKGShapeSRmassC->Scale(CR_Data_MC_SF*MC_ScaleFactors[i]); // Control region data-MC scale factor applied universally
     MCBKGShapeSRmassC->SetLineColor(MC_Colors[i]);
     MCBKGShapeSRmassC->SetFillColor(MC_Colors[i]);
     MCBKGShapeSRmassC->SetMarkerColor(MC_Colors[i]);
@@ -113,7 +113,7 @@ void HighMassBKGShape18()
     MC_SR_m1->Add(MCBKGShapeSRmassC);
 
     TH1F *MCBKGShapeSRmassF = (TH1F*)file_tmp->Get("BKGShapeSRmassF")->Clone("MCBKGShapeSRmassF");
-    MCBKGShapeSRmassF->Scale(MC_ScaleFactors[i]);
+    MCBKGShapeSRmassF->Scale(CR_Data_MC_SF*MC_ScaleFactors[i]); // Control region data-MC scale factor applied universally
     MCBKGShapeSRmassF->SetLineColor(MC_Colors[i]);
     MCBKGShapeSRmassF->SetFillColor(MC_Colors[i]);
     MCBKGShapeSRmassF->SetMarkerColor(MC_Colors[i]);
@@ -662,7 +662,7 @@ void HighMassBKGShape18()
   SR2->SaveAs("HighMassShape/SRm2Variations.pdf");
 
   std::cout << "*******************************" << std::endl;
-  std::cout << "*          Unblinding         *" << std::endl;
+  std::cout << "*       Unblinded Result      *" << std::endl;
   std::cout << "*******************************" << std::endl;
   //==========================================================================
   //=  m1 at SR: data unblinded version (after green light from conveners)   =
