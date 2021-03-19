@@ -360,9 +360,9 @@ void HighMassBKGShape18()
   for(unsigned int iB=1; iB<=HM_Lxy_bins; iB++){
     // pull definition: considering data and MC error
     // check if error is zero
-    if ( DATA_CR_Lxy1->GetBinContent(iB) != 0 && MC_CR_Lxy1->GetBinContent(iB) != 0 ){
+    if ( DATA_CR_Lxy1->GetBinContent(iB) != 0 || MC_CR_Lxy1->GetBinContent(iB) != 0 ){
       float pull_CR_Lxy1_iB = ( DATA_CR_Lxy1->GetBinContent(iB) - MC_CR_Lxy1->GetBinContent(iB) ) / sqrt( pow(DATA_CR_Lxy1->GetBinError(iB), 2) + pow(MC_CR_Lxy1->GetBinError(iB), 2) );
-      pull_CR_Lxy1->SetBinContent(iB, pull_CR_Lxy1_iB );//iB starts from #1
+      pull_CR_Lxy1->SetBinContent(iB, pull_CR_Lxy1_iB ); //iB starts from #1
     }
   }
   pull_CR_Lxy1->GetXaxis()->SetTitle("L_{xy} of #mu#mu1 [cm]");
@@ -439,9 +439,9 @@ void HighMassBKGShape18()
   TH1F *pull_CR_Lxy2 = new TH1F("pull_CR_Lxy2", "", HM_Lxy_bins, HM_Lxy_min, HM_Lxy_max);
   for(unsigned int iB=1; iB<=HM_Lxy_bins; iB++){
     //pull definition: considering data and MC error
-    if ( DATA_CR_Lxy2->GetBinContent(iB) != 0 && MC_CR_Lxy2->GetBinContent(iB) != 0 ){
+    if ( DATA_CR_Lxy2->GetBinContent(iB) != 0 || MC_CR_Lxy2->GetBinContent(iB) != 0 ){
       float pull_CR_Lxy2_iB = ( DATA_CR_Lxy2->GetBinContent(iB) - MC_CR_Lxy2->GetBinContent(iB) ) / sqrt( pow(DATA_CR_Lxy2->GetBinError(iB), 2) + pow(MC_CR_Lxy2->GetBinError(iB), 2) );
-      pull_CR_Lxy2->SetBinContent(iB, pull_CR_Lxy2_iB );//iB starts from #1
+      pull_CR_Lxy2->SetBinContent(iB, pull_CR_Lxy2_iB ); //iB starts from #1
     }
   }
   pull_CR_Lxy2->GetXaxis()->SetTitle("L_{xy} of #mu#mu2 [cm]");
@@ -716,9 +716,9 @@ void HighMassBKGShape18()
   TH1F *pull_SR_m1 = new TH1F("pull_SR_m1","", HM_m_bins, HM_m_min, HM_m_max);
   for (unsigned int iB = 1; iB <= HM_m_bins; iB++) {
     // pull definition: considering data and MC error
-    if ( DATA_SR_m1->GetBinContent(iB) != 0 && MC_SR_m1->GetBinContent(iB) != 0 ){
+    if ( DATA_SR_m1->GetBinContent(iB) != 0 || MC_SR_m1->GetBinContent(iB) != 0 ){
       float pull_SR_m1_iB = ( DATA_SR_m1->GetBinContent(iB) - MC_SR_m1->GetBinContent(iB) ) / sqrt( pow(DATA_SR_m1->GetBinError(iB), 2) + pow(MC_SR_m1->GetBinError(iB), 2) );
-      pull_SR_m1->SetBinContent(iB, pull_SR_m1_iB );//iB starts from #1
+      pull_SR_m1->SetBinContent(iB, pull_SR_m1_iB ); //iB starts from #1
     }
   }
   pull_SR_m1->GetXaxis()->SetTitle("m_{#mu#mu1} [GeV]");
@@ -734,7 +734,7 @@ void HighMassBKGShape18()
   pull_SR_m1->GetYaxis()->SetTitleOffset(.9);
   pull_SR_m1->GetYaxis()->SetLabelSize(15);
   pull_SR_m1->GetYaxis()->SetLabelFont(43);
-  pull_SR_m1->SetMinimum(-3.5);
+  pull_SR_m1->SetMinimum(-8);
   pull_SR_m1->SetMaximum(3.5);
   pull_SR_m1->SetStats(0);
   pull_SR_m1->SetMarkerStyle(20);
@@ -795,9 +795,9 @@ void HighMassBKGShape18()
   TH1F *pull_SR_m2 = new TH1F("pull_SR_m2","", HM_m_bins, HM_m_min, HM_m_max);
   for (unsigned int iB = 1; iB <= HM_m_bins; iB++) {
     // pull definition: considering data and MC error
-    if ( DATA_SR_m2->GetBinContent(iB) != 0 && MC_SR_m2->GetBinContent(iB) != 0 ){
+    if ( DATA_SR_m2->GetBinContent(iB) != 0 || MC_SR_m2->GetBinContent(iB) != 0 ){
       float pull_SR_m2_iB = ( DATA_SR_m2->GetBinContent(iB) - MC_SR_m2->GetBinContent(iB) ) / sqrt( pow(DATA_SR_m2->GetBinError(iB), 2) + pow(MC_SR_m2->GetBinError(iB), 2) );
-      pull_SR_m2->SetBinContent(iB, pull_SR_m2_iB );//iB starts from #1
+      pull_SR_m2->SetBinContent(iB, pull_SR_m2_iB ); //iB starts from #1
     }
   }
   pull_SR_m2->GetXaxis()->SetTitle("m_{#mu#mu2} [GeV]");
@@ -813,7 +813,7 @@ void HighMassBKGShape18()
   pull_SR_m2->GetYaxis()->SetTitleOffset(.9);
   pull_SR_m2->GetYaxis()->SetLabelSize(15);
   pull_SR_m2->GetYaxis()->SetLabelFont(43);
-  pull_SR_m2->SetMinimum(-3.5);
+  pull_SR_m2->SetMinimum(-8);
   pull_SR_m2->SetMaximum(3.5);
   pull_SR_m2->SetStats(0);
   pull_SR_m2->SetMarkerStyle(20);
