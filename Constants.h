@@ -24,6 +24,7 @@ const double       m_Upsilon_up = 11.;
 const unsigned int m_bins_below_Jpsi = 63;//bin size is ~0.04GeV, as above
 const unsigned int m_bins_above_Jpsi = 144;
 const unsigned int m_bins_above_Upsilon = 98;//bin size is 0.5GeV
+const unsigned int m_bins_all = 300;
 
 // Used for smooth pdf with kernel density:
 // for width, AN v4 uses 0.9 (down) and 1.1 (up)
