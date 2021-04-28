@@ -1,0 +1,2 @@
+/scratch/user/ws13/2018BKGMCNtuples/DY0J0.root
+/scratch/user/ws13/2018BKGMCNtuples/DY0J1.root

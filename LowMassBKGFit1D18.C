@@ -991,8 +991,24 @@ void LowMassBKGFit1D18() {
   std::cout << "MC SR 2-dimu events (high mass above Upsilon only): " << cut_bkgmc_above_Upsilon.Data() << std::endl;
   std::cout << "                                                    " << std::endl;
 
-  //MC Ntuples input file from each SM process: // DY0J: no contribution, 0 entries, not included
+  // CR cut: we later will plot 2D MC events for each MC process
+  ostringstream stream_cut_bkgmc_above_Upsilon_CR;
+  stream_cut_bkgmc_above_Upsilon_CR << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) && ( (dimuC_Mu0_SA==1 && muJetC_Mu0_matched_segs>=2) || (dimuC_Mu1_SA==1 && muJetC_Mu1_matched_segs>=2) || (dimuF_Mu0_SA==1 && muJetF_Mu0_matched_segs>=2) || (dimuF_Mu1_SA==1 && muJetF_Mu1_matched_segs>=2) ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && TMath::Abs(diMuonC_FittedVtx_m-diMuonF_FittedVtx_m) >= BKG_cfg::My_MassWindow(diMuonC_FittedVtx_m, diMuonF_FittedVtx_m) && diMuonC_FittedVtx_m > " << m_Upsilon_up << " && diMuonC_FittedVtx_m < " << m_highmax << " && diMuonF_FittedVtx_m > " << m_Upsilon_up << " && diMuonF_FittedVtx_m < " << m_highmax;
+  TString cut_bkgmc_above_Upsilon_CR = stream_cut_bkgmc_above_Upsilon_CR.str();
+  std::cout << "MC CR 2-dimu events (high mass above Upsilon only): " << cut_bkgmc_above_Upsilon_CR.Data() << std::endl;
+  std::cout << "                                                    " << std::endl;
+
+  //MC Ntuples input file from each SM process: // DY0J: no contribution, 0 entries
   //Include: DY1J, DY2J, qqToZZTo4L, TTJets_DiLept, ggHToZZTo4L, ggToZZTo4mu
+  TChain chain_DY0J_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
+  std::ifstream MyDY0Jfile(DY0JFile);//this is BKG MC Ntuple from Config.h
+  std::string MyDY0JLine;
+  if( !MyDY0Jfile ) std::cout<<"ERROR opening DY0J file."<<std::endl;
+  while (std::getline(MyDY0Jfile, MyDY0JLine)){
+    TString DY0JLine(MyDY0JLine);
+    if( DY0JLine.Contains("root") ) chain_DY0J_dimudimu.Add(DY0JLine.Data());
+  }
+
   TChain chain_DY1J_dimudimu("cutFlowAnalyzerPXBL4PXFL3/Events");
   std::ifstream MyDY1Jfile(DY1JFile);//this is BKG MC Ntuple from Config.h
   std::string MyDY1JLine;
@@ -1047,6 +1063,8 @@ void LowMassBKGFit1D18() {
     if( ggToZZLine.Contains("root") ) chain_ggToZZ_dimudimu.Add(ggToZZLine.Data());
   }
 
+  // SR
+  TTree* tree_dimudimu_DY0J_2D_above_Upsilon    = chain_DY0J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
   TTree* tree_dimudimu_DY1J_2D_above_Upsilon    = chain_DY1J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
   TTree* tree_dimudimu_DY2J_2D_above_Upsilon    = chain_DY2J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
   TTree* tree_dimudimu_qqToZZ_2D_above_Upsilon  = chain_qqToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
@@ -1054,6 +1072,18 @@ void LowMassBKGFit1D18() {
   TTree* tree_dimudimu_ggHToZZ_2D_above_Upsilon = chain_ggHToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
   TTree* tree_dimudimu_ggToZZ_2D_above_Upsilon  = chain_ggToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon);
 
+  // CR
+  TTree* tree_dimudimu_DY0J_2D_above_Upsilon_CR    = chain_DY0J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR);
+  TTree* tree_dimudimu_DY1J_2D_above_Upsilon_CR    = chain_DY1J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR);
+  TTree* tree_dimudimu_DY2J_2D_above_Upsilon_CR    = chain_DY2J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR);
+  TTree* tree_dimudimu_qqToZZ_2D_above_Upsilon_CR  = chain_qqToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR);
+  TTree* tree_dimudimu_TTJets_2D_above_Upsilon_CR  = chain_TTJets_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR);
+  TTree* tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR = chain_ggHToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR);
+  TTree* tree_dimudimu_ggToZZ_2D_above_Upsilon_CR  = chain_ggToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR);
+
+  //SR
+  tree_dimudimu_DY0J_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY0J_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
   tree_dimudimu_DY1J_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
   tree_dimudimu_DY1J_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
   tree_dimudimu_DY2J_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
@@ -1067,7 +1097,23 @@ void LowMassBKGFit1D18() {
   tree_dimudimu_ggToZZ_2D_above_Upsilon->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
   tree_dimudimu_ggToZZ_2D_above_Upsilon->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
 
-  // 1-D dataset
+  // CR
+  tree_dimudimu_DY0J_2D_above_Upsilon_CR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY0J_2D_above_Upsilon_CR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_DY1J_2D_above_Upsilon_CR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY1J_2D_above_Upsilon_CR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_DY2J_2D_above_Upsilon_CR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY2J_2D_above_Upsilon_CR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_qqToZZ_2D_above_Upsilon_CR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_qqToZZ_2D_above_Upsilon_CR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_TTJets_2D_above_Upsilon_CR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_TTJets_2D_above_Upsilon_CR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_ggToZZ_2D_above_Upsilon_CR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_ggToZZ_2D_above_Upsilon_CR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+
+  // SR: 1D dataset
   RooDataSet* ds_dimudimu_DY1J_m1_above_Upsilon    = new RooDataSet("ds_dimudimu_DY1J_m1_above_Upsilon",    "ds_dimudimu_DY1J_m1_above_Upsilon",    tree_dimudimu_DY1J_2D_above_Upsilon,    RooArgSet(m1_above_Upsilon));
   RooDataSet* ds_dimudimu_DY1J_m2_above_Upsilon    = new RooDataSet("ds_dimudimu_DY1J_m2_above_Upsilon",    "ds_dimudimu_DY1J_m2_above_Upsilon",    tree_dimudimu_DY1J_2D_above_Upsilon,    RooArgSet(m2_above_Upsilon));
   RooDataSet* ds_dimudimu_DY2J_m1_above_Upsilon    = new RooDataSet("ds_dimudimu_DY2J_m1_above_Upsilon",    "ds_dimudimu_DY2J_m1_above_Upsilon",    tree_dimudimu_DY2J_2D_above_Upsilon,    RooArgSet(m1_above_Upsilon));
@@ -1081,6 +1127,24 @@ void LowMassBKGFit1D18() {
   RooDataSet* ds_dimudimu_ggToZZ_m1_above_Upsilon  = new RooDataSet("ds_dimudimu_ggToZZ_m1_above_Upsilon",  "ds_dimudimu_ggToZZ_m1_above_Upsilon",  tree_dimudimu_ggToZZ_2D_above_Upsilon,  RooArgSet(m1_above_Upsilon));
   RooDataSet* ds_dimudimu_ggToZZ_m2_above_Upsilon  = new RooDataSet("ds_dimudimu_ggToZZ_m2_above_Upsilon",  "ds_dimudimu_ggToZZ_m2_above_Upsilon",  tree_dimudimu_ggToZZ_2D_above_Upsilon,  RooArgSet(m2_above_Upsilon));
 
+  // SR: 2D dataset
+  RooDataSet* ds_dimudimu_DY0J_2D_above_Upsilon_SR    = new RooDataSet("ds_dimudimu_DY0J_2D_above_Upsilon_SR",    "ds_dimudimu_DY0J_2D_above_Upsilon_SR",    tree_dimudimu_DY0J_2D_above_Upsilon,    RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY1J_2D_above_Upsilon_SR    = new RooDataSet("ds_dimudimu_DY1J_2D_above_Upsilon_SR",    "ds_dimudimu_DY1J_2D_above_Upsilon_SR",    tree_dimudimu_DY1J_2D_above_Upsilon,    RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY2J_2D_above_Upsilon_SR    = new RooDataSet("ds_dimudimu_DY2J_2D_above_Upsilon_SR",    "ds_dimudimu_DY2J_2D_above_Upsilon_SR",    tree_dimudimu_DY2J_2D_above_Upsilon,    RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_qqToZZ_2D_above_Upsilon_SR  = new RooDataSet("ds_dimudimu_qqToZZ_2D_above_Upsilon_SR",  "ds_dimudimu_qqToZZ_2D_above_Upsilon_SR",  tree_dimudimu_qqToZZ_2D_above_Upsilon,  RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_TTJets_2D_above_Upsilon_SR  = new RooDataSet("ds_dimudimu_TTJets_2D_above_Upsilon_SR",  "ds_dimudimu_TTJets_2D_above_Upsilon_SR",  tree_dimudimu_TTJets_2D_above_Upsilon,  RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggHToZZ_2D_above_Upsilon_SR = new RooDataSet("ds_dimudimu_ggHToZZ_2D_above_Upsilon_SR", "ds_dimudimu_ggHToZZ_2D_above_Upsilon_SR", tree_dimudimu_ggHToZZ_2D_above_Upsilon, RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggToZZ_2D_above_Upsilon_SR  = new RooDataSet("ds_dimudimu_ggToZZ_2D_above_Upsilon_SR",  "ds_dimudimu_ggToZZ_2D_above_Upsilon_SR",  tree_dimudimu_ggToZZ_2D_above_Upsilon,  RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  // CR: 2D dataset
+  RooDataSet* ds_dimudimu_DY0J_2D_above_Upsilon_CR    = new RooDataSet("ds_dimudimu_DY0J_2D_above_Upsilon_CR",    "ds_dimudimu_DY0J_2D_above_Upsilon_CR",    tree_dimudimu_DY0J_2D_above_Upsilon_CR,    RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY1J_2D_above_Upsilon_CR    = new RooDataSet("ds_dimudimu_DY1J_2D_above_Upsilon_CR",    "ds_dimudimu_DY1J_2D_above_Upsilon_CR",    tree_dimudimu_DY1J_2D_above_Upsilon_CR,    RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY2J_2D_above_Upsilon_CR    = new RooDataSet("ds_dimudimu_DY2J_2D_above_Upsilon_CR",    "ds_dimudimu_DY2J_2D_above_Upsilon_CR",    tree_dimudimu_DY2J_2D_above_Upsilon_CR,    RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_qqToZZ_2D_above_Upsilon_CR  = new RooDataSet("ds_dimudimu_qqToZZ_2D_above_Upsilon_CR",  "ds_dimudimu_qqToZZ_2D_above_Upsilon_CR",  tree_dimudimu_qqToZZ_2D_above_Upsilon_CR,  RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_TTJets_2D_above_Upsilon_CR  = new RooDataSet("ds_dimudimu_TTJets_2D_above_Upsilon_CR",  "ds_dimudimu_TTJets_2D_above_Upsilon_CR",  tree_dimudimu_TTJets_2D_above_Upsilon_CR,  RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggHToZZ_2D_above_Upsilon_CR = new RooDataSet("ds_dimudimu_ggHToZZ_2D_above_Upsilon_CR", "ds_dimudimu_ggHToZZ_2D_above_Upsilon_CR", tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR, RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggToZZ_2D_above_Upsilon_CR  = new RooDataSet("ds_dimudimu_ggToZZ_2D_above_Upsilon_CR",  "ds_dimudimu_ggToZZ_2D_above_Upsilon_CR",  tree_dimudimu_ggToZZ_2D_above_Upsilon_CR,  RooArgSet(m1_above_Upsilon, m2_above_Upsilon));
+
+  // SR
   ds_dimudimu_DY1J_m1_above_Upsilon->Print("s");
   ds_dimudimu_DY1J_m2_above_Upsilon->Print("s");
   ds_dimudimu_DY2J_m1_above_Upsilon->Print("s");
@@ -1093,6 +1157,25 @@ void LowMassBKGFit1D18() {
   ds_dimudimu_ggHToZZ_m2_above_Upsilon->Print("s");
   ds_dimudimu_ggToZZ_m1_above_Upsilon->Print("s");
   ds_dimudimu_ggToZZ_m2_above_Upsilon->Print("s");
+
+  // SR 2D
+  ds_dimudimu_DY0J_2D_above_Upsilon_SR->Print("s");
+  ds_dimudimu_DY1J_2D_above_Upsilon_SR->Print("s");
+  ds_dimudimu_DY2J_2D_above_Upsilon_SR->Print("s");
+  ds_dimudimu_qqToZZ_2D_above_Upsilon_SR->Print("s");
+  ds_dimudimu_TTJets_2D_above_Upsilon_SR->Print("s");
+  ds_dimudimu_ggHToZZ_2D_above_Upsilon_SR->Print("s");
+  ds_dimudimu_ggToZZ_2D_above_Upsilon_SR->Print("s");
+  // CR 2D
+  ds_dimudimu_DY0J_2D_above_Upsilon_CR->Print("s");
+  ds_dimudimu_DY1J_2D_above_Upsilon_CR->Print("s");
+  ds_dimudimu_DY2J_2D_above_Upsilon_CR->Print("s");
+  ds_dimudimu_qqToZZ_2D_above_Upsilon_CR->Print("s");
+  ds_dimudimu_TTJets_2D_above_Upsilon_CR->Print("s");
+  ds_dimudimu_ggHToZZ_2D_above_Upsilon_CR->Print("s");
+  ds_dimudimu_ggToZZ_2D_above_Upsilon_CR->Print("s");
+
+  // SR 1D
   w->import(*ds_dimudimu_DY1J_m1_above_Upsilon);
   w->import(*ds_dimudimu_DY1J_m2_above_Upsilon);
   w->import(*ds_dimudimu_DY2J_m1_above_Upsilon);
@@ -1105,6 +1188,23 @@ void LowMassBKGFit1D18() {
   w->import(*ds_dimudimu_ggHToZZ_m2_above_Upsilon);
   w->import(*ds_dimudimu_ggToZZ_m1_above_Upsilon);
   w->import(*ds_dimudimu_ggToZZ_m2_above_Upsilon);
+
+  // SR 2D
+  w->import(*ds_dimudimu_DY0J_2D_above_Upsilon_SR);
+  w->import(*ds_dimudimu_DY1J_2D_above_Upsilon_SR);
+  w->import(*ds_dimudimu_DY2J_2D_above_Upsilon_SR);
+  w->import(*ds_dimudimu_qqToZZ_2D_above_Upsilon_SR);
+  w->import(*ds_dimudimu_TTJets_2D_above_Upsilon_SR);
+  w->import(*ds_dimudimu_ggHToZZ_2D_above_Upsilon_SR);
+  w->import(*ds_dimudimu_ggToZZ_2D_above_Upsilon_SR);
+  // CR 2D
+  w->import(*ds_dimudimu_DY0J_2D_above_Upsilon_CR);
+  w->import(*ds_dimudimu_DY1J_2D_above_Upsilon_CR);
+  w->import(*ds_dimudimu_DY2J_2D_above_Upsilon_CR);
+  w->import(*ds_dimudimu_qqToZZ_2D_above_Upsilon_CR);
+  w->import(*ds_dimudimu_TTJets_2D_above_Upsilon_CR);
+  w->import(*ds_dimudimu_ggHToZZ_2D_above_Upsilon_CR);
+  w->import(*ds_dimudimu_ggToZZ_2D_above_Upsilon_CR);
 
   //===========
   // 1-D pdf m1
@@ -1579,12 +1679,292 @@ void LowMassBKGFit1D18() {
   w->factory("PROD::HighMassBKG_weight_braidI(HighMassFit2018_m1_weight_braidI, HighMassFit2018_m2_weight_braidI)");
   w->factory("PROD::HighMassBKG_weight_braidII(HighMassFit2018_m1_weight_braidII, HighMassFit2018_m2_weight_braidII)");
 
-  // assume a flat background pdf for above 11 GeV
+  //========================================================================
+  // Unblinding cross checks: assume a flat background pdf for above 11 GeV
+  //========================================================================
   RooPolynomial flatm1("flatm1", "flatm1", m1_above_Upsilon);
   RooPolynomial flatm2("flatm2", "flatm2", m2_above_Upsilon);
   w->import(flatm1);
   w->import(flatm2);
   w->factory("PROD::flat2D(flatm1,flatm2)");
+
+  //========================================================================
+  // Unblinding cross checks: For DY0-2J + TTJetsLL (small stats), use the
+  //      events in the entire m1-m2 plane to make the background kernel PDF;
+  //      for other processes use the same (method 1)
+  //========================================================================
+  // CR+SR: use all events in m1-m2 plane for small stats
+  ostringstream stream_cut_bkgmc_above_Upsilon_CR_SR;
+  stream_cut_bkgmc_above_Upsilon_CR_SR << "is1SelMuHighPt && is2SelMuHighPt && is3SelMuLowPt && is4SelMuLowPt && isVertexOK && is2DiMuons && nSAMu <= 1 && diMuonC_FittedVtx_prob > 0.2*(1 - dimuC_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonC_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonC_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonC_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonC_FittedVtx_dR), 4) )*pow(fabs(diMuonC_FittedVtx_Lxy/10.0), 2.0) ) && diMuonF_FittedVtx_prob > 0.2*(1 - dimuF_nSAMu)*exp( -( 8.53647 - 50.4571*(sqrt(diMuonF_FittedVtx_dR)) + 109.83*pow(sqrt(diMuonF_FittedVtx_dR), 2) - 92.7445*pow(sqrt(diMuonF_FittedVtx_dR), 3) + 36.8351*pow(sqrt(diMuonF_FittedVtx_dR), 4) )*pow(fabs(diMuonF_FittedVtx_Lxy/10.0), 2.0) ) && ( nSAMu == 0 || ( nSAMu == 1 && ( diMuonC_FittedVtx_Lxy > 0.1 || diMuonF_FittedVtx_Lxy > 0.1 ) && ( (dimuC_Mu0_SA==1 && muJetC_Mu0_matched_segs>=2) || (dimuC_Mu1_SA==1 && muJetC_Mu1_matched_segs>=2) || (dimuF_Mu0_SA==1 && muJetF_Mu0_matched_segs>=2) || (dimuF_Mu1_SA==1 && muJetF_Mu1_matched_segs>=2) ) ) ) && (recoRePaired2mutrailing_dR >= 0.2 || recoRePaired2mutrailing_m >= 3) && (diMuonC_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonC_m2_FittedVtx_hitpix_Phase1 == 1) && (diMuonF_m1_FittedVtx_hitpix_Phase1 == 1 || diMuonF_m2_FittedVtx_hitpix_Phase1 == 1) && isSignalHLTFired && diMuonC_IsoTk_FittedVtx < " << iso_cut << " && diMuonF_IsoTk_FittedVtx < " << iso_cut << " && diMuonC_FittedVtx_m > " << m_Upsilon_up << " && diMuonC_FittedVtx_m < " << m_highmax << " && diMuonF_FittedVtx_m > " << m_Upsilon_up << " && diMuonF_FittedVtx_m < " << m_highmax;
+  TString cut_bkgmc_above_Upsilon_CR_SR = stream_cut_bkgmc_above_Upsilon_CR_SR.str();
+  std::cout << "MC 2-dimu events in CR+SR (high mass above Upsilon only): " << cut_bkgmc_above_Upsilon_CR_SR.Data() << std::endl;
+  std::cout << "                                                        " << std::endl;
+
+  TTree* tree_dimudimu_DY0J_2D_above_Upsilon_CR_SR    = chain_DY0J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR_SR);
+  TTree* tree_dimudimu_DY1J_2D_above_Upsilon_CR_SR    = chain_DY1J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR_SR);
+  TTree* tree_dimudimu_DY2J_2D_above_Upsilon_CR_SR    = chain_DY2J_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR_SR);
+  TTree* tree_dimudimu_TTJets_2D_above_Upsilon_CR_SR  = chain_TTJets_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR_SR);
+
+  tree_dimudimu_DY0J_2D_above_Upsilon_CR_SR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY0J_2D_above_Upsilon_CR_SR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_DY1J_2D_above_Upsilon_CR_SR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY1J_2D_above_Upsilon_CR_SR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_DY2J_2D_above_Upsilon_CR_SR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_DY2J_2D_above_Upsilon_CR_SR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_TTJets_2D_above_Upsilon_CR_SR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_TTJets_2D_above_Upsilon_CR_SR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+
+  // CR+SR: 1D dataset
+  RooDataSet* ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR   = new RooDataSet("ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR",    "ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR",    tree_dimudimu_DY0J_2D_above_Upsilon_CR_SR,    RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR   = new RooDataSet("ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR",    "ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR",    tree_dimudimu_DY0J_2D_above_Upsilon_CR_SR,    RooArgSet(m2_above_Upsilon));
+
+  RooDataSet* ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR   = new RooDataSet("ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR",    "ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR",    tree_dimudimu_DY1J_2D_above_Upsilon_CR_SR,    RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR   = new RooDataSet("ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR",    "ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR",    tree_dimudimu_DY1J_2D_above_Upsilon_CR_SR,    RooArgSet(m2_above_Upsilon));
+
+  RooDataSet* ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR   = new RooDataSet("ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR",    "ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR",    tree_dimudimu_DY2J_2D_above_Upsilon_CR_SR,    RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR   = new RooDataSet("ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR",    "ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR",    tree_dimudimu_DY2J_2D_above_Upsilon_CR_SR,    RooArgSet(m2_above_Upsilon));
+
+  RooDataSet* ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR",  "ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR",  tree_dimudimu_TTJets_2D_above_Upsilon_CR_SR,  RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR",  "ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR",  tree_dimudimu_TTJets_2D_above_Upsilon_CR_SR,  RooArgSet(m2_above_Upsilon));
+
+  ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR->Print("s");
+
+  w->import(*ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR);
+
+  // 1-D pdf m1
+  RooKeysPdf DY0J_pdf_m1_CR_SR("DY0J_pdf_m1_CR_SR",       "DY0J_pdf_m1_CR_SR",    m1_above_Upsilon, *ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror); // Adaptive Gaussian kernel
+  RooKeysPdf DY0J_pdf_m1_CR_SR_dn("DY0J_pdf_m1_CR_SR_dn", "DY0J_pdf_m1_CR_SR_dn", m1_above_Upsilon, *ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);// narrow width
+  RooKeysPdf DY0J_pdf_m1_CR_SR_up("DY0J_pdf_m1_CR_SR_up", "DY0J_pdf_m1_CR_SR_up", m1_above_Upsilon, *ds_dimudimu_DY0J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);// wider width
+
+  RooKeysPdf DY1J_pdf_m1_CR_SR("DY1J_pdf_m1_CR_SR",       "DY1J_pdf_m1_CR_SR",    m1_above_Upsilon, *ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf DY1J_pdf_m1_CR_SR_dn("DY1J_pdf_m1_CR_SR_dn", "DY1J_pdf_m1_CR_SR_dn", m1_above_Upsilon, *ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf DY1J_pdf_m1_CR_SR_up("DY1J_pdf_m1_CR_SR_up", "DY1J_pdf_m1_CR_SR_up", m1_above_Upsilon, *ds_dimudimu_DY1J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf DY2J_pdf_m1_CR_SR("DY2J_pdf_m1_CR_SR",       "DY2J_pdf_m1_CR_SR",    m1_above_Upsilon, *ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf DY2J_pdf_m1_CR_SR_dn("DY2J_pdf_m1_CR_SR_dn", "DY2J_pdf_m1_CR_SR_dn", m1_above_Upsilon, *ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf DY2J_pdf_m1_CR_SR_up("DY2J_pdf_m1_CR_SR_up", "DY2J_pdf_m1_CR_SR_up", m1_above_Upsilon, *ds_dimudimu_DY2J_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf TTJets_pdf_m1_CR_SR("TTJets_pdf_m1_CR_SR",       "TTJets_pdf_m1_CR_SR",    m1_above_Upsilon, *ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf TTJets_pdf_m1_CR_SR_dn("TTJets_pdf_m1_CR_SR_dn", "TTJets_pdf_m1_CR_SR_dn", m1_above_Upsilon, *ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf TTJets_pdf_m1_CR_SR_up("TTJets_pdf_m1_CR_SR_up", "TTJets_pdf_m1_CR_SR_up", m1_above_Upsilon, *ds_dimudimu_TTJets_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  // 1-D pdf m2
+  RooKeysPdf DY0J_pdf_m2_CR_SR("DY0J_pdf_m2_CR_SR",       "DY0J_pdf_m2_CR_SR",    m2_above_Upsilon, *ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror); // Adaptive Gaussian kernel
+  RooKeysPdf DY0J_pdf_m2_CR_SR_dn("DY0J_pdf_m2_CR_SR_dn", "DY0J_pdf_m2_CR_SR_dn", m2_above_Upsilon, *ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);// narrow width
+  RooKeysPdf DY0J_pdf_m2_CR_SR_up("DY0J_pdf_m2_CR_SR_up", "DY0J_pdf_m2_CR_SR_up", m2_above_Upsilon, *ds_dimudimu_DY0J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);// wider width
+
+  RooKeysPdf DY1J_pdf_m2_CR_SR("DY1J_pdf_m2_CR_SR",       "DY1J_pdf_m2_CR_SR",    m2_above_Upsilon, *ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf DY1J_pdf_m2_CR_SR_dn("DY1J_pdf_m2_CR_SR_dn", "DY1J_pdf_m2_CR_SR_dn", m2_above_Upsilon, *ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf DY1J_pdf_m2_CR_SR_up("DY1J_pdf_m2_CR_SR_up", "DY1J_pdf_m2_CR_SR_up", m2_above_Upsilon, *ds_dimudimu_DY1J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf DY2J_pdf_m2_CR_SR("DY2J_pdf_m2_CR_SR",       "DY2J_pdf_m2_CR_SR",    m2_above_Upsilon, *ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf DY2J_pdf_m2_CR_SR_dn("DY2J_pdf_m2_CR_SR_dn", "DY2J_pdf_m2_CR_SR_dn", m2_above_Upsilon, *ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf DY2J_pdf_m2_CR_SR_up("DY2J_pdf_m2_CR_SR_up", "DY2J_pdf_m2_CR_SR_up", m2_above_Upsilon, *ds_dimudimu_DY2J_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf TTJets_pdf_m2_CR_SR("TTJets_pdf_m2_CR_SR",       "TTJets_pdf_m2_CR_SR",    m2_above_Upsilon, *ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf TTJets_pdf_m2_CR_SR_dn("TTJets_pdf_m2_CR_SR_dn", "TTJets_pdf_m2_CR_SR_dn", m2_above_Upsilon, *ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf TTJets_pdf_m2_CR_SR_up("TTJets_pdf_m2_CR_SR_up", "TTJets_pdf_m2_CR_SR_up", m2_above_Upsilon, *ds_dimudimu_TTJets_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  w->import(DY0J_pdf_m1_CR_SR);
+  w->import(DY0J_pdf_m1_CR_SR_dn);
+  w->import(DY0J_pdf_m1_CR_SR_up);
+  w->import(DY1J_pdf_m1_CR_SR);
+  w->import(DY1J_pdf_m1_CR_SR_dn);
+  w->import(DY1J_pdf_m1_CR_SR_up);
+  w->import(DY2J_pdf_m1_CR_SR);
+  w->import(DY2J_pdf_m1_CR_SR_dn);
+  w->import(DY2J_pdf_m1_CR_SR_up);
+  w->import(TTJets_pdf_m1_CR_SR);
+  w->import(TTJets_pdf_m1_CR_SR_dn);
+  w->import(TTJets_pdf_m1_CR_SR_up);
+
+  w->import(DY0J_pdf_m2_CR_SR);
+  w->import(DY0J_pdf_m2_CR_SR_dn);
+  w->import(DY0J_pdf_m2_CR_SR_up);
+  w->import(DY1J_pdf_m2_CR_SR);
+  w->import(DY1J_pdf_m2_CR_SR_dn);
+  w->import(DY1J_pdf_m2_CR_SR_up);
+  w->import(DY2J_pdf_m2_CR_SR);
+  w->import(DY2J_pdf_m2_CR_SR_dn);
+  w->import(DY2J_pdf_m2_CR_SR_up);
+  w->import(TTJets_pdf_m2_CR_SR);
+  w->import(TTJets_pdf_m2_CR_SR_dn);
+  w->import(TTJets_pdf_m2_CR_SR_up);
+
+  // total pdf: use same weight as default PDF "HighMassFit2018_m1" above
+  w->factory("SUM::HighMassFit2018_m1_DYTTtot(1.2594848*DY1J_pdf_m1_CR_SR, 2.1432564*DY2J_pdf_m1_CR_SR, 4.1874639*qqToZZ_pdf_m1, 2.7497135*TTJets_pdf_m1_CR_SR, 1.0148314*ggHToZZ_pdf_m1, 0.3392106*ggToZZ_pdf_m1)");
+  w->factory("SUM::HighMassFit2018_m2_DYTTtot(1.2594848*DY1J_pdf_m2_CR_SR, 2.1432564*DY2J_pdf_m2_CR_SR, 4.1874639*qqToZZ_pdf_m2, 2.7497135*TTJets_pdf_m2_CR_SR, 1.0148314*ggHToZZ_pdf_m2, 0.3392106*ggToZZ_pdf_m2)");
+
+  // plot compare with default shape
+  RooPlot* plotShapem1method1 = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1)"));
+  RooPlot* plotShapem2method1 = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2)"));
+
+  w->pdf("HighMassFit2018_m1")->plotOn(plotShapem1method1, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1"));
+  w->pdf("HighMassFit2018_m1_DYTTtot")->plotOn(plotShapem1method1, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_DYTTtot"));
+
+  w->pdf("HighMassFit2018_m2")->plotOn(plotShapem2method1, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2"));
+  w->pdf("HighMassFit2018_m2_DYTTtot")->plotOn(plotShapem2method1, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_DYTTtot"));
+
+  TCanvas * c_shape1D_above_Upsilon_method1 = new TCanvas("c_shape1D_above_Upsilon_method1", "c_shape1D_above_Upsilon_method1", 800, 800);
+  c_shape1D_above_Upsilon_method1->cd();
+  plotShapem1method1->Draw(); plotShapem1method1->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon_method1->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_DYTTtot.pdf");
+  plotShapem2method1->Draw(); plotShapem2method1->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon_method1->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_DYTTtot.pdf");
+
+  //========================================================================
+  // Unblinding cross checks: For all processes, use the
+  //      events in the entire m1-m2 plane to make the background kernel PDF
+  //      (method 2)
+  //========================================================================
+  // do the same for the other large stats sample
+  TTree* tree_dimudimu_qqToZZ_2D_above_Upsilon_CR_SR    = chain_qqToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR_SR);
+  TTree* tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR_SR   = chain_ggHToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR_SR);
+  TTree* tree_dimudimu_ggToZZ_2D_above_Upsilon_CR_SR    = chain_ggToZZ_dimudimu.CopyTree(cut_bkgmc_above_Upsilon_CR_SR);
+
+  tree_dimudimu_qqToZZ_2D_above_Upsilon_CR_SR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_qqToZZ_2D_above_Upsilon_CR_SR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR_SR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR_SR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+  tree_dimudimu_ggToZZ_2D_above_Upsilon_CR_SR->GetBranch("diMuonC_FittedVtx_m")->SetName("m1_above_Upsilon");
+  tree_dimudimu_ggToZZ_2D_above_Upsilon_CR_SR->GetBranch("diMuonF_FittedVtx_m")->SetName("m2_above_Upsilon");
+
+  RooDataSet* ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR",  "ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR",  tree_dimudimu_qqToZZ_2D_above_Upsilon_CR_SR,  RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR",  "ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR",  tree_dimudimu_qqToZZ_2D_above_Upsilon_CR_SR,  RooArgSet(m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR",  "ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR",  tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR_SR,  RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR",  "ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR",  tree_dimudimu_ggHToZZ_2D_above_Upsilon_CR_SR,  RooArgSet(m2_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR",  "ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR",  tree_dimudimu_ggToZZ_2D_above_Upsilon_CR_SR,  RooArgSet(m1_above_Upsilon));
+  RooDataSet* ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR = new RooDataSet("ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR",  "ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR",  tree_dimudimu_ggToZZ_2D_above_Upsilon_CR_SR,  RooArgSet(m2_above_Upsilon));
+
+  ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR->Print("s");
+  ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR->Print("s");
+
+  w->import(*ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR);
+  w->import(*ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR);
+
+  RooKeysPdf qqToZZ_pdf_m1_CR_SR("qqToZZ_pdf_m1_CR_SR",       "qqToZZ_pdf_m1_CR_SR",    m1_above_Upsilon, *ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf qqToZZ_pdf_m1_CR_SR_dn("qqToZZ_pdf_m1_CR_SR_dn", "qqToZZ_pdf_m1_CR_SR_dn", m1_above_Upsilon, *ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf qqToZZ_pdf_m1_CR_SR_up("qqToZZ_pdf_m1_CR_SR_up", "qqToZZ_pdf_m1_CR_SR_up", m1_above_Upsilon, *ds_dimudimu_qqToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggHToZZ_pdf_m1_CR_SR("ggHToZZ_pdf_m1_CR_SR",       "ggHToZZ_pdf_m1_CR_SR",    m1_above_Upsilon, *ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf ggHToZZ_pdf_m1_CR_SR_dn("ggHToZZ_pdf_m1_CR_SR_dn", "ggHToZZ_pdf_m1_CR_SR_dn", m1_above_Upsilon, *ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggHToZZ_pdf_m1_CR_SR_up("ggHToZZ_pdf_m1_CR_SR_up", "ggHToZZ_pdf_m1_CR_SR_up", m1_above_Upsilon, *ds_dimudimu_ggHToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggToZZ_pdf_m1_CR_SR("ggToZZ_pdf_m1_CR_SR",       "ggToZZ_pdf_m1_CR_SR",    m1_above_Upsilon, *ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf ggToZZ_pdf_m1_CR_SR_dn("ggToZZ_pdf_m1_CR_SR_dn", "ggToZZ_pdf_m1_CR_SR_dn", m1_above_Upsilon, *ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggToZZ_pdf_m1_CR_SR_up("ggToZZ_pdf_m1_CR_SR_up", "ggToZZ_pdf_m1_CR_SR_up", m1_above_Upsilon, *ds_dimudimu_ggToZZ_m1_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf qqToZZ_pdf_m2_CR_SR("qqToZZ_pdf_m2_CR_SR",       "qqToZZ_pdf_m2_CR_SR",    m2_above_Upsilon, *ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf qqToZZ_pdf_m2_CR_SR_dn("qqToZZ_pdf_m2_CR_SR_dn", "qqToZZ_pdf_m2_CR_SR_dn", m2_above_Upsilon, *ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf qqToZZ_pdf_m2_CR_SR_up("qqToZZ_pdf_m2_CR_SR_up", "qqToZZ_pdf_m2_CR_SR_up", m2_above_Upsilon, *ds_dimudimu_qqToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggHToZZ_pdf_m2_CR_SR("ggHToZZ_pdf_m2_CR_SR",       "ggHToZZ_pdf_m2_CR_SR",    m2_above_Upsilon, *ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf ggHToZZ_pdf_m2_CR_SR_dn("ggHToZZ_pdf_m2_CR_SR_dn", "ggHToZZ_pdf_m2_CR_SR_dn", m2_above_Upsilon, *ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggHToZZ_pdf_m2_CR_SR_up("ggHToZZ_pdf_m2_CR_SR_up", "ggHToZZ_pdf_m2_CR_SR_up", m2_above_Upsilon, *ds_dimudimu_ggHToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  RooKeysPdf ggToZZ_pdf_m2_CR_SR("ggToZZ_pdf_m2_CR_SR",       "ggToZZ_pdf_m2_CR_SR",    m2_above_Upsilon, *ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror);
+  RooKeysPdf ggToZZ_pdf_m2_CR_SR_dn("ggToZZ_pdf_m2_CR_SR_dn", "ggToZZ_pdf_m2_CR_SR_dn", m2_above_Upsilon, *ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_dn);
+  RooKeysPdf ggToZZ_pdf_m2_CR_SR_up("ggToZZ_pdf_m2_CR_SR_up", "ggToZZ_pdf_m2_CR_SR_up", m2_above_Upsilon, *ds_dimudimu_ggToZZ_m2_above_Upsilon_CR_SR, RooKeysPdf::NoMirror, width_scale_up);
+
+  w->import(qqToZZ_pdf_m1_CR_SR);
+  w->import(qqToZZ_pdf_m1_CR_SR_dn);
+  w->import(qqToZZ_pdf_m1_CR_SR_up);
+  w->import(ggHToZZ_pdf_m1_CR_SR);
+  w->import(ggHToZZ_pdf_m1_CR_SR_dn);
+  w->import(ggHToZZ_pdf_m1_CR_SR_up);
+  w->import(ggToZZ_pdf_m1_CR_SR);
+  w->import(ggToZZ_pdf_m1_CR_SR_dn);
+  w->import(ggToZZ_pdf_m1_CR_SR_up);
+
+  w->import(qqToZZ_pdf_m2_CR_SR);
+  w->import(qqToZZ_pdf_m2_CR_SR_dn);
+  w->import(qqToZZ_pdf_m2_CR_SR_up);
+  w->import(ggHToZZ_pdf_m2_CR_SR);
+  w->import(ggHToZZ_pdf_m2_CR_SR_dn);
+  w->import(ggHToZZ_pdf_m2_CR_SR_up);
+  w->import(ggToZZ_pdf_m2_CR_SR);
+  w->import(ggToZZ_pdf_m2_CR_SR_dn);
+  w->import(ggToZZ_pdf_m2_CR_SR_up);
+
+  // total pdf: use same weight as default PDF "HighMassFit2018_m1" above
+  w->factory("SUM::HighMassFit2018_m1_Alltot(1.2594848*DY1J_pdf_m1_CR_SR, 2.1432564*DY2J_pdf_m1_CR_SR, 4.1874639*qqToZZ_pdf_m1_CR_SR, 2.7497135*TTJets_pdf_m1_CR_SR, 1.0148314*ggHToZZ_pdf_m1_CR_SR, 0.3392106*ggToZZ_pdf_m1_CR_SR)");
+  w->factory("SUM::HighMassFit2018_m2_Alltot(1.2594848*DY1J_pdf_m2_CR_SR, 2.1432564*DY2J_pdf_m2_CR_SR, 4.1874639*qqToZZ_pdf_m2_CR_SR, 2.7497135*TTJets_pdf_m2_CR_SR, 1.0148314*ggHToZZ_pdf_m2_CR_SR, 0.3392106*ggToZZ_pdf_m2_CR_SR)");
+
+  // plot compare with default shape
+  RooPlot* plotShapem1method2 = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1)"));
+  RooPlot* plotShapem2method2 = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2)"));
+
+  w->pdf("HighMassFit2018_m1")->plotOn(plotShapem1method2, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1"));
+  w->pdf("HighMassFit2018_m1_Alltot")->plotOn(plotShapem1method2, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_Alltot"));
+
+  w->pdf("HighMassFit2018_m2")->plotOn(plotShapem2method2, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2"));
+  w->pdf("HighMassFit2018_m2_Alltot")->plotOn(plotShapem2method2, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_Alltot"));
+
+  TCanvas * c_shape1D_above_Upsilon_method2 = new TCanvas("c_shape1D_above_Upsilon_method2", "c_shape1D_above_Upsilon_method2", 800, 800);
+  c_shape1D_above_Upsilon_method2->cd();
+  plotShapem1method2->Draw(); plotShapem1method2->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon_method2->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_Alltot.pdf");
+  plotShapem2method2->Draw(); plotShapem2method2->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon_method2->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_Alltot.pdf");
+
+  //========================================================================
+  // Unblinding cross checks: For DY0-2J + TTJetsToLL, assume flat PDF in the
+  //      entire m1-m2 plane; for other processes, use the same (method 3)
+  //========================================================================
+  RooPolynomial DY1J_pdf_m1_flat("DY1J_pdf_m1_flat", "DY1J_pdf_m1_flat", m1_above_Upsilon);
+  RooPolynomial DY1J_pdf_m2_flat("DY1J_pdf_m2_flat", "DY1J_pdf_m2_flat", m2_above_Upsilon);
+  RooPolynomial DY2J_pdf_m1_flat("DY2J_pdf_m1_flat", "DY2J_pdf_m1_flat", m1_above_Upsilon);
+  RooPolynomial DY2J_pdf_m2_flat("DY2J_pdf_m2_flat", "DY2J_pdf_m2_flat", m2_above_Upsilon);
+  RooPolynomial TTJets_pdf_m1_flat("TTJets_pdf_m1_flat", "TTJets_pdf_m1_flat", m1_above_Upsilon);
+  RooPolynomial TTJets_pdf_m2_flat("TTJets_pdf_m2_flat", "TTJets_pdf_m2_flat", m2_above_Upsilon);
+
+  w->import(DY1J_pdf_m1_flat);
+  w->import(DY1J_pdf_m2_flat);
+  w->import(DY2J_pdf_m1_flat);
+  w->import(DY2J_pdf_m2_flat);
+  w->import(TTJets_pdf_m1_flat);
+  w->import(TTJets_pdf_m2_flat);
+
+  // total pdf: use same weight as default PDF "HighMassFit2018_m1" above
+  w->factory("SUM::HighMassFit2018_m1_DYTTflat(1.2594848*DY1J_pdf_m1_flat, 2.1432564*DY2J_pdf_m1_flat, 4.1874639*qqToZZ_pdf_m1, 2.7497135*TTJets_pdf_m1_flat, 1.0148314*ggHToZZ_pdf_m1, 0.3392106*ggToZZ_pdf_m1)");
+  w->factory("SUM::HighMassFit2018_m2_DYTTflat(1.2594848*DY1J_pdf_m2_flat, 2.1432564*DY2J_pdf_m2_flat, 4.1874639*qqToZZ_pdf_m2, 2.7497135*TTJets_pdf_m2_flat, 1.0148314*ggHToZZ_pdf_m2, 0.3392106*ggToZZ_pdf_m2)");
+
+  // plot compare with default shape
+  RooPlot* plotShapem1method3 = w->var("m1_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m1)"));
+  RooPlot* plotShapem2method3 = w->var("m2_above_Upsilon")->frame(Title("Background PDF above 11 GeV (m2)"));
+
+  w->pdf("HighMassFit2018_m1")->plotOn(plotShapem1method3, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m1"));
+  w->pdf("HighMassFit2018_m1_DYTTflat")->plotOn(plotShapem1method3, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m1_DYTTflat"));
+
+  w->pdf("HighMassFit2018_m2")->plotOn(plotShapem2method3, LineColor(kBlue), Precision(0.0001), Name("HighMassFit2018_m2"));
+  w->pdf("HighMassFit2018_m2_DYTTflat")->plotOn(plotShapem2method3, LineColor(kRed), LineStyle(kDashed), Precision(0.0001), Name("HighMassFit2018_m2_DYTTflat"));
+
+  TCanvas * c_shape1D_above_Upsilon_method3 = new TCanvas("c_shape1D_above_Upsilon_method3", "c_shape1D_above_Upsilon_method3", 800, 800);
+  c_shape1D_above_Upsilon_method3->cd();
+  plotShapem1method3->Draw(); plotShapem1method3->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon_method3->SaveAs("HighMassShape/BKG_Shape1D_m1_above_Upsilon_DYTTflat.pdf");
+  plotShapem2method3->Draw(); plotShapem2method3->GetYaxis()->SetTitle("p.d.f."); c_shape1D_above_Upsilon_method3->SaveAs("HighMassShape/BKG_Shape1D_m2_above_Upsilon_DYTTflat.pdf");
+
+  //========================================================================
+  // Unblinding cross checks: envelope method from EXO-20-014 and H->2a->4g
+  //========================================================================
 
   //=***************************************************************************
   //                           Save to Workspace

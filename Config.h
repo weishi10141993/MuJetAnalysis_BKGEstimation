@@ -49,12 +49,14 @@ TString headertpl2 = "";//header of template 2D
 TString headervld = "";//header of template validation plots
 TString header1 = "";//header of CR plots with pulls
 TString header = "";//header of SR plots without pulls
+TString headermc = "";//header of mc 2d scatter plot
 
 TString inputFile1;//Run 2 data Ntuples used for HighMassBKGABCD and LowMassBKGFit1D
 TString outFileLM = "";//output file of LowMassBKGFit1D, will also be used in limit calculation
 TString inputFile2;//input workSpace file to LowMassBKGPlot2D, that's also the output file of LowMassBKGFit1D
 
-//Run 2 BKG Ntuples used for kernel density estimation in LowMassBKGFit1D
+//Run 2 BKG Ntuples used in LowMassBKGFit1D
+TString DY0JFile;
 TString DY1JFile;
 TString DY2JFile;
 TString qqToZZFile;
@@ -110,6 +112,7 @@ namespace BKG_cfg {
       for(int j = 0; j < 1; j++){
         DATA_files[j] = DATA_files_2018[j];
       }
+      DY0JFile    = "Input_2018_DY0J_MC.txt";
       DY1JFile    = "Input_2018_DY1J_MC.txt";
       DY2JFile    = "Input_2018_DY2J_MC.txt";
       qqToZZFile  = "Input_2018_qqToZZ_MC.txt";
@@ -133,6 +136,8 @@ namespace BKG_cfg {
     header1        = header1 + "#bf{CMS} #it{Preliminary}                                                                                       " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
     //For high mass SR without lower panel
     header         = header +    "#bf{CMS} #it{Preliminary}                                             " + Form("%.1f", luminosity) + "fb^{-1} (13 TeV)";
+    //for low mass data 2D template
+    headermc       = headermc + "#bf{CMS} #it{Simulation}                     (13 TeV)";
     outFileLM      = outFileLM + "ws_" + Form("%d", year) + "_FINAL.root";
     outFileHMABCD  = outFileHMABCD + "ABCD_" + Form("%d", year) + "_FINAL.root";
     outFileHMShape = outFileHMShape + "HighMassBKGShape_" + Form("%d", year) + "_FINAL.root";

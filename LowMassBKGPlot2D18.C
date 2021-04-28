@@ -75,6 +75,15 @@ void LowMassBKGPlot2D18() {
   txtHeader->SetTextAlign(22);
   txtHeader->SetHeader(headertpl2);
 
+  TLegend *mcHeader = new TLegend(.00001, 0.95, 0.94, 1.);
+  mcHeader->SetFillColor(kWhite);
+  mcHeader->SetFillStyle(0);
+  mcHeader->SetBorderSize(0);
+  mcHeader->SetTextFont(42);
+  mcHeader->SetTextSize(0.045);
+  mcHeader->SetTextAlign(22);
+  mcHeader->SetHeader(headermc);
+
   //for validation plot
   TLegend *txtHeadervld = new TLegend(0.14, 0.93, 0.98, 0.98);
   txtHeadervld->SetFillColor(kWhite);
@@ -1022,4 +1031,456 @@ void LowMassBKGPlot2D18() {
   c_data_m1_vs_m2_all->SaveAs("figures/DATA_all.pdf");
   c_data_m1_vs_m2_all->SaveAs("figures/DATA_all.png");
   c_data_m1_vs_m2_all->SaveAs("figures/DATA_all.root");
+
+  //--------------------------------------------------------------
+  // Extra test after unblinding:
+  //            Scatter event plot for each MC above 11 GeV
+  //--------------------------------------------------------------
+  //= DY0J =
+  TH2D* h2_dimudimu_CR_2D_DY0J = (TH2D*)w->data("ds_dimudimu_DY0J_2D_above_Upsilon_CR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2_dimudimu_CR_2D_DY0J->SetMarkerColor(kBlack); h2_dimudimu_CR_2D_DY0J->SetMarkerStyle(20); h2_dimudimu_CR_2D_DY0J->SetMarkerSize(1.5);
+  // Don't draw titles inheritted from dataset
+  h2_dimudimu_CR_2D_DY0J->SetXTitle(""); h2_dimudimu_CR_2D_DY0J->SetYTitle("");
+
+  TH2D * h2_dimudimu_CR_2D_DY0J_tmp = new TH2D( *h2_dimudimu_CR_2D_DY0J);
+  h2_dimudimu_CR_2D_DY0J_tmp->SetMarkerColor(kWhite); h2_dimudimu_CR_2D_DY0J_tmp->SetMarkerStyle(20); h2_dimudimu_CR_2D_DY0J_tmp->SetMarkerSize(1.0);
+
+  TCanvas * c_mc_m1_vs_m2_DY0J = new TCanvas("c_mc_m1_vs_m2_DY0J", "c_mc_m1_vs_m2_DY0J", 0, 1320, 1044, 928);
+  c_mc_m1_vs_m2_DY0J->SetCanvasSize(1040, 900);
+  c_mc_m1_vs_m2_DY0J->SetLeftMargin(0.121);
+  c_mc_m1_vs_m2_DY0J->SetRightMargin(0.17);
+  c_mc_m1_vs_m2_DY0J->SetTopMargin(0.05);
+  c_mc_m1_vs_m2_DY0J->cd();
+
+  TPad* pad_DY0J_mc = new TPad("pad_DY0J_mc", "pad_DY0J_mc", 0, 0, 1, 1);
+  pad_DY0J_mc->Draw();
+  pad_DY0J_mc->cd();
+  pad_DY0J_mc->SetLeftMargin(0.121);
+  pad_DY0J_mc->SetRightMargin(0.17);
+  pad_DY0J_mc->SetTopMargin(0.05);
+  pad_DY0J_mc->SetFillColor(0);
+  pad_DY0J_mc->SetFillStyle(4000);
+  pad_DY0J_mc->SetBorderMode(0);
+  pad_DY0J_mc->SetBorderSize(2);
+  pad_DY0J_mc->SetTickx(1);
+  pad_DY0J_mc->SetTicky(1);
+  pad_DY0J_mc->SetFrameFillStyle(0);
+  pad_DY0J_mc->SetFrameBorderMode(0);
+  pad_DY0J_mc->SetFrameFillStyle(0);
+  pad_DY0J_mc->SetFrameBorderMode(0);
+
+  h2_dimudimu_CR_2D_DY0J->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2_dimudimu_CR_2D_DY0J->GetXaxis()->SetTitleOffset(0.93);
+  h2_dimudimu_CR_2D_DY0J->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2_dimudimu_CR_2D_DY0J->GetYaxis()->SetTitleOffset(0.85);
+  h2_dimudimu_CR_2D_DY0J->Draw();
+  h2_dimudimu_CR_2D_DY0J_tmp->Draw("same");
+
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_SR_2D_DY0J = (TH2D*)w->data("ds_dimudimu_DY0J_2D_above_Upsilon_SR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_SR_2D_DY0J->SetMarkerColor(kBlack);
+  h2D_dimudimu_SR_2D_DY0J->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_DY0J->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_SR_2D_DY0J->SetXTitle("");
+  h2D_dimudimu_SR_2D_DY0J->SetYTitle("");
+  h2D_dimudimu_SR_2D_DY0J->Draw("same");
+
+  TH2D * h2D_dimudimu_SR_2D_DY0J_tmp = new TH2D( *h2D_dimudimu_SR_2D_DY0J);
+  h2D_dimudimu_SR_2D_DY0J_tmp->SetMarkerColor(kWhite);
+  h2D_dimudimu_SR_2D_DY0J_tmp->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_DY0J_tmp->SetMarkerSize(1.0);
+  h2D_dimudimu_SR_2D_DY0J_tmp->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+
+  corridorDn->Draw("L"); corridorUp->Draw("L"); mcHeader->Draw();
+  c_mc_m1_vs_m2_DY0J->SaveAs("figures/MC_DY0J.pdf");
+  c_mc_m1_vs_m2_DY0J->SaveAs("figures/MC_DY0J.png");
+  c_mc_m1_vs_m2_DY0J->SaveAs("figures/MC_DY0J.root");
+
+  //= DY1J =
+  TH2D* h2_dimudimu_CR_2D_DY1J = (TH2D*)w->data("ds_dimudimu_DY1J_2D_above_Upsilon_CR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2_dimudimu_CR_2D_DY1J->SetMarkerColor(kBlack); h2_dimudimu_CR_2D_DY1J->SetMarkerStyle(20); h2_dimudimu_CR_2D_DY1J->SetMarkerSize(1.5);
+  // Don't draw titles inheritted from dataset
+  h2_dimudimu_CR_2D_DY1J->SetXTitle(""); h2_dimudimu_CR_2D_DY1J->SetYTitle("");
+
+  TH2D * h2_dimudimu_CR_2D_DY1J_tmp = new TH2D( *h2_dimudimu_CR_2D_DY1J);
+  h2_dimudimu_CR_2D_DY1J_tmp->SetMarkerColor(kWhite); h2_dimudimu_CR_2D_DY1J_tmp->SetMarkerStyle(20); h2_dimudimu_CR_2D_DY1J_tmp->SetMarkerSize(1.0);
+
+  TCanvas * c_mc_m1_vs_m2_DY1J = new TCanvas("c_mc_m1_vs_m2_DY1J", "c_mc_m1_vs_m2_DY1J", 0, 1320, 1044, 928);
+  c_mc_m1_vs_m2_DY1J->SetCanvasSize(1040, 900);
+  c_mc_m1_vs_m2_DY1J->SetLeftMargin(0.121);
+  c_mc_m1_vs_m2_DY1J->SetRightMargin(0.17);
+  c_mc_m1_vs_m2_DY1J->SetTopMargin(0.05);
+  c_mc_m1_vs_m2_DY1J->cd();
+
+  TPad* pad_DY1J_mc = new TPad("pad_DY1J_mc", "pad_DY1J_mc", 0, 0, 1, 1);
+  pad_DY1J_mc->Draw();
+  pad_DY1J_mc->cd();
+  pad_DY1J_mc->SetLeftMargin(0.121);
+  pad_DY1J_mc->SetRightMargin(0.17);
+  pad_DY1J_mc->SetTopMargin(0.05);
+  pad_DY1J_mc->SetFillColor(0);
+  pad_DY1J_mc->SetFillStyle(4000);
+  pad_DY1J_mc->SetBorderMode(0);
+  pad_DY1J_mc->SetBorderSize(2);
+  pad_DY1J_mc->SetTickx(1);
+  pad_DY1J_mc->SetTicky(1);
+  pad_DY1J_mc->SetFrameFillStyle(0);
+  pad_DY1J_mc->SetFrameBorderMode(0);
+  pad_DY1J_mc->SetFrameFillStyle(0);
+  pad_DY1J_mc->SetFrameBorderMode(0);
+
+  h2_dimudimu_CR_2D_DY1J->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2_dimudimu_CR_2D_DY1J->GetXaxis()->SetTitleOffset(0.93);
+  h2_dimudimu_CR_2D_DY1J->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2_dimudimu_CR_2D_DY1J->GetYaxis()->SetTitleOffset(0.85);
+  h2_dimudimu_CR_2D_DY1J->Draw();
+  h2_dimudimu_CR_2D_DY1J_tmp->Draw("same");
+
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_SR_2D_DY1J = (TH2D*)w->data("ds_dimudimu_DY1J_2D_above_Upsilon_SR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_SR_2D_DY1J->SetMarkerColor(kBlack);
+  h2D_dimudimu_SR_2D_DY1J->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_DY1J->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_SR_2D_DY1J->SetXTitle("");
+  h2D_dimudimu_SR_2D_DY1J->SetYTitle("");
+  h2D_dimudimu_SR_2D_DY1J->Draw("same");
+
+  TH2D * h2D_dimudimu_SR_2D_DY1J_tmp = new TH2D( *h2D_dimudimu_SR_2D_DY1J);
+  h2D_dimudimu_SR_2D_DY1J_tmp->SetMarkerColor(kWhite);
+  h2D_dimudimu_SR_2D_DY1J_tmp->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_DY1J_tmp->SetMarkerSize(1.0);
+  h2D_dimudimu_SR_2D_DY1J_tmp->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+
+  corridorDn->Draw("L"); corridorUp->Draw("L"); mcHeader->Draw();
+  c_mc_m1_vs_m2_DY1J->SaveAs("figures/MC_DY1J.pdf");
+  c_mc_m1_vs_m2_DY1J->SaveAs("figures/MC_DY1J.png");
+  c_mc_m1_vs_m2_DY1J->SaveAs("figures/MC_DY1J.root");
+
+  //= DY2J =
+  TH2D* h2_dimudimu_CR_2D_DY2J = (TH2D*)w->data("ds_dimudimu_DY2J_2D_above_Upsilon_CR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2_dimudimu_CR_2D_DY2J->SetMarkerColor(kBlack); h2_dimudimu_CR_2D_DY2J->SetMarkerStyle(20); h2_dimudimu_CR_2D_DY2J->SetMarkerSize(1.5);
+  // Don't draw titles inheritted from dataset
+  h2_dimudimu_CR_2D_DY2J->SetXTitle(""); h2_dimudimu_CR_2D_DY2J->SetYTitle("");
+
+  TH2D * h2_dimudimu_CR_2D_DY2J_tmp = new TH2D( *h2_dimudimu_CR_2D_DY2J);
+  h2_dimudimu_CR_2D_DY2J_tmp->SetMarkerColor(kWhite); h2_dimudimu_CR_2D_DY2J_tmp->SetMarkerStyle(20); h2_dimudimu_CR_2D_DY2J_tmp->SetMarkerSize(1.0);
+
+  TCanvas * c_mc_m1_vs_m2_DY2J = new TCanvas("c_mc_m1_vs_m2_DY2J", "c_mc_m1_vs_m2_DY2J", 0, 1320, 1044, 928);
+  c_mc_m1_vs_m2_DY2J->SetCanvasSize(1040, 900);
+  c_mc_m1_vs_m2_DY2J->SetLeftMargin(0.121);
+  c_mc_m1_vs_m2_DY2J->SetRightMargin(0.17);
+  c_mc_m1_vs_m2_DY2J->SetTopMargin(0.05);
+  c_mc_m1_vs_m2_DY2J->cd();
+
+  TPad* pad_DY2J_mc = new TPad("pad_DY2J_mc", "pad_DY2J_mc", 0, 0, 1, 1);
+  pad_DY2J_mc->Draw();
+  pad_DY2J_mc->cd();
+  pad_DY2J_mc->SetLeftMargin(0.121);
+  pad_DY2J_mc->SetRightMargin(0.17);
+  pad_DY2J_mc->SetTopMargin(0.05);
+  pad_DY2J_mc->SetFillColor(0);
+  pad_DY2J_mc->SetFillStyle(4000);
+  pad_DY2J_mc->SetBorderMode(0);
+  pad_DY2J_mc->SetBorderSize(2);
+  pad_DY2J_mc->SetTickx(1);
+  pad_DY2J_mc->SetTicky(1);
+  pad_DY2J_mc->SetFrameFillStyle(0);
+  pad_DY2J_mc->SetFrameBorderMode(0);
+  pad_DY2J_mc->SetFrameFillStyle(0);
+  pad_DY2J_mc->SetFrameBorderMode(0);
+
+  h2_dimudimu_CR_2D_DY2J->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2_dimudimu_CR_2D_DY2J->GetXaxis()->SetTitleOffset(0.93);
+  h2_dimudimu_CR_2D_DY2J->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2_dimudimu_CR_2D_DY2J->GetYaxis()->SetTitleOffset(0.85);
+  h2_dimudimu_CR_2D_DY2J->Draw();
+  h2_dimudimu_CR_2D_DY2J_tmp->Draw("same");
+
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_SR_2D_DY2J = (TH2D*)w->data("ds_dimudimu_DY2J_2D_above_Upsilon_SR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_SR_2D_DY2J->SetMarkerColor(kBlack);
+  h2D_dimudimu_SR_2D_DY2J->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_DY2J->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_SR_2D_DY2J->SetXTitle("");
+  h2D_dimudimu_SR_2D_DY2J->SetYTitle("");
+  h2D_dimudimu_SR_2D_DY2J->Draw("same");
+
+  TH2D * h2D_dimudimu_SR_2D_DY2J_tmp = new TH2D( *h2D_dimudimu_SR_2D_DY2J);
+  h2D_dimudimu_SR_2D_DY2J_tmp->SetMarkerColor(kWhite);
+  h2D_dimudimu_SR_2D_DY2J_tmp->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_DY2J_tmp->SetMarkerSize(1.0);
+  h2D_dimudimu_SR_2D_DY2J_tmp->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+
+  corridorDn->Draw("L"); corridorUp->Draw("L"); mcHeader->Draw();
+  c_mc_m1_vs_m2_DY2J->SaveAs("figures/MC_DY2J.pdf");
+  c_mc_m1_vs_m2_DY2J->SaveAs("figures/MC_DY2J.png");
+  c_mc_m1_vs_m2_DY2J->SaveAs("figures/MC_DY2J.root");
+
+  //= qqToZZ =
+  TH2D* h2_dimudimu_CR_2D_qqToZZ = (TH2D*)w->data("ds_dimudimu_qqToZZ_2D_above_Upsilon_CR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2_dimudimu_CR_2D_qqToZZ->SetMarkerColor(kBlack); h2_dimudimu_CR_2D_qqToZZ->SetMarkerStyle(7); h2_dimudimu_CR_2D_qqToZZ->SetMarkerSize(0.8);
+  // Don't draw titles inheritted from dataset
+  h2_dimudimu_CR_2D_qqToZZ->SetXTitle(""); h2_dimudimu_CR_2D_qqToZZ->SetYTitle("");
+
+  TCanvas * c_mc_m1_vs_m2_qqToZZ = new TCanvas("c_mc_m1_vs_m2_qqToZZ", "c_mc_m1_vs_m2_qqToZZ", 0, 1320, 1044, 928);
+  c_mc_m1_vs_m2_qqToZZ->SetCanvasSize(1040, 900);
+  c_mc_m1_vs_m2_qqToZZ->SetLeftMargin(0.121);
+  c_mc_m1_vs_m2_qqToZZ->SetRightMargin(0.17);
+  c_mc_m1_vs_m2_qqToZZ->SetTopMargin(0.05);
+  c_mc_m1_vs_m2_qqToZZ->cd();
+
+  TPad* pad_qqToZZ_mc = new TPad("pad_qqToZZ_mc", "pad_qqToZZ_mc", 0, 0, 1, 1);
+  pad_qqToZZ_mc->Draw();
+  pad_qqToZZ_mc->cd();
+  pad_qqToZZ_mc->SetLeftMargin(0.121);
+  pad_qqToZZ_mc->SetRightMargin(0.17);
+  pad_qqToZZ_mc->SetTopMargin(0.05);
+  pad_qqToZZ_mc->SetFillColor(0);
+  pad_qqToZZ_mc->SetFillStyle(4000);
+  pad_qqToZZ_mc->SetBorderMode(0);
+  pad_qqToZZ_mc->SetBorderSize(2);
+  pad_qqToZZ_mc->SetTickx(1);
+  pad_qqToZZ_mc->SetTicky(1);
+  pad_qqToZZ_mc->SetFrameFillStyle(0);
+  pad_qqToZZ_mc->SetFrameBorderMode(0);
+  pad_qqToZZ_mc->SetFrameFillStyle(0);
+  pad_qqToZZ_mc->SetFrameBorderMode(0);
+
+  h2_dimudimu_CR_2D_qqToZZ->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2_dimudimu_CR_2D_qqToZZ->GetXaxis()->SetTitleOffset(0.93);
+  h2_dimudimu_CR_2D_qqToZZ->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2_dimudimu_CR_2D_qqToZZ->GetYaxis()->SetTitleOffset(0.85);
+  h2_dimudimu_CR_2D_qqToZZ->Draw();
+
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_SR_2D_qqToZZ = (TH2D*)w->data("ds_dimudimu_qqToZZ_2D_above_Upsilon_SR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_SR_2D_qqToZZ->SetMarkerColor(kBlack);
+  h2D_dimudimu_SR_2D_qqToZZ->SetMarkerStyle(7);
+  h2D_dimudimu_SR_2D_qqToZZ->SetMarkerSize(0.8);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_SR_2D_qqToZZ->SetXTitle("");
+  h2D_dimudimu_SR_2D_qqToZZ->SetYTitle("");
+  h2D_dimudimu_SR_2D_qqToZZ->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+
+  corridorDn->SetLineColor(2); corridorUp->SetLineColor(2);
+  corridorDn->Draw("L"); corridorUp->Draw("L"); mcHeader->Draw();
+  c_mc_m1_vs_m2_qqToZZ->SaveAs("figures/MC_qqToZZ.pdf");
+  c_mc_m1_vs_m2_qqToZZ->SaveAs("figures/MC_qqToZZ.png");
+  c_mc_m1_vs_m2_qqToZZ->SaveAs("figures/MC_qqToZZ.root");
+
+  //= TTJets =
+  TH2D* h2_dimudimu_CR_2D_TTJets = (TH2D*)w->data("ds_dimudimu_TTJets_2D_above_Upsilon_CR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2_dimudimu_CR_2D_TTJets->SetMarkerColor(kBlack); h2_dimudimu_CR_2D_TTJets->SetMarkerStyle(20); h2_dimudimu_CR_2D_TTJets->SetMarkerSize(1.5);
+  // Don't draw titles inheritted from dataset
+  h2_dimudimu_CR_2D_TTJets->SetXTitle(""); h2_dimudimu_CR_2D_TTJets->SetYTitle("");
+
+  TH2D * h2_dimudimu_CR_2D_TTJets_tmp = new TH2D( *h2_dimudimu_CR_2D_TTJets);
+  h2_dimudimu_CR_2D_TTJets_tmp->SetMarkerColor(kWhite); h2_dimudimu_CR_2D_TTJets_tmp->SetMarkerStyle(20); h2_dimudimu_CR_2D_TTJets_tmp->SetMarkerSize(1.0);
+
+  TCanvas * c_mc_m1_vs_m2_TTJets = new TCanvas("c_mc_m1_vs_m2_TTJets", "c_mc_m1_vs_m2_TTJets", 0, 1320, 1044, 928);
+  c_mc_m1_vs_m2_TTJets->SetCanvasSize(1040, 900);
+  c_mc_m1_vs_m2_TTJets->SetLeftMargin(0.121);
+  c_mc_m1_vs_m2_TTJets->SetRightMargin(0.17);
+  c_mc_m1_vs_m2_TTJets->SetTopMargin(0.05);
+  c_mc_m1_vs_m2_TTJets->cd();
+
+  TPad* pad_TTJets_mc = new TPad("pad_TTJets_mc", "pad_TTJets_mc", 0, 0, 1, 1);
+  pad_TTJets_mc->Draw();
+  pad_TTJets_mc->cd();
+  pad_TTJets_mc->SetLeftMargin(0.121);
+  pad_TTJets_mc->SetRightMargin(0.17);
+  pad_TTJets_mc->SetTopMargin(0.05);
+  pad_TTJets_mc->SetFillColor(0);
+  pad_TTJets_mc->SetFillStyle(4000);
+  pad_TTJets_mc->SetBorderMode(0);
+  pad_TTJets_mc->SetBorderSize(2);
+  pad_TTJets_mc->SetTickx(1);
+  pad_TTJets_mc->SetTicky(1);
+  pad_TTJets_mc->SetFrameFillStyle(0);
+  pad_TTJets_mc->SetFrameBorderMode(0);
+  pad_TTJets_mc->SetFrameFillStyle(0);
+  pad_TTJets_mc->SetFrameBorderMode(0);
+
+  h2_dimudimu_CR_2D_TTJets->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2_dimudimu_CR_2D_TTJets->GetXaxis()->SetTitleOffset(0.93);
+  h2_dimudimu_CR_2D_TTJets->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2_dimudimu_CR_2D_TTJets->GetYaxis()->SetTitleOffset(0.85);
+  h2_dimudimu_CR_2D_TTJets->Draw();
+  h2_dimudimu_CR_2D_TTJets_tmp->Draw("same");
+
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_SR_2D_TTJets = (TH2D*)w->data("ds_dimudimu_TTJets_2D_above_Upsilon_SR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_SR_2D_TTJets->SetMarkerColor(kBlack);
+  h2D_dimudimu_SR_2D_TTJets->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_TTJets->SetMarkerSize(1.5);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_SR_2D_TTJets->SetXTitle("");
+  h2D_dimudimu_SR_2D_TTJets->SetYTitle("");
+  h2D_dimudimu_SR_2D_TTJets->Draw("same");
+
+  TH2D * h2D_dimudimu_SR_2D_TTJets_tmp = new TH2D( *h2D_dimudimu_SR_2D_TTJets);
+  h2D_dimudimu_SR_2D_TTJets_tmp->SetMarkerColor(kWhite);
+  h2D_dimudimu_SR_2D_TTJets_tmp->SetMarkerStyle(20);
+  h2D_dimudimu_SR_2D_TTJets_tmp->SetMarkerSize(1.0);
+  h2D_dimudimu_SR_2D_TTJets_tmp->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+
+  corridorDn->Draw("L"); corridorUp->Draw("L"); mcHeader->Draw();
+  c_mc_m1_vs_m2_TTJets->SaveAs("figures/MC_TTJets.pdf");
+  c_mc_m1_vs_m2_TTJets->SaveAs("figures/MC_TTJets.png");
+  c_mc_m1_vs_m2_TTJets->SaveAs("figures/MC_TTJets.root");
+
+  //= ggHToZZ =
+  TH2D* h2_dimudimu_CR_2D_ggHToZZ = (TH2D*)w->data("ds_dimudimu_ggHToZZ_2D_above_Upsilon_CR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2_dimudimu_CR_2D_ggHToZZ->SetMarkerColor(kBlack); h2_dimudimu_CR_2D_ggHToZZ->SetMarkerStyle(7); h2_dimudimu_CR_2D_ggHToZZ->SetMarkerSize(0.8);
+  // Don't draw titles inheritted from dataset
+  h2_dimudimu_CR_2D_ggHToZZ->SetXTitle(""); h2_dimudimu_CR_2D_ggHToZZ->SetYTitle("");
+
+  TCanvas * c_mc_m1_vs_m2_ggHToZZ = new TCanvas("c_mc_m1_vs_m2_ggHToZZ", "c_mc_m1_vs_m2_ggHToZZ", 0, 1320, 1044, 928);
+  c_mc_m1_vs_m2_ggHToZZ->SetCanvasSize(1040, 900);
+  c_mc_m1_vs_m2_ggHToZZ->SetLeftMargin(0.121);
+  c_mc_m1_vs_m2_ggHToZZ->SetRightMargin(0.17);
+  c_mc_m1_vs_m2_ggHToZZ->SetTopMargin(0.05);
+  c_mc_m1_vs_m2_ggHToZZ->cd();
+
+  TPad* pad_ggHToZZ_mc = new TPad("pad_ggHToZZ_mc", "pad_ggHToZZ_mc", 0, 0, 1, 1);
+  pad_ggHToZZ_mc->Draw();
+  pad_ggHToZZ_mc->cd();
+  pad_ggHToZZ_mc->SetLeftMargin(0.121);
+  pad_ggHToZZ_mc->SetRightMargin(0.17);
+  pad_ggHToZZ_mc->SetTopMargin(0.05);
+  pad_ggHToZZ_mc->SetFillColor(0);
+  pad_ggHToZZ_mc->SetFillStyle(4000);
+  pad_ggHToZZ_mc->SetBorderMode(0);
+  pad_ggHToZZ_mc->SetBorderSize(2);
+  pad_ggHToZZ_mc->SetTickx(1);
+  pad_ggHToZZ_mc->SetTicky(1);
+  pad_ggHToZZ_mc->SetFrameFillStyle(0);
+  pad_ggHToZZ_mc->SetFrameBorderMode(0);
+  pad_ggHToZZ_mc->SetFrameFillStyle(0);
+  pad_ggHToZZ_mc->SetFrameBorderMode(0);
+
+  h2_dimudimu_CR_2D_ggHToZZ->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2_dimudimu_CR_2D_ggHToZZ->GetXaxis()->SetTitleOffset(0.93);
+  h2_dimudimu_CR_2D_ggHToZZ->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2_dimudimu_CR_2D_ggHToZZ->GetYaxis()->SetTitleOffset(0.85);
+  h2_dimudimu_CR_2D_ggHToZZ->Draw();
+
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_SR_2D_ggHToZZ = (TH2D*)w->data("ds_dimudimu_ggHToZZ_2D_above_Upsilon_SR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_SR_2D_ggHToZZ->SetMarkerColor(kBlack);
+  h2D_dimudimu_SR_2D_ggHToZZ->SetMarkerStyle(7);
+  h2D_dimudimu_SR_2D_ggHToZZ->SetMarkerSize(0.8);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_SR_2D_ggHToZZ->SetXTitle("");
+  h2D_dimudimu_SR_2D_ggHToZZ->SetYTitle("");
+  h2D_dimudimu_SR_2D_ggHToZZ->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+
+  corridorDn->SetLineColor(2); corridorUp->SetLineColor(2);
+  corridorDn->Draw("L"); corridorUp->Draw("L"); mcHeader->Draw();
+  c_mc_m1_vs_m2_ggHToZZ->SaveAs("figures/MC_ggHToZZ.pdf");
+  c_mc_m1_vs_m2_ggHToZZ->SaveAs("figures/MC_ggHToZZ.png");
+  c_mc_m1_vs_m2_ggHToZZ->SaveAs("figures/MC_ggHToZZ.root");
+
+  //= ggToZZ =
+  TH2D* h2_dimudimu_CR_2D_ggToZZ = (TH2D*)w->data("ds_dimudimu_ggToZZ_2D_above_Upsilon_CR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2_dimudimu_CR_2D_ggToZZ->SetMarkerColor(kBlack); h2_dimudimu_CR_2D_ggToZZ->SetMarkerStyle(7); h2_dimudimu_CR_2D_ggToZZ->SetMarkerSize(0.6);
+  // Don't draw titles inheritted from dataset
+  h2_dimudimu_CR_2D_ggToZZ->SetXTitle(""); h2_dimudimu_CR_2D_ggToZZ->SetYTitle("");
+
+  TCanvas * c_mc_m1_vs_m2_ggToZZ = new TCanvas("c_mc_m1_vs_m2_ggToZZ", "c_mc_m1_vs_m2_ggToZZ", 0, 1320, 1044, 928);
+  c_mc_m1_vs_m2_ggToZZ->SetCanvasSize(1040, 900);
+  c_mc_m1_vs_m2_ggToZZ->SetLeftMargin(0.121);
+  c_mc_m1_vs_m2_ggToZZ->SetRightMargin(0.17);
+  c_mc_m1_vs_m2_ggToZZ->SetTopMargin(0.05);
+  c_mc_m1_vs_m2_ggToZZ->cd();
+
+  TPad* pad_ggToZZ_mc = new TPad("pad_ggToZZ_mc", "pad_ggToZZ_mc", 0, 0, 1, 1);
+  pad_ggToZZ_mc->Draw();
+  pad_ggToZZ_mc->cd();
+  pad_ggToZZ_mc->SetLeftMargin(0.121);
+  pad_ggToZZ_mc->SetRightMargin(0.17);
+  pad_ggToZZ_mc->SetTopMargin(0.05);
+  pad_ggToZZ_mc->SetFillColor(0);
+  pad_ggToZZ_mc->SetFillStyle(4000);
+  pad_ggToZZ_mc->SetBorderMode(0);
+  pad_ggToZZ_mc->SetBorderSize(2);
+  pad_ggToZZ_mc->SetTickx(1);
+  pad_ggToZZ_mc->SetTicky(1);
+  pad_ggToZZ_mc->SetFrameFillStyle(0);
+  pad_ggToZZ_mc->SetFrameBorderMode(0);
+  pad_ggToZZ_mc->SetFrameFillStyle(0);
+  pad_ggToZZ_mc->SetFrameBorderMode(0);
+
+  h2_dimudimu_CR_2D_ggToZZ->GetXaxis()->SetTitle("m_{#mu#mu_{1}} [GeV]");
+  h2_dimudimu_CR_2D_ggToZZ->GetXaxis()->SetTitleOffset(0.93);
+  h2_dimudimu_CR_2D_ggToZZ->GetYaxis()->SetTitle("m_{#mu#mu_{2}} [GeV]");
+  h2_dimudimu_CR_2D_ggToZZ->GetYaxis()->SetTitleOffset(0.85);
+  h2_dimudimu_CR_2D_ggToZZ->Draw();
+
+  //========================================================
+  //    !!!BEGIN: unblinding signal (above Upsilon)
+  //========================================================
+
+  TH2D* h2D_dimudimu_SR_2D_ggToZZ = (TH2D*)w->data("ds_dimudimu_ggToZZ_2D_above_Upsilon_SR")->createHistogram("m1_above_Upsilon,m2_above_Upsilon", m_bins_above_Upsilon, m_bins_above_Upsilon);
+  h2D_dimudimu_SR_2D_ggToZZ->SetMarkerColor(kBlack);
+  h2D_dimudimu_SR_2D_ggToZZ->SetMarkerStyle(7);
+  h2D_dimudimu_SR_2D_ggToZZ->SetMarkerSize(0.6);
+  //Don't draw titles inheritted from dataset
+  h2D_dimudimu_SR_2D_ggToZZ->SetXTitle("");
+  h2D_dimudimu_SR_2D_ggToZZ->SetYTitle("");
+  h2D_dimudimu_SR_2D_ggToZZ->Draw("same");
+
+  //==========================================================
+  //    !!!END: unblinding signal (above Upsilon)
+  //==========================================================
+  corridorDn->SetLineColor(2); corridorUp->SetLineColor(2);
+  corridorDn->Draw("L"); corridorUp->Draw("L"); mcHeader->Draw();
+  c_mc_m1_vs_m2_ggToZZ->SaveAs("figures/MC_ggToZZ.pdf");
+  c_mc_m1_vs_m2_ggToZZ->SaveAs("figures/MC_ggToZZ.png");
+  c_mc_m1_vs_m2_ggToZZ->SaveAs("figures/MC_ggToZZ.root");
 }
